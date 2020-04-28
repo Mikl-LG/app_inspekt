@@ -14,6 +14,8 @@ const useStyles = makeStyles((theme) => ({
       justifyContent: 'start',
       alignItems:'center',
       color:Color.greyWebTitle,
+      borderBottom:'solid 0.5px grey',
+      //backgroundColor:Color.veryLightGrey,
       padding:'20px'
     },
     gridList: {
@@ -34,8 +36,8 @@ export default function Header(navigation){
     
     switch(navigation.navigation){
         case 0:
-            icon = <AddBoxIcon/>
-            title = 'Nouvelle expertise';
+            icon = <AddBoxIcon fontSize='small'/>
+            title = 'EXPERTISEZ';
         break;
 
         case 1:
@@ -56,11 +58,11 @@ export default function Header(navigation){
         default:
             title = 'Accueil';
     }
-    
+
     return(
         <div className={classes.root}>
             {icon}
-            <Typography variant='h6' style={{marginLeft:'10px'}}>
+            <Typography style={{marginLeft:'10px'}}>
                 {title}
             </Typography>
         </div>
