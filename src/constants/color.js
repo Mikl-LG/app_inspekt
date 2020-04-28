@@ -17,6 +17,7 @@ const primary = {
   
   export default {
     ...primary,
+    greyWebTitle : '#777777',
     tabIconDefault: '#ccc',
     tabIconSelected: primary.tintColor,
     tabBar: '#fefefe',

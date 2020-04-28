@@ -5,7 +5,7 @@ import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import HomeWorkIcon from '@material-ui/icons/HomeWork';
 import InsertCommentIcon from '@material-ui/icons/InsertComment';
-import StorageIcon from '@material-ui/icons/Storage'
+import StorageIcon from '@material-ui/icons/Storage';
 
 import Color from '../constants/color.js';
 
@@ -17,11 +17,12 @@ const useStyles = makeStyles({
     position:'fixed',
     bottom:'0px',
     borderTop:'solid 1px grey',
-    backgroundColor:Color.veryLightGrey
+    backgroundColor:Color.veryLightGrey,
+    zIndex:'10'
   },
 });
 
-export default function SimpleBottomNavigation() {
+export default function SimpleBottomNavigation({setNavigation}) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -30,6 +31,7 @@ export default function SimpleBottomNavigation() {
       value={value}
       onChange={(event, newValue) => {
         setValue(newValue);
+        setNavigation(newValue);
       }}
       showLabels
       className={classes.root}
