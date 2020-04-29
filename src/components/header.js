@@ -18,6 +18,11 @@ const useStyles = makeStyles((theme) => ({
       //backgroundColor:Color.veryLightGrey,
       padding:'20px'
     },
+    title:{
+        display:'flex',
+        flexDirection:'column',
+        alignItems:'start'
+    },
     gridList: {
       width: '80%',
       height: 450,
@@ -30,29 +35,34 @@ const useStyles = makeStyles((theme) => ({
 export default function Header(navigation){
 
     let title = '';
+    let subtitle = '';
     let icon = '';
 
     const classes = useStyles();
     
     switch(navigation.navigation){
         case 0:
-            icon = <AddBoxIcon fontSize='small'/>
-            title = 'EXPERTISEZ';
+            icon = <AddBoxIcon style={{color:'#EC5A1C'}}/>
+            title = 'CREER UNE NOUVELLE EXPERTISE';
+            subtitle = 'Saisissez votre expertise';
         break;
 
         case 1:
-            icon = <InsertCommentIcon/>
+            icon = <InsertCommentIcon style={{color:'#EC5A1C'}}/>
             title = 'INSPEKT';
+            subtitle = 'Expertises en cours d\'évaluation';
         break;
 
         case 2:
-            icon = <StorageIcon/>
+            icon = <StorageIcon style={{color:'#EC5A1C'}}/>
             title = 'QOT';
+            subtitle = 'Expertises clôturées';
         break;
 
         case 3:
-            icon = <HomeWorkIcon/>
+            icon = <HomeWorkIcon style={{color:'#EC5A1C'}}/>
             title = 'STOCKS';
+            subtitle = 'Machines en stock';
         break;
 
         default:
@@ -62,9 +72,15 @@ export default function Header(navigation){
     return(
         <div className={classes.root}>
             {icon}
-            <Typography style={{marginLeft:'10px'}}>
-                {title}
-            </Typography>
+            <div className={classes.title}>
+                <Typography variant='h6' style={{color:'#EC5A1C',marginLeft:'20px'}}>
+                    {title}
+                </Typography>
+                <Typography variant='subtitle1' style={{color:Color.lightGrey,marginLeft:'20px'}}>
+                    {subtitle}
+                </Typography>
+            </div>
+            
         </div>
     )
 }

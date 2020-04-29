@@ -10,14 +10,19 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
 import Header from './components/header';
+import InspektList from './views/inspektList';
+import Login from './views/login';
+import NewExpertise from './views/newExpertise';
 import token from './constants/token';
-import InspektList from './components/inspektList';
 
 class Home extends Component{
 
     constructor(props){
         super(props);
-        this.state={navigation:0};
+        this.state={
+            navigation:0,
+            //user:'mikl' //RAT : setted for build on home instead of login
+        };
     }
 
     theme = createMuiTheme({
@@ -62,8 +67,12 @@ class Home extends Component{
         this.setState({navigation : targetNav});
     };
 
+    setUserInState= (user) => {
+        this.setState(user);
+    }
+
     componentDidUpdate(){
-        console.log('state updated : ',this.state);
+        console.log('homeState updated : ',this.state);
     }
 
     async componentDidMount(){
@@ -78,19 +87,33 @@ class Home extends Component{
 
         return(
             <ThemeProvider theme={this.theme}>
-                <AppBar/>
-                <Container>
-                    <Header navigation = {navigation}/>
-                    {
-                        navigation === 1
-                        ?
-                        <InspektList
-                            inspektList = {inspektList}
-                        />
-                        :null
-                    }
-                </Container>
-                <BottomTabNavigator setNavigation = {this.setNavigation}/>
+                {
+                    this.state.user
+                    ?
+                    <div>
+                        <AppBar/>
+                        <Container>
+                            <Header navigation = {navigation}/>
+                            {
+                                navigation === 1
+                                ?
+                                <InspektList
+                                    inspektList = {inspektList}
+                                />
+                                :
+                                (
+                                    navigation === 0
+                                    ?<NewExpertise/>
+                                    :null
+                                )
+                            }
+                        </Container>
+                        <BottomTabNavigator setNavigation = {this.setNavigation}/>
+                    </div>
+                :
+                <Login setUserInState={this.setUserInState}/>
+                }
+                
             </ThemeProvider>
             
         )
