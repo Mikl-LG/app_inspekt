@@ -42,25 +42,25 @@ export default function Header(navigation){
     
     switch(navigation.navigation){
         case 0:
-            icon = <AddBoxIcon style={{color:'#EC5A1C'}}/>
-            title = 'CREER UNE NOUVELLE EXPERTISE';
-            subtitle = 'Saisissez votre expertise';
+            icon = <AddBoxIcon style={{color:Color.secondary}}/>
+            title = 'EXPERTISER';
+            subtitle = 'Créer une nouvelle expertise';
         break;
 
         case 1:
-            icon = <InsertCommentIcon style={{color:'#EC5A1C'}}/>
+            icon = <InsertCommentIcon style={{color:Color.secondary}}/>
             title = 'INSPEKT';
             subtitle = 'Expertises en cours d\'évaluation';
         break;
 
         case 2:
-            icon = <StorageIcon style={{color:'#EC5A1C'}}/>
+            icon = <StorageIcon style={{color:Color.secondary}}/>
             title = 'QOT';
             subtitle = 'Expertises clôturées';
         break;
 
         case 3:
-            icon = <HomeWorkIcon style={{color:'#EC5A1C'}}/>
+            icon = <HomeWorkIcon style={{color:Color.secondary}}/>
             title = 'STOCKS';
             subtitle = 'Machines en stock';
         break;
@@ -73,7 +73,7 @@ export default function Header(navigation){
         <div className={classes.root}>
             {icon}
             <div className={classes.title}>
-                <Typography variant='h6' style={{color:'#EC5A1C',marginLeft:'20px'}}>
+                <Typography variant='h6' style={{color:Color.secondary,marginLeft:'20px'}}>
                     {title}
                 </Typography>
                 <Typography variant='subtitle1' style={{color:Color.lightGrey,marginLeft:'20px'}}>

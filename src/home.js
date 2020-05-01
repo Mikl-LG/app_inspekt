@@ -7,7 +7,6 @@ import BottomTabNavigator from './components/bottomTabNavigator.js';
 import Container from '@material-ui/core/Container';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 
 import Header from './components/header';
 import InspektList from './views/inspektList';
@@ -20,8 +19,8 @@ class Home extends Component{
     constructor(props){
         super(props);
         this.state={
-            navigation:0,
-            //user:'mikl' //RAT : setted for build on home instead of login
+            navigation:1,
+            //logInfo:'mikl' //RAT DELETE
         };
     }
 
@@ -36,17 +35,20 @@ class Home extends Component{
     });
 
     getInspekts = async() => {
-        try{
-            const axiosResponse = await axios({
-                method:'get',
-                url:'https://inspekt.herokuapp.com/api?request=INSPEKTS&token='+token,
-            });
-            this.setState({inspektList : axiosResponse.data});
-
-        }catch(error){
-            console.log('error getInspekts : ',error);
-        };
-
+        if(this.state.logInfo){
+            try{
+                const axiosResponse = await axios({
+                    method:'get',
+                    url:'https://inspekt.herokuapp.com/api?request=INSPEKTS&token='+this.state.logInfo.token,
+                });
+                this.setState({inspektList : axiosResponse.data});
+    
+            }catch(error){
+                console.log('error getInspekts : ',error);
+            };
+        }else{
+            console.log('Pas de user connecté')
+        }
     };
 
     getQots = async() => {
@@ -67,8 +69,8 @@ class Home extends Component{
         this.setState({navigation : targetNav});
     };
 
-    setUserInState= (user) => {
-        this.setState(user);
+    setStateFromChild= (param) => {
+        this.setState(param);
     }
 
     componentDidUpdate(){
@@ -76,8 +78,8 @@ class Home extends Component{
     }
 
     async componentDidMount(){
-        this.getInspekts();
-        this.getQots();
+        
+        
     };
 
     render(){
@@ -88,7 +90,7 @@ class Home extends Component{
         return(
             <ThemeProvider theme={this.theme}>
                 {
-                    this.state.user
+                    this.state.logInfo
                     ?
                     <div>
                         <AppBar/>
@@ -103,7 +105,8 @@ class Home extends Component{
                                 :
                                 (
                                     navigation === 0
-                                    ?<NewExpertise/>
+                                    ?<NewExpertise
+                                        setStateFromChild={this.setStateFromChild}/>
                                     :null
                                 )
                             }
@@ -111,7 +114,10 @@ class Home extends Component{
                         <BottomTabNavigator setNavigation = {this.setNavigation}/>
                     </div>
                 :
-                <Login setUserInState={this.setUserInState}/>
+                <Login
+                    setStateFromChild={this.setStateFromChild}
+                    getInspekts = {this.getInspekts}
+                    getQots = {this.getQots}/>
                 }
                 
             </ThemeProvider>

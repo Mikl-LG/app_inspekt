@@ -9,14 +9,14 @@ const primary = {
     softGrey: "#d6d6d6",
     lightSoftGrey: "#e0e0e0",
     lightGreen: "#8bed45",      // was "#bbed45",
-    inspektBlue: "#0097D3",
-    veryLightGrey : '#F0F2F4'     // rbg 0, 151, 211  // was "#2e86c1",       
+    inspektBlue: "#0097D3",    // rbg 0, 151, 211  // was "#2e86c1",       
   
   
   }
   
   export default {
     ...primary,
+    secondary : '#EC5A1C',
     greyWebTitle : '#777777',
     tabIconDefault: '#ccc',
     tabIconSelected: primary.tintColor,

@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
-import crypto from '../components/crypto';
+import React from 'react';
+import {hasher} from '../components/crypto';
 import logo from '../logo_inspekt.png';
 
 import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import MailIcon from '@material-ui/icons/Mail';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -34,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-export default function Login({setUserInState}){
+export default function Login({setStateFromChild,getInspekts,getQots}){
     const [user,setUser] = React.useState();
     const [token,setToken] = React.useState();
     const [company,setCompany] = React.useState();
@@ -45,10 +44,11 @@ export default function Login({setUserInState}){
     const classes = useStyles();
     
     const userConnect = async() => {
-        const hash = await crypto.encrypt(passwrd, true)    
+        const hash = await hasher(passwrd)   
         // le 2e argument true renvoie une string iso un object {data: string}
     
         const fetchOptions = {
+            headers: {Accept:'application/json','Content-Type':'application/json'},
             method: 'POST',
             body: JSON.stringify({email, hash})                     
          }
@@ -56,12 +56,9 @@ export default function Login({setUserInState}){
             'https://inspekt.herokuapp.com/api?request=LOGIN', 
             fetchOptions
          )
-
-         console.log('email : ',email);
-         console.log('passwrd : ',passwrd);
-         console.log('hash : ',hash);
-         console.log('fetchResponse : ',fetchResponse);
-         setUserInState({user:'mikllg'});
+         setStateFromChild({logInfo:await fetchResponse.json()});
+         getInspekts();
+         getQots();
     }
     
 
