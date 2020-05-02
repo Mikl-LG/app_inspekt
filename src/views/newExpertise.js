@@ -8,9 +8,10 @@ import Steps from '../constants/Steps.js';
 
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import IconButton from '@material-ui/core/IconButton';
 import InputLabel from '@material-ui/core/InputLabel';
 import { makeStyles } from '@material-ui/core/styles';
-import MenuItem from '@material-ui/core/MenuItem';
+import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import Select from '@material-ui/core/Select';
 import Switch from '@material-ui/core/Switch';
 import TextField from '@material-ui/core/TextField';
@@ -21,35 +22,37 @@ import { set } from 'date-fns';
 const API_URL = 'https://inspekt-open-backend.herokuapp.com' // 'http://localhost:3001'
 
 const useStyles = makeStyles((theme) => ({
+  fileInput:{
+    display:'flex',
+    flexDirection:'column',
+    justifyContent:'center',
+    alignItems:'center',
+    padding:'5%'
+  },
+
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: '99%',
+  },
+  hideInput:{
+    display:'none'
+  },
+  optionsInput:{
+    minWidth:'25vw',
+    marginBottom:'20px'
+  },
   root:{
     overflow:'scroll',
     marginBottom:'200px',
     padding:'5vw'
   },
   rootForm:{
-      display: 'flex',
-      justifyContent:'space-around',
-      alignItems:'flex-end',
-      margin: '30px',
-      flexWrap:'wrap'
-  },
-
-  toggleForm:{
     display: 'flex',
     justifyContent:'space-around',
-    alignItems:'flex-start',
+    alignItems:'flex-end',
     margin: '30px',
     flexWrap:'wrap'
 },
-
-  optionsInput:{
-    minWidth:'25vw',
-    marginBottom:'20px'
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: '99%',
-  },
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
@@ -57,6 +60,13 @@ const useStyles = makeStyles((theme) => ({
     display:'flex',
     flexDirection:'column'
   },
+  toggleForm:{
+    display: 'flex',
+    justifyContent:'space-around',
+    alignItems:'flex-start',
+    margin: '30px',
+    flexWrap:'wrap'
+},
 }));
 
 export default function NewExpertise({setStateFromChild}){
@@ -87,6 +97,7 @@ export default function NewExpertise({setStateFromChild}){
   const [customer,setCustomer] = React.useState({});
   const [machine,setMachine] = React.useState({});
   const [machineFeatures,setMachineFeatures] = React.useState({});
+  const [machinePictures,setMachinePictures] = React.useState({});
 
   const customerHandleChange = (target) => {
       customer[target.id] = target.value;
@@ -114,13 +125,7 @@ export default function NewExpertise({setStateFromChild}){
 
   /**USEEFFECT ONLY USED ON CONSOLE */
   useEffect(() => {
-    //console.log('nature : ',nature);
-    console.log('customer : ',customer);
-    console.log('machine : ',machine);
-    console.log('machineFeatures : ',machineFeatures);
-    //console.log('machineFormList : ',machineFormList);
-    //console.log('machineFeaturesFormList : ',machineFeaturesFormList);
-    //console.log('formsCatalog : ',formsCatalog);
+    console.log('machinePictures : ',machinePictures);
   })
 
     const classes = useStyles();
@@ -339,12 +344,48 @@ export default function NewExpertise({setStateFromChild}){
 
         {
           nature &&
-          <Typography
-            style={{color:Color.secondary,margin:'30px'}}
-            variant='subtitle1'>4. Ajoutez vos photos :
-          </Typography>
+            <Typography
+              style={{color:Color.secondary,margin:'30px'}}
+              variant='subtitle1'>4. Ajoutez vos photos :
+            </Typography>
         }
-
+        <div className={classes.rootForm}>
+        {
+          (nature && nature.formStepsTypes)
+          ?
+            nature.formStepsTypes[4].type == 'trailed'
+            ?
+              (
+                picturerequiredlist.trailed.map((picture => (
+                  <div className={classes.fileInput}>
+                    <label htmlFor={`image ${picture.property}`}>
+                      <IconButton color="primary" aria-label="upload picture" component="span">
+                        <PhotoCamera />
+                      </IconButton>
+                    </label>
+                    <Typography>{picture.title}</Typography>
+                    <input accept="image/*" ref={machinePictures} id={`image ${picture.property}`} type="file" />
+                  </div>
+                )))
+              )
+            :null
+              (
+                picturerequiredlist.regular.map((picture) => (
+                  <div className={classes.fileInput}>
+                    <label htmlFor={`image ${picture.property}`}>
+                      <IconButton color="primary" aria-label="upload picture" component="span">
+                        <PhotoCamera />
+                      </IconButton>
+                    </label>
+                    <Typography>{picture.title}</Typography>
+                    <input accept="image/*" ref={machinePictures} id={`image ${picture.property}`} type="file"/>
+                  </div>
+                ))
+              )
+          :null
+        }
+        </div>
+        <button onClick={() => console.log(machinePictures.current.file[0].name)}> Afficher la valeur</button>
 
       </div>
     )

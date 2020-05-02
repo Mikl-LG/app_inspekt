@@ -20,7 +20,7 @@ class Home extends Component{
         super(props);
         this.state={
             navigation:1,
-            //logInfo:'mikl' //RAT DELETE
+            logInfo:'mikl' //RAT DELETE
         };
     }
 
