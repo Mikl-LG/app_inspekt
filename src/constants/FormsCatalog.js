@@ -2639,6 +2639,12 @@ rotativeHarrow:{
                         data: formsCatalog.implementWorkingWidth
                     },
 
+                    "largeurTravailNumerique":{
+                        title:'Largeur travail (mètres)',
+                        property:'implementWorkingWidth',
+                        numeric: true,
+                    },
+
                     "largeurTravailPouces":{
                         title:'Largeur travail (pouces)',
                         property:'implementWorkingWidth',
@@ -3851,6 +3857,12 @@ rotativeHarrow:{
                     "canal":{
                         title:'Canal',
                         property:'channel',
+                        picture: true
+                    },
+
+                    "carteGrise":{
+                        title:'Carte grise',
+                        property:'registrationCard',
                         picture: true
                     },
                     
