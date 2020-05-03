@@ -171,7 +171,7 @@ export default function NewExpertise({setStateFromChild}){
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
 
     //FOCUS USER ON THE FORM AND HIDE APPBAR AND HEADER IF THE DOCUMENT.HEIGHT IS HIGHER THAN THE SCREEN
-    window.scrollTo({
+    activeStep !==0 && window.scrollTo({
       top: document.getElementById('stepper').offsetTop,
       left: 0,
       behavior: 'smooth'
@@ -198,7 +198,9 @@ export default function NewExpertise({setStateFromChild}){
       
       <div className={classes.root}>
 
-        <div className={classes.rootStepper}>
+        {
+          activeStep !== 0 &&
+          <div className={classes.rootStepper}>
           <Stepper activeStep={activeStep} alternativeLabel id='stepper'>
             {steps.map((label) => (
               <Step key={label}>
@@ -219,6 +221,7 @@ export default function NewExpertise({setStateFromChild}){
             )}
           </div>
         </div>
+        }
         {
           activeStep === 0 &&
           <Typography variant='h6' style={{width:'100%',textAlign:'center',padding:'30px',color:Color.secondary}}>Créer une nouvelle expertise.</Typography>
