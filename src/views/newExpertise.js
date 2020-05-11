@@ -1,8 +1,16 @@
 import React, { Component, useEffect } from 'react';
-import Color from '../constants/color.js';
-import FormsCatalog from '../constants/FormsCatalog.js';
-import Natures from '../constants/Natures.js';
-import Steps from '../constants/Steps.js';
+import Color from '../constants/color';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Divider from '@material-ui/core/Divider';
+import FormsCatalog from '../constants/FormsCatalog';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Natures from '../constants/Natures';
+import Snackbar from '@material-ui/core/Snackbar';
+import Steps from '../constants/Steps';
 //import ImageUploader from "react-images-upload";
 
 
@@ -20,7 +28,7 @@ import Switch from '@material-ui/core/Switch';
 import TextField from '@material-ui/core/TextField';
 
 import Axios from 'axios';
-import { Typography, Button } from '@material-ui/core';
+import { Typography, Button, SnackbarContent } from '@material-ui/core';
 import { set } from 'date-fns';
 const API_URL = 'https://inspekt-open-backend.herokuapp.com' // 'http://localhost:3001'
 
@@ -64,11 +72,26 @@ const useStyles = makeStyles((theme) => ({
     margin: '30px',
     flexWrap:'wrap'
   },
+  rootPicture:{
+    display: 'flex',
+    flexDirection:'column',
+    alignItems:'flex-start',
+    justifyContent:'center'
+  },
   rootStepper:{
     width:'100%'
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
+  },
+  snackBarError:{
+    backgroundColor:'#6A8D10'
+  },
+  snackbarSuccess:{
+    backgroundColor:'#6A8D10'
+  },
+  snackbarWarning:{
+    backgroundColor:'#E03616'
   },
   stepButton:{
     display:'flex',
@@ -89,7 +112,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function getSteps() {
-  return ['Client', 'Machine', 'Options','Images','Commentaires'];
+  return ['','Client', 'Machine', 'Options','Images','Commentaires'];
 }
 
 function getStepContent(stepIndex) {
@@ -97,13 +120,13 @@ function getStepContent(stepIndex) {
     case 0:
       return '';
     case 1:
-      return 'A qui appartient le matériel?';
+      return 'A qui appartient le matériel:';
     case 2:
-      return 'De quel matériel s\'agit-il? :';
+      return 'De quel matériel s\'agit-il :';
     case 3:
-      return 'Comment le matériel est-il équipé?';
+      return 'Comment le matériel est-il équipé :';
     case 4:
-      return 'Une photo vaut mieux qu\'un long discours, non?';
+      return 'Une photo vaut mieux qu\'un long discours :';
     case 5:
         return 'Les derniers détails...';
     default:
@@ -111,7 +134,7 @@ function getStepContent(stepIndex) {
   }
 }
 
-export default function NewExpertise({setStateFromChild}){
+export default function NewExpertise({setStateFromChild,logInfo}){
 
   /**DATA SUBSCRIBTION : CUSTOMER INPUTS, NATURELIST, MACHINEFORMLIST, MACHINEFEATURELIST, PICTURESREQUIRED*/
   const [customerInputs,setCustomerInputs] = React.useState(Steps[1].fields);
@@ -133,13 +156,16 @@ export default function NewExpertise({setStateFromChild}){
       setpicturerequiredlist(value);
     })
   });
+  const [pictureList,setPictureList] = React.useState([]);
 
   /**HOOK HANDLE */
   const [nature,setNature] = React.useState();
   const [customer,setCustomer] = React.useState({});
+  const [image, setImage] = React.useState({});
+  const [loader,setLoader] = React.useState({isOpen:false,title:'',content:''})
   const [machine,setMachine] = React.useState({});
   const [machineFeatures,setMachineFeatures] = React.useState({});
-  const [machinePictures,setMachinePictures] = React.useState({});
+  const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
   const [activeStep, setActiveStep] = React.useState(0);
   const steps = getSteps();
 
@@ -147,16 +173,15 @@ export default function NewExpertise({setStateFromChild}){
       customer[target.id] = target.value;
       setCustomer(customer);
   }
-
-  const natureMachineHandleChange = (target) => {
-    const natureInput = JSON.parse(target.value);
-    //setMachine(machine);
-    setNature(natureInput);
-    setBrands(formsCatalog[natureInput.value].brands);
-    setStateFromChild({nature:natureInput});
-
+  
+  const imageHandleChange = (e,property) => {
+    if (e.target.files.length) {
+      setImage({...image,[property]:{
+        preview: URL.createObjectURL(e.target.files[0]),
+        raw: e.target.files[0]
+      }});
+    }
   }
-
   const machineHandleChange = (target,inputName) => {
     machine[inputName] = target.value;
     setMachine(machine);
@@ -167,15 +192,154 @@ export default function NewExpertise({setStateFromChild}){
     setMachineFeatures(machineFeatures);
   }
 
-  const stepperHandleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  const natureMachineHandleChange = async(target) => {
+    const natureInput = JSON.parse(target.value);
 
-    //FOCUS USER ON THE FORM AND HIDE APPBAR AND HEADER IF THE DOCUMENT.HEIGHT IS HIGHER THAN THE SCREEN
-    activeStep !==0 && window.scrollTo({
-      top: document.getElementById('stepper').offsetTop,
-      left: 0,
-      behavior: 'smooth'
-    });
+    let pictureToSet = [];
+
+    if(natureInput && natureInput.formStepsTypes[4].type == 'trailed'){
+      pictureToSet = [...picturerequiredlist.trailed];
+
+    }else if (natureInput && natureInput.formStepsTypes[4].type == 'regular'){
+      pictureToSet = [...picturerequiredlist.regular];
+    }
+
+    if (natureInput && natureInput.formStepsTypes[4].addOns){
+      natureInput.formStepsTypes[4].addOns.map((element) => {
+        pictureToSet.push(picturerequiredlist.addOns[element]);
+      })
+    }
+
+    setPictureList(pictureToSet);
+
+    setMachine({nature:{name:natureInput.text,key:natureInput.value}});
+
+    setNature(natureInput);
+    
+    setBrands(formsCatalog[natureInput.value].brands);
+
+    setStateFromChild({nature:natureInput});
+
+  }
+
+  const snackbarHandleClose = () => {
+    setSnackbar({isOpen:false})
+  }
+
+  const stepperHandleNext = async() => {
+
+    if(activeStep === steps.length -1){
+
+      setLoader({isOpen:true,title:'Sauvegarde en cours...',content:'Bien joué : on vérifie que tout va bien et on sauvegarde votre expertise.'})
+
+      console.log('Customer : ',customer);
+      console.log('Machine : ',machine);
+      console.log('MachineFeatures : ',machineFeatures);
+      console.log('Nature : ',nature);
+      console.log('imageStringify : ',JSON.stringify(image));
+      console.log('image : ',JSON.stringify(image) == "{}");
+
+      const token = logInfo.token;
+      let pictures = {};
+      
+      if(JSON.stringify(image) != "{}"){
+        let picturesArray =[];
+        for (let[key,value] of Object.entries(image)){
+          if(value.raw){
+            picturesArray.push({[key]:value.raw});
+          }
+        }
+
+        const data = await new Promise((resolve,reject)=>{
+          let formdata = new FormData();
+          
+          picturesArray.forEach((picture,index)=>{
+            for (let [key,value] of Object.entries(picture)){
+              formdata.append('filedata',value);
+              if(index == picturesArray.length-1){
+                resolve(formdata);
+              }
+            }
+          })
+        })
+
+        ///////// ADD PICTURES TO S3 \\\\\\\\\\
+        const axiosParams = await Promise.resolve({
+          method: "post",
+          url: `http://inspekt.herokuapp.com/webapi/create_inspekt?token=${token}`,
+          // FormData object containing all images in 'filedata'
+          data:data,
+          config: { headers: { "Content-Type": "multipart/form-data" } }
+        })
+
+        const {data: urls, status} = await Axios(axiosParams);
+
+        if(status === 200){
+          picturesArray.forEach((element,index) => {
+            for (let [key,value] of Object.entries(element)){
+              
+              pictures[key] = urls[index];
+              
+            }
+          }  
+          )
+        }
+      }
+      
+
+      const body = await Promise.resolve({
+        customer:customer, 
+        machineFeatures: machineFeatures, 
+        pictures:pictures, 
+        particularities: {}, 
+        status: 'inspekt',
+        machine: machine, 
+    })
+
+    ////////// ADD INSPEKT TO S3 \\\\\\\\\\
+
+      const url = `https://inspekt.herokuapp.com/api?request=CREATE_INSPEKT&token=${token}`
+      let fetchOptions = await Promise.resolve(
+          {
+              method: 'POST',
+              mode: 'cors',
+              headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(body)
+          }
+      )
+      let fetching = await fetch(url, fetchOptions)
+      let error = await Promise.resolve(!fetching.ok)
+      let response = !error && await Promise.resolve(fetching.json());
+
+      console.log(error,response);
+      setLoader({isOpen:false,title:'',content:''})
+
+      //UPDATE STATE WITH THE NEW INSPEKTLIST
+      setStateFromChild({inspektList : response});
+
+      setActiveStep(0);
+
+      setSnackbar({message : 'Et une expertise de plus !',type:'snackbarSuccess',isOpen:true});
+
+    }else if(activeStep === 2 && !nature){
+      
+      setSnackbar({message : 'Vous êtes très rapide! Mais vous devez sélectionner une nature pour continuer.',type:'snackbarWarning',isOpen:true});
+
+    }else{
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+
+      //FOCUS USER ON THE FORM AND HIDE APPBAR AND HEADER IF THE DOCUMENT.HEIGHT IS HIGHER THAN THE SCREEN
+      activeStep !==0 && window.scrollTo({
+        top: document.getElementById('stepper').offsetTop,
+        left: 0,
+        behavior: 'smooth'
+      });
+    }
+
+
   };
 
   const stepperHandleBack = () => {
@@ -188,9 +352,8 @@ export default function NewExpertise({setStateFromChild}){
 
   /**USEEFFECT ONLY USED ON CONSOLE */
   useEffect(() => {
-    console.log('picturerequiredlist : ',picturerequiredlist);
-    console.log('nature : ',nature);
-  })
+    console.log('image : ',image);
+  },[image])
 
     const classes = useStyles();
 
@@ -211,8 +374,8 @@ export default function NewExpertise({setStateFromChild}){
           <div>
             {activeStep === steps.length ? (
               <div>
-                <Typography className={classes.instructions}>Votre expertise est prête !</Typography>
-                <Button onClick={stepperHandleReset}>Recommencer</Button>
+                <Typography className={classes.instructions}>Bravo</Typography>
+                <Button onClick={stepperHandleReset}>Ajouter une nouvelle expertise</Button>
               </div>
             ) : (
               <div>
@@ -385,7 +548,7 @@ export default function NewExpertise({setStateFromChild}){
                               className={classes.optionsInput}
                               id={machineFeaturesFormList.addOns[input].property}
                               variant="outlined"
-                              onChange={(e) => machineFeaturesHandleChange(e.target,input.property)}
+                              onChange={(e) => machineFeaturesHandleChange(e.target,machineFeaturesFormList.addOns[input].property)}
                             />
                           </div>
 
@@ -432,52 +595,32 @@ export default function NewExpertise({setStateFromChild}){
         {
           activeStep === 4 &&
             <div>
-              <div className={classes.rootForm}>
+              <div className={classes.rootPicture}>
                 {
-                  (nature && nature.formStepsTypes)
-                  ?
-                    nature.formStepsTypes[4].type == 'trailed'
-                    ?
-                      (
-                        picturerequiredlist.trailed.map((picture => (
-                          <div className={classes.fileInput}>
-                            <label htmlFor={`image ${picture.property}`}>
-                              <IconButton color="primary" aria-label="upload picture" component="span">
-                                <PhotoCamera />
-                              </IconButton>
-                            </label>
-                            <Typography>{picture.title}</Typography>
-                            <input accept="image/*" className={classes.hideInput} ref={machinePictures} id={`image ${picture.property}`} type="file" />
-                          </div>
-                        )))
-                      )
-                    :
-                      (
-                        picturerequiredlist.regular.map((picture) => (
-                          <div className={classes.fileInput}>
-                            <label htmlFor={`image ${picture.property}`}>
-                              <IconButton color="primary" aria-label="upload picture" component="span">
-                                <PhotoCamera />
-                              </IconButton>
-                            </label>
-                            <Typography>{picture.title}</Typography>
-                            <input accept="image/*" className={classes.hideInput} ref={machinePictures} id={`image ${picture.property}`} type="file"/>
-                          </div>
-                        ))
-                      )
-                  :null
-                }
-                {
-                  (nature && nature.formStepsTypes[4].addOns) && 
-                    nature.formStepsTypes[4].addOns.map((picture) => (
-                      <div className={classes.fileInput}>
-                        <label htmlFor={`image ${picturerequiredlist.addOns[picture].property}`}>
+                  pictureList && 
+                    pictureList.map((picture) => (
+                      <div style={{display:'flex',alignItems:'center'}}>
+                        <Divider/>
+                        <div style={(image[picture.property] && image[picture.property].preview) ? {justifySelf:'flex-end',width:'80px',marginRight:'10vw'} : {display:'none'}}>
+                          <img
+                            src={image[picture.property] && image[picture.property].preview && image[picture.property].preview}
+                            style={{width:'80px'}}
+                          />
+                        </div>
+                        <label htmlFor={`image ${picture.property}`}>
                           <IconButton color="primary" aria-label="upload picture" component="span">
                             <PhotoCamera />
                           </IconButton>
                         </label>
-                        <Typography>{picturerequiredlist.addOns[picture].title}</Typography>
-                        <input accept="image/*" className={classes.hideInput} ref={machinePictures} id={`image ${picturerequiredlist.addOns[picture].property}`} type="file"/>
+                        <Typography>{picture.title}</Typography>
+                        <input
+                          accept="image/*"
+                          className={classes.hideInput}
+                          id={`image ${picture.property}`}
+                          type="file"
+                          onChange={(e) => imageHandleChange(e,picture.property)}
+                        />
+                        
                       </div>
                     ))
                 }
@@ -496,7 +639,32 @@ export default function NewExpertise({setStateFromChild}){
             {activeStep === steps.length - 1 ? 'Terminer' : 'Suivant'}
           </Button>
         </div>
-
+        <div>
+          <Snackbar
+            autoHideDuration={3000}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            onClose={snackbarHandleClose}
+            open={snackbar.isOpen}>
+              <SnackbarContent className={classes[snackbar.type]} message={snackbar.message}/>
+          </Snackbar>
+      </div>
+      <div>
+      <Dialog
+        open={loader.isOpen}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{loader.title}</DialogTitle>
+        <DialogContent>
+          <LinearProgress style={{width:'100%'}} />
+          <LinearProgress style={{width:'100%'}} color="secondary" />
+          <DialogContentText id="alert-dialog-description">
+            {loader.content}
+          </DialogContentText>
+        </DialogContent>
+      </Dialog>
+    </div>
+        
       </div>
     )
 }

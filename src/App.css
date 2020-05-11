@@ -6,6 +6,13 @@
   padding: 10vh;
 }
 
+.iconSize16{
+  font-size: 18px;
+}
+
+.small{
+  font-size: 0.8em;
+}
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

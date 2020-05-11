@@ -32,6 +32,9 @@ class Home extends Component{
         status: {
           danger: 'orange',
         },
+        listItemText:{
+            fontSize:'0.7em',//Insert your required size
+          }
     });
 
     getInspekts = async() => {
@@ -85,7 +88,9 @@ class Home extends Component{
     render(){
 
         const navigation = this.state.navigation;
-        const inspektList = this.state.inspektList;
+        const inspektList = this.state.inspektList && this.state.inspektList;
+        const cieMembers = this.state.logInfo && this.state.logInfo.cieMembers;
+        const logInfo = this.state.logInfo;
 
         return(
             <ThemeProvider theme={this.theme}>
@@ -101,12 +106,16 @@ class Home extends Component{
                                 ?
                                 <InspektList
                                     inspektList = {inspektList}
+                                    cieMembers = {cieMembers} 
+                                    logInfo={logInfo}
+                                    setStateFromChild={this.setStateFromChild}
                                 />
                                 :
                                 (
                                     navigation === 0
                                     ?<NewExpertise
-                                        setStateFromChild={this.setStateFromChild}/>
+                                        setStateFromChild={this.setStateFromChild}
+                                        logInfo={logInfo}/>
                                     :null
                                 )
                             }

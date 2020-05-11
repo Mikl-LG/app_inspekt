@@ -14,6 +14,7 @@ const useStyles = makeStyles({
     display:'flex',
     justifyContent:'center',
     width: '100%',
+    height: '50px',
     position:'fixed',
     bottom:'0px',
     borderTop:'solid 1px grey',

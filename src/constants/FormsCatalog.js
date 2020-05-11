@@ -237,6 +237,7 @@ const formsCatalog = {
             "AGUIRE",
             "ALPEGO",
             "AMAZONE",
+            "CLAYDON",
             "GASPARDO",
             "GREAT PLAINS",
             "HERRIAU",
@@ -1388,6 +1389,7 @@ rotativeHarrow:{
                 "BONNEL",
                 "BUGNOT",
                 "CARRE",
+                "CLAYDON",
                 "ECO MULCH",
                 "FRANQUET",
                 "GREGOIRE BESSON", 
@@ -1677,7 +1679,7 @@ rotativeHarrow:{
         "3 VITESSES MECA",
         "4 VITESSES MECA",
         "3 VITESSES ELEC",
-        "3 VITESSES ELEC",
+        "4 VITESSES ELEC",
         "AUTOMATIQUE"
     ],
 
@@ -1725,7 +1727,7 @@ rotativeHarrow:{
         "PLATEFORME",
         "SILENT BLOC",
         "SUSPENSION MECANIQUE",
-        "SUSPENSION HYDRAUIQUE",
+        "SUSPENSION HYDRAULIQUE",
         "SUSPENSION PNEUMATIQUE"
     ],
 
@@ -1749,7 +1751,6 @@ rotativeHarrow:{
         "EXTINCTEUR",
         "PLAQUES REFLECHISSANTES",
         "PROTECTION CARDAN",
-        "POIGNEES CHAUFFANTES"
     ],
 
     distributionSystem:[
@@ -3762,7 +3763,7 @@ rotativeHarrow:{
                     },
                     {
                         title:'3/4 arrière gauche',
-                        property : 'rightLeft',
+                        property : 'leftBack',
                         picture: true
                     }
                 ],
@@ -3790,7 +3791,7 @@ rotativeHarrow:{
                     },
                     {
                         title:'3/4 arrière gauche',
-                        property : 'rightLeft',
+                        property : 'leftback',
                         picture: true
                     },
                     {
