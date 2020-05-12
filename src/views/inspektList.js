@@ -5,11 +5,14 @@ import Axios from 'axios';
 import AppBar from '@material-ui/core/AppBar';
 import Badge from '@material-ui/core/Badge';
 import Button from '@material-ui/core/Button';
-import Checkbox from '@material-ui/core/Checkbox';
 import CloseIcon from '@material-ui/icons/Close';
 import clsx from 'clsx';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Grid from '@material-ui/core/Grid';
@@ -138,6 +141,7 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
     const [inputQuotations, setInputQuotations] = React.useState({});
     const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
     const [openMachineDetail, setOpenMachineDetail] = React.useState(false);
+    const [isOpenDeleteValidation, setIsOpenDeleteValidation] = React.useState(false);
     const [quotations, setQuotations] = React.useState(false);
 
     ///////// FUNCTIONS \\\\\\\\\\
@@ -198,7 +202,6 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
     };
 
     const inspektDelete = async(expertise) => {
-      console.log('expertise : ',expertise);
       const body = await Promise.resolve({ expId : expertise.id })
       const url = `https://inspekt.herokuapp.com/api?request=REMOVE_INSPEKT&token=${logInfo.token}`
       let fetchOptions = await Promise.resolve(
@@ -216,11 +219,11 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
       let error = await Promise.resolve(!fetching.ok)
       let response = !error && await Promise.resolve(fetching.json());
 
-      console.log('response : ',{error,response});
-
       if(error == false){
         setSnackbar({message : 'Votre INSPEKT est supprimé.',type:'snackbarSuccess',isOpen:true});
         setStateFromChild({inspektList:response});
+        setOpenMachineDetail(false);
+        setIsOpenDeleteValidation(false);
       }
       
     }
@@ -421,6 +424,29 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
               <div style={{width:'100%',textAlign:'center',marginTop:'40px',color:Color.lightGrey}}>Aucun INSPEKT à évaluer pour le moment.</div>
         }
       </GridList>
+
+      <Dialog
+        open={isOpenDeleteValidation}
+        onClose={() => setIsOpenDeleteValidation(false)}
+        aria-labelledby="alert-deleteInspekt-title"
+        aria-describedby="alert-deleteInspekt-description"
+      >
+        <DialogTitle id="alert-deleteInspekt-title">{"Supprimer cet Inspekt?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-deleteInspekt-description">
+            Vous êtes sur le point de supprimer un Inspekt : ces données seront effacées et ne pourront pas être récupérées.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsOpenDeleteValidation(false)} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={() => inspektDelete(focusMachine)} color="primary" autoFocus>
+            Supprimer
+          </Button>
+        </DialogActions>
+
+      </Dialog>
       
       <Dialog fullScreen open={openMachineDetail} onClose={handleClickCloseMachineDetail} TransitionComponent={Transition}>
         <AppBar className={classes.appBar} id='machineDetailAppBar'>
@@ -435,7 +461,7 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
                 focusMachine && focusMachine.machine && focusMachine.machine.nature.name + ' ' + focusMachine.machine.brand + ' ' + focusMachine.machine.model}
             </Typography>
             <Tooltip title="Supprimer">
-              <Button autoFocus color="inherit" onClick={() => inspektDelete(focusMachine)}>
+              <Button autoFocus color="inherit" onClick={() => setIsOpenDeleteValidation(true)}>
                 <DeleteIcon/>
               </Button>
             </Tooltip>

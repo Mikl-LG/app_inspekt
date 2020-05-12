@@ -1,5 +1,6 @@
 import React, { Component, useEffect } from 'react';
 import Color from '../constants/color';
+import DatePicker from '../components/datePicker';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -8,6 +9,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
 import FormsCatalog from '../constants/FormsCatalog';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import MenuItem from '@material-ui/core/MenuItem';
 import Natures from '../constants/Natures';
 import Snackbar from '@material-ui/core/Snackbar';
 import Steps from '../constants/Steps';
@@ -165,6 +167,7 @@ export default function NewExpertise({setStateFromChild,logInfo}){
   const [loader,setLoader] = React.useState({isOpen:false,title:'',content:''})
   const [machine,setMachine] = React.useState({});
   const [machineFeatures,setMachineFeatures] = React.useState({});
+  const [particularities,setParticularities] = React.useState({});
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
   const [activeStep, setActiveStep] = React.useState(0);
   const steps = getSteps();
@@ -232,13 +235,6 @@ export default function NewExpertise({setStateFromChild,logInfo}){
 
       setLoader({isOpen:true,title:'Sauvegarde en cours...',content:'Bien joué : on vérifie que tout va bien et on sauvegarde votre expertise.'})
 
-      console.log('Customer : ',customer);
-      console.log('Machine : ',machine);
-      console.log('MachineFeatures : ',machineFeatures);
-      console.log('Nature : ',nature);
-      console.log('imageStringify : ',JSON.stringify(image));
-      console.log('image : ',JSON.stringify(image) == "{}");
-
       const token = logInfo.token;
       let pictures = {};
       
@@ -291,7 +287,7 @@ export default function NewExpertise({setStateFromChild,logInfo}){
         customer:customer, 
         machineFeatures: machineFeatures, 
         pictures:pictures, 
-        particularities: {}, 
+        particularities: particularities, 
         status: 'inspekt',
         machine: machine, 
     })
@@ -352,8 +348,8 @@ export default function NewExpertise({setStateFromChild,logInfo}){
 
   /**USEEFFECT ONLY USED ON CONSOLE */
   useEffect(() => {
-    console.log('image : ',image);
-  },[image])
+    console.log('particularities : ',particularities);
+  })
 
     const classes = useStyles();
 
@@ -438,41 +434,41 @@ export default function NewExpertise({setStateFromChild,logInfo}){
                     (
                       input.property == 'brand'
                       ?
-                        <div>
+                        <div key={input.property}>
                           <InputLabel>Marque</InputLabel>
-                          <TextField
-                            select
+                          <Select
+                            
                             className={classes.optionsInput}
                             id='brand'
                             variant="outlined"
-                            value={machine && machine.brand}
+                            value={machine.brand && machine.brand}
                             onChange={(e) => machineHandleChange(e.target,'brand')}
                           >
                           {
                             brands.map((data) => (
-                              <option key={data} value={data}>{data}</option>
+                              <MenuItem key={data} value={data}>{data}</MenuItem>
                             ))
                           }
-                          </TextField>
+                          </Select>
                         </div>
                       :
-                        <div>
+                        <div key={input.property}>
                           <InputLabel>{input.title}</InputLabel>
-                          <TextField
-                            select
+                          <Select
+                            
                             key={input.property}
                             className={classes.optionsInput}
                             id={input.property}
                             variant="outlined"
-                            value={machine.nature && JSON.stringify(machine.nature)}
+                            value={machine[input.property] && machine[input.property]}
                             onChange={(e) => machineHandleChange(e.target,input.property)}
                           >
                           {
                             input.data.map((data) => (
-                              <option key={data} value={data}>{data}</option>
+                              <MenuItem key={data} value={data}>{data}</MenuItem>
                             ))
                           }
-                          </TextField>
+                          </Select>
                         </div>
                       )
                   :
@@ -518,7 +514,7 @@ export default function NewExpertise({setStateFromChild,logInfo}){
                         (
                           <div>
                             <InputLabel>{machineFeaturesFormList.addOns[input].title}</InputLabel>
-                            <TextField
+                            <Select
                               select
                               key={machineFeaturesFormList.addOns[input].property}
                               className={classes.optionsInput}
@@ -529,10 +525,10 @@ export default function NewExpertise({setStateFromChild,logInfo}){
                             >
                             {
                               machineFeaturesFormList.addOns[input].data.map((data) => (
-                                <option key={data} value={data}>{data}</option>
+                                <MenuItem key={data} value={data}>{data}</MenuItem>
                               ))
                             }
-                            </TextField>
+                            </Select>
                           </div>
                         )
                       :
@@ -576,6 +572,7 @@ export default function NewExpertise({setStateFromChild,logInfo}){
                                   <Switch
                                     //checked={state.jason}
                                     //onChange={handleChange}
+                                    color="primary"
                                     name={data}
                                 />}
                               > 
@@ -625,6 +622,27 @@ export default function NewExpertise({setStateFromChild,logInfo}){
                     ))
                 }
               </div>
+            </div>
+        }
+        {
+          activeStep === 5 &&
+            <div>
+                {
+                  <div className={classes.rootForm}>
+                    <DatePicker
+                      setAvalaibleDate={(date) => setParticularities({...particularities,availableDate:date})}
+                    />
+                    <TextField
+                      id="comment"
+                      label="Commentaires"
+                      multiline
+                      rowsMin={4}
+                      value={particularities.comment}
+                      onChange={(event) => setParticularities({...particularities,comments:event.target.value})}
+                    />
+                  </div>
+                }
+              
             </div>
         }
         <div className={classes.stepButton}>
