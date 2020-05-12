@@ -5,6 +5,7 @@
 /.pnp
 .pnp.js
 .env
+# use this line to terminal to stop tracking .env : git rm .env --cached
 
 # testing
 /coverage

@@ -10,9 +10,12 @@ import { ThemeProvider } from '@material-ui/core/styles';
 
 import Header from './components/header';
 import InspektList from './views/inspektList';
+import QotList from './views/qotList';
 import Login from './views/login';
 import NewExpertise from './views/newExpertise';
 import token from './constants/token';
+
+import 'moment/locale/fr';
 
 class Home extends Component{
 
@@ -89,6 +92,7 @@ class Home extends Component{
 
         const navigation = this.state.navigation;
         const inspektList = this.state.inspektList && this.state.inspektList;
+        const qotList = this.state.qotList && this.state.qotList;
         const cieMembers = this.state.logInfo && this.state.logInfo.cieMembers;
         const logInfo = this.state.logInfo;
 
@@ -102,21 +106,28 @@ class Home extends Component{
                         <Container>
                             <Header navigation = {navigation}/>
                             {
-                                navigation === 1
-                                ?
-                                <InspektList
-                                    inspektList = {inspektList}
-                                    cieMembers = {cieMembers} 
-                                    logInfo={logInfo}
-                                    setStateFromChild={this.setStateFromChild}
-                                />
+                                navigation === 0
+                                ?   <NewExpertise
+                                        setStateFromChild={this.setStateFromChild}
+                                        logInfo={logInfo}
+                                    />
                                 :
                                 (
-                                    navigation === 0
-                                    ?<NewExpertise
-                                        setStateFromChild={this.setStateFromChild}
-                                        logInfo={logInfo}/>
-                                    :null
+                                    navigation === 1
+                                    ?   <InspektList
+                                            inspektList = {inspektList}
+                                            cieMembers = {cieMembers} 
+                                            logInfo={logInfo}
+                                            setStateFromChild={this.setStateFromChild}
+                                        />
+                                        :navigation === 2
+                                        ?   <QotList
+                                                qotList = {qotList}
+                                                cieMembers = {cieMembers} 
+                                                logInfo={logInfo}
+                                                setStateFromChild={this.setStateFromChild}
+                                            />
+                                        :null
                                 )
                             }
                         </Container>

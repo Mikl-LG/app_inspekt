@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import Moment from 'moment';
+import Axios from 'axios';
 
 import AppBar from '@material-ui/core/AppBar';
 import Badge from '@material-ui/core/Badge';
@@ -11,20 +12,19 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import Dialog from '@material-ui/core/Dialog';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
-import InfoIcon from '@material-ui/icons/Info';
 import { makeStyles } from '@material-ui/core/styles';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 import SaveIcon from '@material-ui/icons/Save';
-import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -36,10 +36,11 @@ import SnackbarContent from '@material-ui/core/SnackbarContent';
 import Color from '../constants/color.js';
 import ImageSlider from '../components/imageslider';
 import FormsCatalog from '../constants/FormsCatalog';
+import getPdf from '../components/expertisePdf';
 import Natures from '../constants/Natures';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalculator,faTimesCircle,faSquareFull,faCheck,faCheckSquare } from '@fortawesome/free-solid-svg-icons';
+import { faCalculator,faEye,faTimesCircle,faMoneyBillAlt,faCheck,faComments } from '@fortawesome/free-solid-svg-icons';
 import { faImages } from '@fortawesome/free-solid-svg-icons';
 
 const useStyles = makeStyles((theme) => ({
@@ -57,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
   fullList: {
     width: 'auto',
   },
-  gridList: {
+  listGrid: {
     width: '100%',
     paddingBottom:'50px'
   },
@@ -131,10 +132,10 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
 
     ///////// VARIABLES \\\\\\\\\\
 
+    const [anchorEl, setAnchorEl] = React.useState(null);
     const [drawer,setDrawer] = React.useState({isOpen:false});
     const [focusMachine,setFocusMachine] = React.useState({});
     const [inputQuotations, setInputQuotations] = React.useState({});
-    const [machine,setMachine] = React.useState([]);
     const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
     const [openMachineDetail, setOpenMachineDetail] = React.useState(false);
     const [quotations, setQuotations] = React.useState(false);
@@ -142,16 +143,24 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
     ///////// FUNCTIONS \\\\\\\\\\
 
     const checkDetailsToPrint = (detail) => {
-      const detailToSet = machine.find((element) => element === detail);
-      const index = machine.findIndex((element) => element === detail)
+      const detailToSet = focusMachine.orderedDetailsToPrint.find((element) => element === detail);
+      const index = focusMachine.orderedDetailsToPrint.findIndex((element) => element === detail)
+      console.log('detailToSet : ',detailToSet);
       if(detailToSet.visibleOnPdf === true){
         detailToSet.visibleOnPdf = false
       }else{
         detailToSet.visibleOnPdf = true
       }
 
-      machine.splice(index,1,detailToSet);
-      setMachine([...machine]);
+      focusMachine.orderedDetailsToPrint.splice(index,1,detailToSet);
+      console.log('focusMachine from checkDetails : ',focusMachine);
+      setFocusMachine({...focusMachine});
+    }
+
+    const editPdf = (type) => {
+      //type = ficheExpertise || bonReprise || contreExpertise
+      setAnchorEl(null);
+      getPdf(focusMachine.orderedDetailsToPrint,type)
     }
 
     const handleClickOpenMachineDetail = () => {
@@ -167,37 +176,25 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
     };
 
     const imageDownload = () => {
+
+      console.log('start downloading');
+
       const dataUrl = 'https://inspekt-prod.s3.eu-west-3.amazonaws.com/a00adfa7-cd1d-434f-ae28-ed9a9868b2c6';
-      const blobToFile = (blobData, fileName) => {
-        const fd = new FormData();
-        fd.set('a', blobData, fileName);
-        return fd.get('a');
-      }
-      const toFile = (dataUrl, fileName) => {
-         return new Promise(async(resolve) => {
-            console.log('Utils.toFile called')
-             let blob = await new Promise(function(res, rej) {
-                 try {
-                     var xhr = new XMLHttpRequest();
-                     xhr.open("GET", dataUrl);
-                     xhr.setRequestHeader('Accept', '*')
-                     xhr.setRequestHeader('Origin', '*')
-                     xhr.responseType = "blob";
-                     xhr.onerror = function() {rej("Network error.")};
-                     xhr.onload = function() {
-                         if (xhr.status === 200) {res(xhr.response)}
-                         else {rej("Loading error:" + xhr.statusText)}
-                     };
-                     xhr.send();
-                 }
-                 catch(err) {rej(err.message)}
-             });
-             console.log('blob'+ blob)
-             let file = await Promise.resolve(blobToFile(blob, fileName))
-             console.log('toFile file', file)
-             resolve(file)
-         })
-     }
+
+      const axiosResponse = Axios({
+        url: 'https://inspekt-prod.s3.eu-west-3.amazonaws.com/a00adfa7-cd1d-434f-ae28-ed9a9868b2c6',
+        method: 'GET',
+        headers: {"Access-Control-Allow-Origin": "*"},
+        crossDomain: true,
+        responseType: 'blob', // important
+      }).then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'file.jpeg');
+        document.body.appendChild(link);
+        link.click();
+      });
     };
 
     const inspektDelete = async(expertise) => {
@@ -251,11 +248,35 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
         property:'customer',
         value:['title','name','city'].map((element) => (
         expertise.customer && expertise.customer[element] && ' ' + expertise.customer[element]
-      )),
+        )).join(' '),
         visibleOnPdf:true}
-
-      machineToArray.push(customer,'divider');
-
+      
+        machineToArray.push(
+          {
+            title:'Id',
+            property:'id',
+            value:expertise.id,
+            visibleOnPdf:true
+          },
+          customer,{
+            title:'Commercial',
+            property:'salesman',
+            value:logInfo.cieMembers[expertise.openedBy].name,
+            visibleOnPdf:true
+          },
+          {
+            title:'Date de création',
+            property:'date',
+            value:Moment(expertise.openedOn).format('DD MMMM YYYY'),
+            visibleOnPdf:true
+          },
+        'divider',
+        {
+          title:'Nature',
+          property:'nature',
+          value:expertise.machine.nature.name,
+          visibleOnPdf:true
+        });
       /**ARRAY OF ALL THE ADDONS AVAILABLE AT STEP 3, ORDERED AS ON THE APPLICATION FORM */
       const machineAddonsAvailable = natureList.filter(
         (element) => element.value === expertise.machine.nature.key)
@@ -304,25 +325,26 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
         
       })
 
-      setMachine(machineToArray)
-
       ////////// QUOTATIONS ARRAY BUILD \\\\\\\\\\
 
-      setUserToQuotations(expertise.quotations)
+      setUserToQuotations(expertise.quotations) //ADD USER DETAIL TO THE QUOTATIONS ARRAY
       
-
       ////////// MACHINE PICTURES ARRAY BUILD \\\\\\\\\\
       let pictureArrayList = [];
-      for (let [key,value] of Object.entries(expertise.pictures)){
-        pictureArrayList.push(value);
+      if(expertise.pictures){
+        for (let [key,value] of Object.entries(expertise.pictures)){
+          pictureArrayList.push(value);
+        }
       }
+      
       expertise.imageList = pictureArrayList;
+      expertise.orderedDetailsToPrint = machineToArray;
       setFocusMachine(expertise);
+
       setOpenMachineDetail(true);
     }
 
     const saveNewQuotation = async() => {
-      
 
       inputQuotations.userId = logInfo.user.id;
       inputQuotations.timestamp = Date.now();
@@ -355,8 +377,6 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
       let error = await Promise.resolve(!fetching.ok)
       let response = !error && await Promise.resolve(fetching.json());
 
-      console.log('response after cotation saving : ',response);
-
       if(error == false){
         setSnackbar({message : 'Votre cotation est enregistrée.',type:'snackbarSuccess',isOpen:true});
         setStateFromChild({inspektList:response});
@@ -371,35 +391,34 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
 
     useEffect(() => {
       console.log('focusMachine : ',focusMachine);
-      console.log('quotations : ',quotations);
     })
 
 
   return (
     <div className={classes.root}>
       
-      <GridList cellHeight={200} className={classes.gridList}>
+      <GridList cellHeight={200} className={classes.listGrid}>
         {
             inspektList
-            ?inspektList.map((expertise) => (
+            ?inspektList.sort((a,b) => b.id - a.id).map((expertise) => (
                 <GridListTile key={expertise.id}>
                     {
                         expertise.pictures
-                        ?<img src={expertise.pictures.rightFront}/>
+                        ?<img src={Object.values(expertise.pictures)[0]}/>
                         :null
                     }
                     <GridListTileBar
                     title={expertise.machine.brand + ' ' + expertise.machine.model}
                     subtitle={expertise.customer ? <span>Client: {expertise.customer.title && expertise.customer.title + ' ' +expertise.customer.name}</span> : null}
                     actionIcon={
-                        <IconButton className={classes.icon}>
-                          <InfoIcon onClick={() => machineClicked(expertise)}/>
+                        <IconButton className={classes.icon} onClick={() => machineClicked(expertise)}>
+                          <FontAwesomeIcon icon={faEye} style={{fontSize:'1em',color:'white'}}/>
                         </IconButton>
                     }
                     />
                 </GridListTile>
             )):
-            null
+              <div style={{width:'100%',textAlign:'center',marginTop:'40px',color:Color.lightGrey}}>Aucun INSPEKT à évaluer pour le moment.</div>
         }
       </GridList>
       
@@ -416,7 +435,7 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
                 focusMachine && focusMachine.machine && focusMachine.machine.nature.name + ' ' + focusMachine.machine.brand + ' ' + focusMachine.machine.model}
             </Typography>
             <Tooltip title="Supprimer">
-              <Button Button autoFocus color="inherit"  onClick={() => inspektDelete(focusMachine)}>
+              <Button autoFocus color="inherit" onClick={() => inspektDelete(focusMachine)}>
                 <DeleteIcon/>
               </Button>
             </Tooltip>
@@ -427,16 +446,31 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
                 </Badge>
               </Button>
             </Tooltip>
+
             <Tooltip title="Télécharger les photos">
               <Button autoFocus color="inherit" onClick={() => imageDownload()}>
                 <FontAwesomeIcon icon={faImages} style={{fontSize:'1.5em'}}/>
               </Button>
             </Tooltip>
-            <Tooltip title="Editer au format PDF">
-              <Button autoFocus color="inherit" onClick={() => console.log('machine to print : ',machine)}>
+              <Button 
+                aria-controls='pdf-edit'
+                autoFocus
+                color="inherit" 
+                onClick={(event) => {setAnchorEl(event.currentTarget)}}
+              >
                 <PictureAsPdfIcon/>
               </Button>
-            </Tooltip>
+              <Menu
+                id="pdf-edit"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={() => {setAnchorEl(null)}}
+              >
+                <MenuItem onClick={() => editPdf('ficheExpertise')}>Fiche d'expertise</MenuItem>
+                <MenuItem onClick={() => editPdf('bonReprise')}>Bon de reprise</MenuItem>
+                <MenuItem onClick={() => {setAnchorEl(null)}}>Contre-expertise</MenuItem>
+              </Menu>
             
           </Toolbar>
         </AppBar>
@@ -448,17 +482,17 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
           <Grid item xs={12} sm={6} lg={6}>
                 <div className={classes.detailMachineContainer}>
                   {
-                    machine.map((element,index) => (
+                    focusMachine.orderedDetailsToPrint && focusMachine.orderedDetailsToPrint.map((element,index) => (
                       element == 'divider' 
                       ? <Divider/>
                       :
                         <ListItemText key={element.property} classes={{primary:classes.listItemText}}>
                           <div style={{display:'flex', alignItems:'center'}}>
                               <FontAwesomeIcon
-                                icon={machine[index].visibleOnPdf && machine[index].visibleOnPdf == true ? faCheckSquare : faTimesCircle}
+                                icon={focusMachine.orderedDetailsToPrint[index].visibleOnPdf && focusMachine.orderedDetailsToPrint[index].visibleOnPdf == true ? faCheck : faTimesCircle}
                                 style={{
                                   fontSize:'1em',
-                                  color:machine[index].visibleOnPdf && machine[index].visibleOnPdf ? Color.success : Color.warning,
+                                  color:focusMachine.orderedDetailsToPrint[index].visibleOnPdf && focusMachine.orderedDetailsToPrint[index].visibleOnPdf ? Color.softGrey : Color.warning,
                                   marginRight:'15px'}}
                                 onClick={(event) => checkDetailsToPrint(element)}
                               />
@@ -551,11 +585,31 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
                                 {title : 'Préparation estimée',key:'estimatedRepairCost'},
                                 {title : 'Prix d\'achat',key:'estimatedBuyingPrice'},
                                 ].map((value) => (
-                                  <div className={classes.listItemText}>{element[value.key] && value.title + ' : ' + element[value.key] + '€'}
+                                  <div 
+                                    className={classes.listItemText}
+                                    style={{color:value.key === 'estimatedBuyingPrice' && Color.secondary}}
+                                    >
+                                      {value.key === 'estimatedBuyingPrice'
+                                      && <FontAwesomeIcon
+                                            icon={faMoneyBillAlt}
+                                            style={{
+                                              fontSize:'1em',
+                                              color:Color.secondary,
+                                              marginRight:'5px'}}
+                                          />
+                                      }
+                                      {element[value.key] && value.title + ' : ' + element[value.key] + '€'}
                                 </div>
                                 ))
                               }
-                              <div className={classes.listItemText} style={{fontStyle:'italic'}}>{element.comment && 'Commentaires : ' + element.comment}</div>
+                              <div className={classes.listItemText} style={{fontStyle:'italic'}}>
+                                <FontAwesomeIcon
+                                  icon={faComments}
+                                  style={{
+                                    fontSize:'1em',
+                                    marginRight:'5px'}}
+                                />
+                                {element.comment && 'Commentaires : ' + element.comment}</div>
                             </div>
                           }
                         </ListItemText>

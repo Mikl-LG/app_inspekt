@@ -3436,7 +3436,7 @@ rotativeHarrow:{
                     },
 
                     "typeSemoir":{
-                        title:'Type demoir',
+                        title:'Type de semoir',
                         property:'drillType',
                         data: ["DIRECT","EN LIGNE", "MONOGRAINE","SIMPLIFIE"]
                     },
