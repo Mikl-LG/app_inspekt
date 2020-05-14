@@ -187,6 +187,8 @@ export default function ExpertiseDetails(props) {
       setSnackbar({message : 'Votre cotation est enregistrée.',type:'snackbarSuccess',isOpen:true});
       setStateFromChild({inspektList:response});
       setDrawer({isOpen:false});
+      setOpen(false);
+      setInputQuotations({});
     }
   }
 
@@ -405,7 +407,8 @@ export default function ExpertiseDetails(props) {
             </Typography>
             <Divider />
             {
-              focusMachine.quotations && focusMachine.quotations.map((element) => (
+              focusMachine.quotations && focusMachine.quotations.length > 0
+              ?focusMachine.quotations.map((element) => (
                 <ListItemText key={element.timestamp} className={'small'}>     
                   {element && 
                     <div className={classes.detailMachineContainer}>
@@ -453,6 +456,7 @@ export default function ExpertiseDetails(props) {
                   }
                 </ListItemText>
               ))
+              :<div className={classes.listItemText} style={{width:'100%',textAlign:'center',padding:'5px'}}>Soyez le premier à évaluer cette machine.</div>
             }
           </div>
         </div>

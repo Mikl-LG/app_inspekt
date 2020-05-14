@@ -37,6 +37,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 
 import Color from '../constants/color.js';
+import ExpertiseDetails from '../components/expertiseDetails';
 import FormsCatalog from '../constants/FormsCatalog';
 import getPdf from '../components/expertisePdf';
 import ImageSlider from '../components/imageslider';
@@ -135,111 +136,11 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
 
     ///////// VARIABLES \\\\\\\\\\
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const [drawer,setDrawer] = React.useState({isOpen:false});
     const [focusMachine,setFocusMachine] = React.useState({});
-    const [inputQuotations, setInputQuotations] = React.useState({});
-    const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
-    const [openMachineDetail, setOpenMachineDetail] = React.useState(false);
-    const [isOpenDeleteValidation, setIsOpenDeleteValidation] = React.useState(false);
+    const [isExpertiseDetailsOpen,setIsExpertiseDetailsOpen] = React.useState(false);
     const [isOpenShareMarketersValidation, setIsOpenShareMarketersValidation] = React.useState(false);
-    const [quotations, setQuotations] = React.useState(false);
 
     ///////// FUNCTIONS \\\\\\\\\\
-
-    const checkDetailsToPrint = (detail) => {
-      const detailToSet = focusMachine.orderedDetailsToPrint.find((element) => element === detail);
-      const index = focusMachine.orderedDetailsToPrint.findIndex((element) => element === detail)
-      console.log('detailToSet : ',detailToSet);
-      if(detailToSet.visibleOnPdf === true){
-        detailToSet.visibleOnPdf = false
-      }else{
-        detailToSet.visibleOnPdf = true
-      }
-
-      focusMachine.orderedDetailsToPrint.splice(index,1,detailToSet);
-      console.log('focusMachine from checkDetails : ',focusMachine);
-      setFocusMachine({...focusMachine});
-    }
-
-    const editPdf = (type) => {
-      //type = ficheExpertise || bonReprise || contreExpertise
-      setAnchorEl(null);
-      getPdf(focusMachine.orderedDetailsToPrint,type)
-    }
-
-    const handleClickOpenMachineDetail = () => {
-      setOpenMachineDetail(true);
-    };
-  
-    const handleClickCloseMachineDetail = () => {
-      setOpenMachineDetail(false);
-    };
-
-    const handleChangeQuotations = (event,key) => {
-      setInputQuotations({...inputQuotations,[key]:event.target.value});
-    };
-
-    const imageDownload = () => {
-
-      console.log('start downloading');
-
-      const dataUrl = 'https://inspekt-prod.s3.eu-west-3.amazonaws.com/a00adfa7-cd1d-434f-ae28-ed9a9868b2c6';
-
-      const axiosResponse = Axios({
-        url: 'https://inspekt-prod.s3.eu-west-3.amazonaws.com/a00adfa7-cd1d-434f-ae28-ed9a9868b2c6',
-        method: 'GET',
-        headers: {"Access-Control-Allow-Origin": "*"},
-        crossDomain: true,
-        responseType: 'blob', // important
-      }).then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'file.jpeg');
-        document.body.appendChild(link);
-        link.click();
-      });
-    };
-
-    const inspektDelete = async(expertise) => {
-      const body = await Promise.resolve({ expId : expertise.id })
-      const url = `https://inspekt.herokuapp.com/api?request=REMOVE_INSPEKT&token=${logInfo.token}`
-      let fetchOptions = await Promise.resolve(
-          {
-              method: 'POST',
-              mode: 'cors',
-              headers: {
-                  Accept: 'application/json',
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(body)
-          }
-      )
-      let fetching = await fetch(url, fetchOptions)
-      let error = await Promise.resolve(!fetching.ok)
-      let response = !error && await Promise.resolve(fetching.json());
-
-      if(error == false){
-        setSnackbar({message : 'Votre INSPEKT est supprimé.',type:'snackbarSuccess',isOpen:true});
-        setStateFromChild({inspektList:response});
-        setOpenMachineDetail(false);
-        setIsOpenDeleteValidation(false);
-      }
-      
-    }
-
-    const setUserToQuotations = (quotationList) => {
-      let quotationsToArray = [];
-      if(quotationList){
-        quotationList.map((element) => {
-          element.userDetail = cieMembers[element.userId];
-          quotationsToArray.push(element);
-        });
-      }
-
-      setQuotations(quotationsToArray);
-    }
 
     const machineClicked = (expertise) => {
 
@@ -331,6 +232,18 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
 
       ////////// QUOTATIONS ARRAY BUILD \\\\\\\\\\
 
+      const setUserToQuotations = (quotationList) => {
+        let quotationsToArray = [];
+        if(quotationList){
+          quotationList.map((element) => {
+            element.userDetail = cieMembers[element.userId];
+            quotationsToArray.push(element);
+          });
+        }
+      
+        expertise.quotations = quotationsToArray; // replace the quotation array with a user included array
+      }
+      
       setUserToQuotations(expertise.quotations) //ADD USER DETAIL TO THE QUOTATIONS ARRAY
       
       ////////// MACHINE PICTURES ARRAY BUILD \\\\\\\\\\
@@ -344,54 +257,7 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
       expertise.imageList = pictureArrayList;
       expertise.orderedDetailsToPrint = machineToArray;
       setFocusMachine(expertise);
-
-      setOpenMachineDetail(true);
-    }
-
-    const saveNewQuotation = async() => {
-
-      inputQuotations.userId = logInfo.user.id;
-      inputQuotations.timestamp = Date.now();
-
-      const quotations = await Promise.resolve([
-        ...(focusMachine.quotations || []),     // array
-        inputQuotations                         // quotation object*
-      ]);
-      console.log('quotations : ',quotations);
-       const body = await Promise.resolve({
-        expId : focusMachine.id,
-        status: 'inspekt',
-        merge: {            // {object} list des quotations à jour
-          quotations
-        }
-      })
-
-      const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
-      let fetchOptions = await Promise.resolve(
-          {
-              method: 'POST',
-              mode: 'cors',
-              headers: {
-                  Accept: 'application/json',
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(body)
-          }
-      )
-      let fetching = await fetch(url, fetchOptions)
-      let error = await Promise.resolve(!fetching.ok)
-      let response = !error && await Promise.resolve(fetching.json());
-
-      if(error == false){
-        setSnackbar({message : 'Votre cotation est enregistrée.',type:'snackbarSuccess',isOpen:true});
-        setStateFromChild({inspektList:response});
-        setUserToQuotations(response.find((element) => element.id === focusMachine.id).quotations);
-        setDrawer({isOpen:false});
-      }
-    }
-
-    const snackbarHandleClose = () => {
-      setSnackbar({isOpen:false})
+      setIsExpertiseDetailsOpen(true)
     }
 
     useEffect(() => {
@@ -433,30 +299,6 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
               <div style={{width:'100%',textAlign:'center',marginTop:'40px',color:Color.lightGrey}}>Aucun INSPEKT à évaluer pour le moment.</div>
         }
       </GridList>
-
-      <Dialog
-        open={isOpenDeleteValidation}
-        onClose={() => setIsOpenDeleteValidation(false)}
-        aria-labelledby="alert-deleteInspekt-title"
-        aria-describedby="alert-deleteInspekt-description"
-      >
-        <DialogTitle id="alert-deleteInspekt-title">{"Supprimer cet Inspekt?"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-deleteInspekt-description">
-            Vous êtes sur le point de supprimer un Inspekt : ces données seront effacées et ne pourront pas être récupérées.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setIsOpenDeleteValidation(false)} color="primary">
-            Annuler
-          </Button>
-          <Button onClick={() => inspektDelete(focusMachine)} color="primary" autoFocus>
-            Supprimer
-          </Button>
-        </DialogActions>
-
-      </Dialog>
-
       <Dialog
         open={isOpenShareMarketersValidation}
         onClose={() => setIsOpenShareMarketersValidation(false)}
@@ -474,218 +316,15 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
             Mettre mon abonnement à niveau
           </Button>
         </DialogActions>
-
       </Dialog>
-      
-      <Dialog
-        fullScreen
-        open={openMachineDetail}
-        onClose={handleClickCloseMachineDetail}
-        TransitionComponent={Transition}
-      >
-        <AppBar className={classes.appBar} id='machineDetailAppBar'>
-          <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={handleClickCloseMachineDetail} aria-label="close">
-              <Tooltip title="Fermer">
-                <CloseIcon />
-              </Tooltip>
-            </IconButton>
-            <Typography variant="h6" className={classes.title}>
-              {
-                focusMachine && focusMachine.machine && focusMachine.machine.nature.name + ' ' + focusMachine.machine.brand + ' ' + focusMachine.machine.model}
-            </Typography>
-            <Tooltip title="Supprimer">
-              <Button autoFocus color="inherit" onClick={() => setIsOpenDeleteValidation(true)}>
-                <DeleteIcon/>
-              </Button>
-            </Tooltip>
-            <Tooltip title="Ajouter une cotation">
-              <Button autoFocus color="inherit" onClick={() => setDrawer({isOpen:true})}>
-                <Badge badgeContent={quotations.length} color="secondary">
-                <FontAwesomeIcon icon={faCalculator} style={{fontSize:'1.5em'}}/>
-                </Badge>
-              </Button>
-            </Tooltip>
-
-            <Tooltip title="Télécharger les photos">
-              <Button autoFocus color="inherit" onClick={() => imageDownload()}>
-                <FontAwesomeIcon icon={faImages} style={{fontSize:'1.5em'}}/>
-              </Button>
-            </Tooltip>
-              <Button 
-                aria-controls='pdf-edit'
-                autoFocus
-                color="inherit" 
-                onClick={(event) => {setAnchorEl(event.currentTarget)}}
-              >
-                <PictureAsPdfIcon/>
-              </Button>
-            <Menu
-              id="pdf-edit"
-              anchorEl={anchorEl}
-              keepMounted
-              open={Boolean(anchorEl)}
-              onClose={() => {setAnchorEl(null)}}
-            >
-              <MenuItem onClick={() => editPdf('ficheExpertise')}>Fiche d'expertise</MenuItem>
-              <MenuItem onClick={() => editPdf('bonReprise')}>Bon de reprise</MenuItem>
-              <MenuItem onClick={() => {setAnchorEl(null)}}>Contre-expertise</MenuItem>
-            </Menu>
-            
-          </Toolbar>
-        </AppBar>
-        <Divider />
-        <Grid container>
-          <Grid item xs={12} sm={6} lg={6}>
-            <ImageSlider imageList={focusMachine.imageList}/>
-          </Grid>
-          <Grid item xs={12} sm={6} lg={6}>
-            <div className={classes.detailMachineContainer}>
-              {
-                focusMachine.orderedDetailsToPrint && focusMachine.orderedDetailsToPrint.map((element,index) => (
-                  element == 'divider' 
-                  ? <Divider/>
-                  :
-                    <ListItemText key={element.property} classes={{primary:classes.listItemText}}>
-                      <div style={{display:'flex', alignItems:'center'}}>
-                        <FontAwesomeIcon
-                          icon={focusMachine.orderedDetailsToPrint[index].visibleOnPdf && focusMachine.orderedDetailsToPrint[index].visibleOnPdf == true ? faCheck : faTimesCircle}
-                          style={{
-                            fontSize:'1em',
-                            color:focusMachine.orderedDetailsToPrint[index].visibleOnPdf && focusMachine.orderedDetailsToPrint[index].visibleOnPdf ? Color.softGrey : Color.warning,
-                            marginRight:'15px'}}
-                          onClick={(event) => checkDetailsToPrint(element)}
-                        />
-
-                        {element
-                        &&  <div style={{display:'flex'}}>
-                              <div style={{fontWeight:'bold'}}>{element.title}
-                              </div>
-                              <div>{' : ' + element.value}
-                              </div>
-                            </div>
-                        }
-                      </div>
-                    </ListItemText> 
-                ))
-              }
-              <Divider/>
-            </div>
-          </Grid>
-        </Grid>
-      </Dialog>
-      <Snackbar
-        autoHideDuration={3000}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        onClose={snackbarHandleClose}
-        open={snackbar.isOpen}
-      >
-        <SnackbarContent className={classes[snackbar.type]} message={snackbar.message}/>
-      </Snackbar>
-      <Drawer anchor='right' open={drawer.isOpen} onClose={() => setDrawer({isOpen:false})}>
-        <div
-          className={clsx(classes.list, {[classes.fullList]: false,})}
-          role="presentation"
-        >
-          <List>
-            {[
-              {title : 'Prix de vente',key:'customerEstimatedSalePrice'},
-              {title : 'Prix marchand',key:'marketerEstimatedSalePrice'},
-              {title : 'Préparation estimée',key:'estimatedRepairCost'},
-              {title : 'Prix d\'achat',key:'estimatedBuyingPrice'},
-            ].map((value, index) => (
-              <ListItem key={value.key}>
-              <TextField
-                label={value.title}
-                style={{width:'100%'}}
-                variant="outlined"
-                onChange={(event) => handleChangeQuotations(event,value.key)}
-              />
-              </ListItem>
-            ))}
-              <ListItem key={'comment'}>
-                <TextField
-                  multiline
-                  rowsMin={4}
-                  label={'Commentaires'}
-                  style={{width:'100%'}}
-                  variant="outlined"
-                  onChange={(event) => handleChangeQuotations(event,'comment')}
-                />
-              </ListItem>
-                <div
-                  style={{width:'100%',display:'flex',justifyContent:'center',marginTop:'20px',marginBottom:'20px'}}>
-                  <Button
-                    disabled={inputQuotations.estimatedBuyingPrice ? false : true}
-                    variant="contained"
-                    color="primary"
-                    className={classes.button}
-                    startIcon={<SaveIcon />}
-                    style={{width:'auto'}}
-                    onClick={() => (saveNewQuotation())}
-                  >
-                    Coter
-                  </Button>
-                </div>
-                </List>
-                <div className={classes.detailMachineContainer}>
-                  <Typography
-                    variant='h6'
-                    style={{textAlign:'center',color:Color.secondary}}>
-                      Cotations
-                  </Typography>
-                  <Divider />
-                  {
-                    quotations && quotations.map((element) => (
-                      <ListItemText key={element.timestamp} className={'small'}>
-                          
-                        {element && 
-                          <div className={classes.detailMachineContainer}>
-                            <div
-                              className={classes.listItemText}
-                              style={{fontWeight:'bold'}}
-                            >
-                              {element.userDetail.name}
-                            </div>
-                              {[
-                                {title : 'Prix de vente',key:'customerEstimatedSalePrice'},
-                                {title : 'Prix marchand',key:'marketerEstimatedSalePrice'},
-                                {title : 'Préparation estimée',key:'estimatedRepairCost'},
-                                {title : 'Prix d\'achat',key:'estimatedBuyingPrice'},
-                              ].map((value) => (
-                                <div 
-                                  className={classes.listItemText}
-                                  style={{color:value.key === 'estimatedBuyingPrice' && Color.secondary}}
-                                >
-                                  {value.key === 'estimatedBuyingPrice'
-                                  &&  <FontAwesomeIcon
-                                        icon={faMoneyBillAlt}
-                                        style={{
-                                          fontSize:'1em',
-                                          color:Color.secondary,
-                                          marginRight:'5px'}}
-                                      />
-                                  }
-                                  {element[value.key] && value.title + ' : ' + element[value.key] + '€'}
-                                </div>
-                              ))
-                              }
-                              <div className={classes.listItemText} style={{fontStyle:'italic'}}>
-                                <FontAwesomeIcon
-                                  icon={faComments}
-                                  style={{
-                                    fontSize:'1em',
-                                    marginRight:'5px'}}
-                                  />
-                                  {element.comment && 'Commentaires : ' + element.comment}</div>
-                              </div>
-                            }
-                      </ListItemText>
-                    ))
-                  }
-                </div>
-              </div>
-            </Drawer>
+      <ExpertiseDetails
+        open={isExpertiseDetailsOpen}
+        setOpen={(isOpen) => setIsExpertiseDetailsOpen(isOpen)}
+        focusMachine={focusMachine}
+        setFocusMachine={(newFocusMachine) => setFocusMachine(newFocusMachine)}
+        logInfo={logInfo}
+        setStateFromChild={setStateFromChild}
+      />
     </div>
   );
 }
