@@ -1,19 +1,29 @@
 import React from 'react';
+import {connect} from 'react-redux';
+
 import { fade, makeStyles } from '@material-ui/core/styles';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 import AppBar from '@material-ui/core/AppBar';
+import Badge from '@material-ui/core/Badge';
+import Button from '@material-ui/core/Button';
+import CloseIcon from '@material-ui/icons/Close';
+import Dialog from '@material-ui/core/Dialog';
+import Divider from '@material-ui/core/Divider';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
 import InputBase from '@material-ui/core/InputBase';
-import Badge from '@material-ui/core/Badge';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import MailIcon from '@material-ui/icons/Mail';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import MailIcon from '@material-ui/icons/Mail';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import SearchIcon from '@material-ui/icons/Search';
+import Slide from '@material-ui/core/Slide';
+import Typography from '@material-ui/core/Typography';
 
 import Color from '../constants/color.js';
 import logo from '../inspektLogo_white.png';
@@ -82,10 +92,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function PrimarySearchAppBar() {
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+function PrimarySearchAppBar(props) {
+
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const [isUserDetailOpen,setIsUserDetailOpen] = React.useState(false);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -118,8 +134,8 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Mes préférences</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Mon compte</MenuItem>
+      <MenuItem onClick={() => setIsUserDetailOpen(true)}>Mon compte</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Configuration</MenuItem>
     </Menu>
   );
 
@@ -142,7 +158,7 @@ export default function PrimarySearchAppBar() {
         </IconButton>
         <p>Notifications</p>
       </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
+      <MenuItem onClick={(handleProfileMenuOpen)}>
         <IconButton
           aria-label="account of current user"
           aria-controls="primary-search-account-menu"
@@ -194,7 +210,7 @@ export default function PrimarySearchAppBar() {
               aria-label="account of current user"
               aria-controls={menuId}
               aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
+              onClick={() => setIsUserDetailOpen(true)}
               color="inherit"
             >
               <AccountCircle />
@@ -215,6 +231,38 @@ export default function PrimarySearchAppBar() {
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
+      <Dialog
+        fullScreen
+        open={isUserDetailOpen}
+        onClose={() => setIsUserDetailOpen(false)}
+        TransitionComponent={Transition}>
+        <AppBar className={classes.appBar}>
+          <Toolbar>
+            <IconButton edge="start" color="inherit" onClick={() => setIsUserDetailOpen(false)} aria-label="close">
+              <CloseIcon />
+            </IconButton>
+            <Typography variant="h6" className={classes.title}>
+              Votre compte utilisateur
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <List>
+          {
+            [{key:'name',title:'Nom'},
+            {key:'phoneNumber',title:'Numéro de téléphone'},
+            {key:'email',title:'Email'}]
+            .map((element) => (
+              <ListItem button>
+                <ListItemText/>
+              </ListItem>
+
+            ))
+          }
+          
+        </List>
+      </Dialog>
     </div>
   );
 }
+
+export default connect(state => state)(PrimarySearchAppBar)

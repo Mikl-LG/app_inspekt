@@ -21,10 +21,17 @@ import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
 
 import Color from '../constants/color.js';
-import Login from './login.js';
+import ExpertiseDetails from '../components/expertiseDetails';
+import FormsCatalog from '../constants/FormsCatalog';
+import getPdf from '../components/expertisePdf';
+import ImageSlider from '../components/imageslider';
+import Natures from '../constants/Natures';
+
 
 function createData(id, date, salesman, nature, brand, model, details, year, estimatedBuyingPrice) {
   return { id, date, salesman, nature, brand, model, details, year, estimatedBuyingPrice };
@@ -156,9 +163,7 @@ const EnhancedTableToolbar = (props) => {
           {numSelected} sélectionné(s)
         </Typography>
       ) : (
-        <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Sélection
-        </Typography>
+        null
       )}
 
       {numSelected > 0 ? (
@@ -168,11 +173,7 @@ const EnhancedTableToolbar = (props) => {
           </IconButton>
         </Tooltip>
       ) : (
-        <Tooltip title="Filter list">
-          <IconButton aria-label="filter list">
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
+        null
       )}
     </Toolbar>
   );
@@ -208,14 +209,47 @@ const useStyles = makeStyles((theme) => ({
 
 export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromChild}) {
   const classes = useStyles();
+
+  ///////// CATALOGS \\\\\\\\\\
+
+  const [machineFeatureCatalog,setMachineFeatureCatalog] = React.useState(() => {
+    FormsCatalog.formSteps({step:3}).then((value) => {
+      setMachineFeatureCatalog(value);
+    })
+  });
+  const [machineCatalog,setMachineCatalog] = React.useState(() => {
+    FormsCatalog.formSteps({step:2}).then((value) => {
+      setMachineCatalog(value);
+    })
+  });
+  const [natureList,setNatureList] = React.useState(Natures.Natures);
+
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('salesman');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [isExpertiseDetailsOpen,setIsExpertiseDetailsOpen] = React.useState(false);
+  const [quotations, setQuotations] = React.useState(false);
+  const [focusMachine,setFocusMachine] = React.useState({});
 
-  const rows = qotList;
+  const rows = qotList.map((element) => {
+    return {
+      id : element.id,
+      date : Moment(element.addedOn).format('MMMM-YYYY'),
+      salesman: logInfo.cieMembers[element.openedBy].name,
+      nature : element.machine.nature.name,
+      brand : element.machine.brand,
+      model : element.machine.model,
+      details : element.machine.model,
+      year : element.machine.year,
+      estimatedBuyingPrice : element.quotation.estimatedBuyingPrice,
+      expertiseObject : element
+    };
+  });
+
+  console.log('rows : ',rows);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -269,6 +303,124 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
+  const machineClicked = (expertise) => {
+
+    ////////// MACHINE ARRAY BUILD \\\\\\\\\\
+      console.log('expertise : ',expertise);
+    let machineToArray = [];
+
+    let customer = {
+      title:'Client',
+      property:'customer',
+      value:['title','name','city'].map((element) => (
+      expertise.customer && expertise.customer[element] && ' ' + expertise.customer[element]
+      )).join(' '),
+      visibleOnPdf:true}
+    
+      machineToArray.push(
+        {
+          title:'Id',
+          property:'id',
+          value:expertise.id,
+          visibleOnPdf:true
+        },
+        customer,{
+          title:'Commercial',
+          property:'salesman',
+          value:logInfo.cieMembers[expertise.openedBy].name,
+          visibleOnPdf:true
+        },
+        {
+          title:'Date de création',
+          property:'date',
+          value:Moment(expertise.openedOn).format('DD MMMM YYYY'),
+          visibleOnPdf:true
+        },
+      'divider',
+      {
+        title:'Nature',
+        property:'nature',
+        value:expertise.machine.nature.name,
+        visibleOnPdf:true
+      });
+    /**ARRAY OF ALL THE ADDONS AVAILABLE AT STEP 3, ORDERED AS ON THE APPLICATION FORM */
+    console.log('natureList : ',natureList);
+    const machineAddonsAvailable = natureList.filter(
+      (element) => element.value === expertise.machine.nature.key)
+      [0].formStepsTypes[2].addOns.map(
+        (element) => (machineCatalog.addOns[element]));
+
+      machineCatalog.regular.map((element) => {
+        for (let [key,value] of Object.entries(expertise.machine)){
+          if(key === element.property){
+            element.value = value;
+            element.visibleOnPdf = true;
+            machineToArray.push(element);
+          }
+        }
+      })
+
+        machineAddonsAvailable.map((element) => {
+      for (let [key,value] of Object.entries(expertise.machine)){
+        console.log(key,value);
+        if(key === element.property){
+          element.value = value;
+          element.visibleOnPdf = true;
+          machineToArray.push(element);
+        }
+      }
+    })
+    machineToArray.push('divider');
+
+    /**ARRAY OF ALL THE ADDONS AVAILABLE AT STEP 3, ORDERED AS ON THE APPLICATION FORM */
+    const machineFeatureAddonsAvailable = natureList.filter(
+      (element) => element.value === expertise.machine.nature.key)
+      [0].formStepsTypes[3].addOns.map(
+        (element) => (machineFeatureCatalog.addOns[element]));
+      
+    /**SETTING MACHINEFEATURE_HOOK WITH THE COMPLETE ADDONS : TITLE - PROPERTY - VALUE */
+    machineFeatureAddonsAvailable.map((element) => {
+      if(expertise.machineFeatures){
+        for (let [key,value] of Object.entries(expertise.machineFeatures)){
+          if(key === element.property){
+            element.value = value;
+            element.visibleOnPdf = true;
+            machineToArray.push(element);
+          }
+        }
+      }
+      
+    })
+
+    ////////// QUOTATIONS ARRAY BUILD \\\\\\\\\\
+    const setUserToQuotations = (quotationList) => {
+      let quotationsToArray = [];
+      if(quotationList){
+        quotationList.map((element) => {
+          element.userDetail = cieMembers[element.userId];
+          quotationsToArray.push(element);
+        });
+      }
+
+      expertise.quotations = quotationsToArray; // replace the quotation array with a user included array
+    }
+
+    setUserToQuotations(expertise.quotations) //ADD USER DETAIL TO THE QUOTATIONS ARRAY
+    
+    ////////// MACHINE PICTURES ARRAY BUILD \\\\\\\\\\
+    let pictureArrayList = [];
+    if(expertise.pictures){
+      for (let [key,value] of Object.entries(expertise.pictures)){
+        pictureArrayList.push(value);
+      }
+    }
+    
+    expertise.imageList = pictureArrayList;
+    expertise.orderedDetailsToPrint = machineToArray;
+    setFocusMachine(expertise);
+    setIsExpertiseDetailsOpen(true)
+  }
+
   useEffect(()=>{
       console.log('qotList : ',qotList);
       console.log('rows : ',rows);
@@ -308,7 +460,6 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.id)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
@@ -319,19 +470,26 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
                         <Checkbox
                           checked={isItemSelected}
                           inputProps={{ 'aria-labelledby': labelId }}
+                          onClick={(event) => handleClick(event, row.id)}
                         />
                       </TableCell>
                       <TableCell component="th" id={labelId} scope="row" padding="none">
                         {row.id}
                       </TableCell>
-                      <TableCell align="right">{Moment(row.addedOn).format('MMMM-YYYY')}</TableCell>
-                      <TableCell align="right">{logInfo.cieMembers[row.openedBy].name}</TableCell>
-                      <TableCell align="right">{row.machine.nature.name}</TableCell>
-                      <TableCell align="right">{row.machine.brand}</TableCell>
-                      <TableCell align="right">{row.machine.model}</TableCell>
-                      <TableCell align="right">{row.machine.model}</TableCell>
-                      <TableCell align="right">{row.machine.year}</TableCell>
-                      <TableCell align="right">{row.quotation.estimatedBuyingPrice}</TableCell>
+                      <TableCell align="right">{row.date}</TableCell>
+                      <TableCell align="right">{row.salesman}</TableCell>
+                      <TableCell align="right">{row.nature}</TableCell>
+                      <TableCell align="right">{row.brand}</TableCell>
+                      <TableCell align="right">{row.model}</TableCell>
+                      <TableCell align="right">{row.details}</TableCell>
+                      <TableCell align="right">{row.year}</TableCell>
+                      <TableCell align="right">{row.estimatedBuyingPrice}</TableCell>
+                      <TableCell align="right">
+                      <FontAwesomeIcon
+                        icon={faEye}
+                        style={{fontSize:'1em',color:Color.inspektBlue}}
+                        onClick={() => machineClicked(row.expertiseObject)}/>
+                      </TableCell>
                     </TableRow>
                   );
                 })}
@@ -354,8 +512,17 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
         />
       </Paper>
       <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
+        control={<Switch checked={dense} color="primary" onChange={handleChangeDense} />}
+        label="Mode condensé"
+      />
+      <ExpertiseDetails
+        open={isExpertiseDetailsOpen}
+        setOpen={(isOpen) => setIsExpertiseDetailsOpen(isOpen)}
+        focusMachine={focusMachine}
+        setFocusMachine={(newFocusMachine) => setFocusMachine(newFocusMachine)}
+        possibleToQuote={true}
+        logInfo={logInfo}
+        setStateFromChild={setStateFromChild}
       />
     </div>
   );

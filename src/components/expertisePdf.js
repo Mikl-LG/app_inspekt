@@ -25,7 +25,7 @@ const getPdf = (orderedDetailsToPrint,type) => {
         let Xline = 70;
         orderedDetailsToPrint && orderedDetailsToPrint.map((element) => {
             
-                if(element === 'divider'){
+                if(element === 'divider' && Xline > 70){
                     Xline += 5;
                     documentPdf.line(20,Xline,190,Xline)
                 }else if(element.visibleOnPdf === true){

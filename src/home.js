@@ -102,7 +102,11 @@ class Home extends Component{
                     this.state.logInfo
                     ?
                     <div>
-                        <AppBar/>
+                        <AppBar
+                            cieMembers = {cieMembers} 
+                            logInfo={logInfo}
+                            setStateFromChild={this.setStateFromChild}
+                        />
                         <Container>
                             <Header navigation = {navigation}/>
                             {

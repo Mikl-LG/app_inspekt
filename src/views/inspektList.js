@@ -37,13 +37,13 @@ import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 
 import Color from '../constants/color.js';
-import ImageSlider from '../components/imageslider';
 import FormsCatalog from '../constants/FormsCatalog';
 import getPdf from '../components/expertisePdf';
+import ImageSlider from '../components/imageslider';
 import Natures from '../constants/Natures';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalculator,faEye,faTimesCircle,faMoneyBillAlt,faCheck,faComments } from '@fortawesome/free-solid-svg-icons';
+import { faCalculator,faEye,faUserShield,faTimesCircle,faMoneyBillAlt,faCheck,faComments } from '@fortawesome/free-solid-svg-icons';
 import { faImages } from '@fortawesome/free-solid-svg-icons';
 
 const useStyles = makeStyles((theme) => ({
@@ -142,6 +142,7 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
     const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
     const [openMachineDetail, setOpenMachineDetail] = React.useState(false);
     const [isOpenDeleteValidation, setIsOpenDeleteValidation] = React.useState(false);
+    const [isOpenShareMarketersValidation, setIsOpenShareMarketersValidation] = React.useState(false);
     const [quotations, setQuotations] = React.useState(false);
 
     ///////// FUNCTIONS \\\\\\\\\\
@@ -356,6 +357,7 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
         ...(focusMachine.quotations || []),     // array
         inputQuotations                         // quotation object*
       ]);
+      console.log('quotations : ',quotations);
        const body = await Promise.resolve({
         expId : focusMachine.id,
         status: 'inspekt',
@@ -414,9 +416,16 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
                     title={expertise.machine.brand + ' ' + expertise.machine.model}
                     subtitle={expertise.customer ? <span>Client: {expertise.customer.title && expertise.customer.title + ' ' +expertise.customer.name}</span> : null}
                     actionIcon={
-                        <IconButton className={classes.icon} onClick={() => machineClicked(expertise)}>
-                          <FontAwesomeIcon icon={faEye} style={{fontSize:'1em',color:'white'}}/>
+                      <div>
+                        <IconButton className={classes.icon} onClick={() => setIsOpenShareMarketersValidation(true)}>
+                          <FontAwesomeIcon icon={faUserShield} style={{fontSize:'1em',color:'white'}}/>
                         </IconButton>
+                        <IconButton className={classes.icon} onClick={() => machineClicked(expertise)}>
+                          <Badge badgeContent={expertise && expertise.quotations && expertise.quotations.length} color="secondary">
+                            <FontAwesomeIcon icon={faEye} style={{fontSize:'1em',color:'white'}}/>
+                          </Badge>
+                        </IconButton>
+                      </div>
                     }
                     />
                 </GridListTile>
@@ -447,14 +456,39 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
         </DialogActions>
 
       </Dialog>
+
+      <Dialog
+        open={isOpenShareMarketersValidation}
+        onClose={() => setIsOpenShareMarketersValidation(false)}
+        aria-labelledby="alert-shareInspekt-title"
+        aria-describedby="alert-shareInspekt-description"
+      >
+        <DialogTitle id="alert-shareInspekt-title">{"Partager cet Inspekt"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-shareInspekt-description">
+            Pour partager cette expertise avec une liste de marchands sécurisés et recevoir une offre d'achat vous devez mettre à niveau votre abonnement.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsOpenShareMarketersValidation(false)} color="primary" autoFocus>
+            Mettre mon abonnement à niveau
+          </Button>
+        </DialogActions>
+
+      </Dialog>
       
-      <Dialog fullScreen open={openMachineDetail} onClose={handleClickCloseMachineDetail} TransitionComponent={Transition}>
+      <Dialog
+        fullScreen
+        open={openMachineDetail}
+        onClose={handleClickCloseMachineDetail}
+        TransitionComponent={Transition}
+      >
         <AppBar className={classes.appBar} id='machineDetailAppBar'>
           <Toolbar>
             <IconButton edge="start" color="inherit" onClick={handleClickCloseMachineDetail} aria-label="close">
-            <Tooltip title="Fermer">
-              <CloseIcon />
-            </Tooltip>
+              <Tooltip title="Fermer">
+                <CloseIcon />
+              </Tooltip>
             </IconButton>
             <Typography variant="h6" className={classes.title}>
               {
@@ -486,17 +520,17 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
               >
                 <PictureAsPdfIcon/>
               </Button>
-              <Menu
-                id="pdf-edit"
-                anchorEl={anchorEl}
-                keepMounted
-                open={Boolean(anchorEl)}
-                onClose={() => {setAnchorEl(null)}}
-              >
-                <MenuItem onClick={() => editPdf('ficheExpertise')}>Fiche d'expertise</MenuItem>
-                <MenuItem onClick={() => editPdf('bonReprise')}>Bon de reprise</MenuItem>
-                <MenuItem onClick={() => {setAnchorEl(null)}}>Contre-expertise</MenuItem>
-              </Menu>
+            <Menu
+              id="pdf-edit"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={() => {setAnchorEl(null)}}
+            >
+              <MenuItem onClick={() => editPdf('ficheExpertise')}>Fiche d'expertise</MenuItem>
+              <MenuItem onClick={() => editPdf('bonReprise')}>Bon de reprise</MenuItem>
+              <MenuItem onClick={() => {setAnchorEl(null)}}>Contre-expertise</MenuItem>
+            </Menu>
             
           </Toolbar>
         </AppBar>
@@ -506,127 +540,135 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
             <ImageSlider imageList={focusMachine.imageList}/>
           </Grid>
           <Grid item xs={12} sm={6} lg={6}>
-                <div className={classes.detailMachineContainer}>
-                  {
-                    focusMachine.orderedDetailsToPrint && focusMachine.orderedDetailsToPrint.map((element,index) => (
-                      element == 'divider' 
-                      ? <Divider/>
-                      :
-                        <ListItemText key={element.property} classes={{primary:classes.listItemText}}>
-                          <div style={{display:'flex', alignItems:'center'}}>
-                              <FontAwesomeIcon
-                                icon={focusMachine.orderedDetailsToPrint[index].visibleOnPdf && focusMachine.orderedDetailsToPrint[index].visibleOnPdf == true ? faCheck : faTimesCircle}
-                                style={{
-                                  fontSize:'1em',
-                                  color:focusMachine.orderedDetailsToPrint[index].visibleOnPdf && focusMachine.orderedDetailsToPrint[index].visibleOnPdf ? Color.softGrey : Color.warning,
-                                  marginRight:'15px'}}
-                                onClick={(event) => checkDetailsToPrint(element)}
-                              />
+            <div className={classes.detailMachineContainer}>
+              {
+                focusMachine.orderedDetailsToPrint && focusMachine.orderedDetailsToPrint.map((element,index) => (
+                  element == 'divider' 
+                  ? <Divider/>
+                  :
+                    <ListItemText key={element.property} classes={{primary:classes.listItemText}}>
+                      <div style={{display:'flex', alignItems:'center'}}>
+                        <FontAwesomeIcon
+                          icon={focusMachine.orderedDetailsToPrint[index].visibleOnPdf && focusMachine.orderedDetailsToPrint[index].visibleOnPdf == true ? faCheck : faTimesCircle}
+                          style={{
+                            fontSize:'1em',
+                            color:focusMachine.orderedDetailsToPrint[index].visibleOnPdf && focusMachine.orderedDetailsToPrint[index].visibleOnPdf ? Color.softGrey : Color.warning,
+                            marginRight:'15px'}}
+                          onClick={(event) => checkDetailsToPrint(element)}
+                        />
 
-                            {element &&
-                                <div style={{display:'flex'}}>
-                                  <div style={{fontWeight:'bold'}}>{element.title}
-                                  </div>
-                                  <div>{' : ' + element.value}
-                                  </div>
-                                  
-                                </div>
-                            }
-                          </div>
-                        </ListItemText> 
-                    ))
-                  }
-                  <Divider/>
+                        {element
+                        &&  <div style={{display:'flex'}}>
+                              <div style={{fontWeight:'bold'}}>{element.title}
+                              </div>
+                              <div>{' : ' + element.value}
+                              </div>
+                            </div>
+                        }
+                      </div>
+                    </ListItemText> 
+                ))
+              }
+              <Divider/>
+            </div>
+          </Grid>
+        </Grid>
+      </Dialog>
+      <Snackbar
+        autoHideDuration={3000}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        onClose={snackbarHandleClose}
+        open={snackbar.isOpen}
+      >
+        <SnackbarContent className={classes[snackbar.type]} message={snackbar.message}/>
+      </Snackbar>
+      <Drawer anchor='right' open={drawer.isOpen} onClose={() => setDrawer({isOpen:false})}>
+        <div
+          className={clsx(classes.list, {[classes.fullList]: false,})}
+          role="presentation"
+        >
+          <List>
+            {[
+              {title : 'Prix de vente',key:'customerEstimatedSalePrice'},
+              {title : 'Prix marchand',key:'marketerEstimatedSalePrice'},
+              {title : 'Préparation estimée',key:'estimatedRepairCost'},
+              {title : 'Prix d\'achat',key:'estimatedBuyingPrice'},
+            ].map((value, index) => (
+              <ListItem key={value.key}>
+              <TextField
+                label={value.title}
+                style={{width:'100%'}}
+                variant="outlined"
+                onChange={(event) => handleChangeQuotations(event,value.key)}
+              />
+              </ListItem>
+            ))}
+              <ListItem key={'comment'}>
+                <TextField
+                  multiline
+                  rowsMin={4}
+                  label={'Commentaires'}
+                  style={{width:'100%'}}
+                  variant="outlined"
+                  onChange={(event) => handleChangeQuotations(event,'comment')}
+                />
+              </ListItem>
+                <div
+                  style={{width:'100%',display:'flex',justifyContent:'center',marginTop:'20px',marginBottom:'20px'}}>
+                  <Button
+                    disabled={inputQuotations.estimatedBuyingPrice ? false : true}
+                    variant="contained"
+                    color="primary"
+                    className={classes.button}
+                    startIcon={<SaveIcon />}
+                    style={{width:'auto'}}
+                    onClick={() => (saveNewQuotation())}
+                  >
+                    Coter
+                  </Button>
                 </div>
-              </Grid>
-            </Grid>
-          </Dialog>
-            <Snackbar
-              autoHideDuration={3000}
-              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-              onClose={snackbarHandleClose}
-              open={snackbar.isOpen}>
-                <SnackbarContent className={classes[snackbar.type]} message={snackbar.message}/>
-            </Snackbar>
-            <Drawer anchor='right' open={drawer.isOpen} onClose={() => setDrawer({isOpen:false})}>
-              <div
-                className={clsx(classes.list, {
-                  [classes.fullList]: false,
-                })}
-                role="presentation"
-                //onClick={() => setDrawer({isOpen:false})}
-              >
-                <List>
-                  {[
-                    {title : 'Prix de vente',key:'customerEstimatedSalePrice'},
-                    {title : 'Prix marchand',key:'marketerEstimatedSalePrice'},
-                    {title : 'Préparation estimée',key:'estimatedRepairCost'},
-                    {title : 'Prix d\'achat',key:'estimatedBuyingPrice'},
-                    ].map((value, index) => (
-                    <ListItem key={value.key}>
-                      <TextField
-                        label={value.title}
-                        style={{width:'100%'}}
-                        variant="outlined"
-                        onChange={(event) => handleChangeQuotations(event,value.key)}
-                      />
-                    </ListItem>
-                  ))}
-                  <ListItem key={'comment'}>
-                    <TextField
-                      multiline
-                      rowsMin={4}
-                      label={'Commentaires'}
-                      style={{width:'100%'}}
-                      variant="outlined"
-                      onChange={(event) => handleChangeQuotations(event,'comment')}
-                      />
-                    </ListItem>
-                  <div style={{width:'100%',display:'flex',justifyContent:'center',marginTop:'20px',marginBottom:'20px'}}>
-                    <Button
-                      disabled={inputQuotations.estimatedBuyingPrice ? false : true}
-                      variant="contained"
-                      color="primary"
-                      className={classes.button}
-                      startIcon={<SaveIcon />}
-                      style={{width:'auto'}}
-                      onClick={() => (saveNewQuotation())}
-                    >
-                      Coter
-                    </Button>
-                  </div>
                 </List>
                 <div className={classes.detailMachineContainer}>
-                  <Typography variant='h6' style={{textAlign:'center',color:Color.secondary}}>Cotations</Typography><Divider />
+                  <Typography
+                    variant='h6'
+                    style={{textAlign:'center',color:Color.secondary}}>
+                      Cotations
+                  </Typography>
+                  <Divider />
                   {
                     quotations && quotations.map((element) => (
-                        <ListItemText key={element.timestamp} className={'small'}>
+                      <ListItemText key={element.timestamp} className={'small'}>
                           
-                          {element && 
-                            <div className={classes.detailMachineContainer}>
-                              <div className={classes.listItemText} style={{fontWeight:'bold'}}>{element.userDetail.name}</div>
+                        {element && 
+                          <div className={classes.detailMachineContainer}>
+                            <div
+                              className={classes.listItemText}
+                              style={{fontWeight:'bold'}}
+                            >
+                              {element.userDetail.name}
+                            </div>
                               {[
                                 {title : 'Prix de vente',key:'customerEstimatedSalePrice'},
                                 {title : 'Prix marchand',key:'marketerEstimatedSalePrice'},
                                 {title : 'Préparation estimée',key:'estimatedRepairCost'},
                                 {title : 'Prix d\'achat',key:'estimatedBuyingPrice'},
-                                ].map((value) => (
-                                  <div 
-                                    className={classes.listItemText}
-                                    style={{color:value.key === 'estimatedBuyingPrice' && Color.secondary}}
-                                    >
-                                      {value.key === 'estimatedBuyingPrice'
-                                      && <FontAwesomeIcon
-                                            icon={faMoneyBillAlt}
-                                            style={{
-                                              fontSize:'1em',
-                                              color:Color.secondary,
-                                              marginRight:'5px'}}
-                                          />
-                                      }
-                                      {element[value.key] && value.title + ' : ' + element[value.key] + '€'}
+                              ].map((value) => (
+                                <div 
+                                  className={classes.listItemText}
+                                  style={{color:value.key === 'estimatedBuyingPrice' && Color.secondary}}
+                                >
+                                  {value.key === 'estimatedBuyingPrice'
+                                  &&  <FontAwesomeIcon
+                                        icon={faMoneyBillAlt}
+                                        style={{
+                                          fontSize:'1em',
+                                          color:Color.secondary,
+                                          marginRight:'5px'}}
+                                      />
+                                  }
+                                  {element[value.key] && value.title + ' : ' + element[value.key] + '€'}
                                 </div>
-                                ))
+                              ))
                               }
                               <div className={classes.listItemText} style={{fontStyle:'italic'}}>
                                 <FontAwesomeIcon
@@ -634,16 +676,14 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
                                   style={{
                                     fontSize:'1em',
                                     marginRight:'5px'}}
-                                />
-                                {element.comment && 'Commentaires : ' + element.comment}</div>
-                            </div>
-                          }
-                        </ListItemText>
+                                  />
+                                  {element.comment && 'Commentaires : ' + element.comment}</div>
+                              </div>
+                            }
+                      </ListItemText>
                     ))
-                  
                   }
                 </div>
-                
               </div>
             </Drawer>
     </div>
