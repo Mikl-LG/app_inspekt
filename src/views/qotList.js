@@ -231,7 +231,6 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [isExpertiseDetailsOpen,setIsExpertiseDetailsOpen] = React.useState(false);
-  const [quotations, setQuotations] = React.useState(false);
   const [focusMachine,setFocusMachine] = React.useState({});
 
   const rows = qotList.map((element) => {

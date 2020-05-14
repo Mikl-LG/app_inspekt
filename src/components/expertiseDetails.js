@@ -16,9 +16,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Grid from '@material-ui/core/Grid';
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -33,14 +30,11 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import Slide from '@material-ui/core/Slide';
-import Snackbar from '@material-ui/core/Snackbar';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
 
 import Color from '../constants/color.js';
-import FormsCatalog from '../constants/FormsCatalog';
 import getPdf from '../components/expertisePdf';
 import ImageSlider from '../components/imageslider';
-import Natures from '../constants/Natures';
+import SnackBar from '../components/snackBar';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalculator,faEye,faUserShield,faTimesCircle,faMoneyBillAlt,faCheck,faComments } from '@fortawesome/free-solid-svg-icons';
@@ -118,12 +112,13 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function ExpertiseDetails(props) {
   const classes = useStyles();
-  const {open,setOpen,focusMachine,setFocusMachine,possibleToQuote,logInfo,setStateFromChild} = props;
+  const {open,setOpen,focusMachine,setFocusMachine,logInfo,setStateFromChild} = props;
   
   const [drawer,setDrawer] = React.useState({isOpen:false});
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [inputQuotations, setInputQuotations] = React.useState({});
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
+  const [isOpenDeleteValidation,setIsOpenDeleteValidation] = React.useState(false);
 
   const checkDetailsToPrint = (detail) => {
 
@@ -163,7 +158,7 @@ export default function ExpertiseDetails(props) {
       inputQuotations                         // quotation object*
     ]);
     console.log('quotations : ',quotations);
-     const body = await Promise.resolve({
+    const body = await Promise.resolve({
       expId : focusMachine.id,
       status: 'inspekt',
       merge: {            // {object} list des quotations à jour
@@ -195,6 +190,33 @@ export default function ExpertiseDetails(props) {
     }
   }
 
+  const inspektDelete = async(expertise) => {
+    const body = await Promise.resolve({ expId : expertise.id })
+    const url = `https://inspekt.herokuapp.com/api?request=REMOVE_INSPEKT&token=${logInfo.token}`
+    let fetchOptions = await Promise.resolve(
+        {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body)
+        }
+    )
+    let fetching = await fetch(url, fetchOptions)
+    let error = await Promise.resolve(!fetching.ok)
+    let response = !error && await Promise.resolve(fetching.json());
+
+    if(error == false){
+      setSnackbar({message : 'Votre INSPEKT est supprimé.',type:'snackbarSuccess',isOpen:true});
+      setStateFromChild({inspektList:response});
+      setOpen(false);
+      setIsOpenDeleteValidation(false);
+    }
+    
+  }
+
   useEffect(() => {
     console.log('focusMachine : ',focusMachine);
   })
@@ -218,16 +240,26 @@ export default function ExpertiseDetails(props) {
               {
                 focusMachine && focusMachine.machine && focusMachine.machine.nature.name + ' ' + focusMachine.machine.brand + ' ' + focusMachine.machine.model}
             </Typography>
+            {
+              focusMachine.status === 'inspekt'
+                &&
+            <Tooltip title="Supprimer">
+              <Button autoFocus color="inherit" onClick={() => setIsOpenDeleteValidation(true)}>
+                <DeleteIcon/>
+              </Button>
+            </Tooltip>
+            }
             <Tooltip title="Ajouter une cotation">
               <Button autoFocus color="inherit" onClick={() => setDrawer({isOpen:true})}>
                 <Badge badgeContent={focusMachine.quotations && focusMachine.quotations.length} color="secondary">
-                <FontAwesomeIcon icon={faCalculator} style={{fontSize:'1.5em'}}/>
+                  <FontAwesomeIcon icon={faCalculator} style={{fontSize:'1.5em'}}/>
                 </Badge>
               </Button>
             </Tooltip>
 
             <Tooltip title="Télécharger les photos">
-              <Button autoFocus color="inherit" onClick={() => console.log('quotations : ',focusMachine.quotations)}>
+              <Button autoFocus color="inherit"
+                onClick={() => setSnackbar({message : 'Be patient : someone is developing this...',type:'snackbarWarning',isOpen:true})}>
                 <FontAwesomeIcon icon={faImages} style={{fontSize:'1.5em'}}/>
               </Button>
             </Tooltip>
@@ -293,13 +325,35 @@ export default function ExpertiseDetails(props) {
           </Grid>
         </Grid>
       </Dialog>
+      <Dialog
+        open={isOpenDeleteValidation}
+        onClose={() => setIsOpenDeleteValidation(false)}
+        aria-labelledby="alert-deleteInspekt-title"
+        aria-describedby="alert-deleteInspekt-description"
+      >
+        <DialogTitle id="alert-deleteInspekt-title">{"Supprimer cet Inspekt?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-deleteInspekt-description">
+            Vous êtes sur le point de supprimer un Inspekt : ces données seront effacées et ne pourront pas être récupérées.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsOpenDeleteValidation(false)} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={() => inspektDelete(focusMachine)} color="primary" autoFocus>
+            Supprimer
+          </Button>
+        </DialogActions>
+
+      </Dialog>
       <Drawer anchor='right' open={drawer.isOpen} onClose={() => setDrawer({isOpen:false})}>
         <div
           className={clsx(classes.list, {[classes.fullList]: false,})}
           role="presentation"
         >
           {
-            possibleToQuote === true
+            focusMachine.status === 'inspekt'
             ?<List>
               {[
                 {title : 'Prix de vente',key:'customerEstimatedSalePrice'},
@@ -403,6 +457,12 @@ export default function ExpertiseDetails(props) {
           </div>
         </div>
       </Drawer>
+      <SnackBar
+        handleClose={() => setSnackbar({isopen : false})}
+        message={snackbar.message}
+        type={snackbar.type}
+        isOpen={snackbar.isOpen}
+      />
     </div>
   );
 }
