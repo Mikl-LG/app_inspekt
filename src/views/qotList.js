@@ -519,7 +519,6 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
         setOpen={(isOpen) => setIsExpertiseDetailsOpen(isOpen)}
         focusMachine={focusMachine}
         setFocusMachine={(newFocusMachine) => setFocusMachine(newFocusMachine)}
-        possibleToQuote={true}
         logInfo={logInfo}
         setStateFromChild={setStateFromChild}
       />
