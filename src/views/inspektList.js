@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import Moment from 'moment';
-import Axios from 'axios';
 
 import AppBar from '@material-ui/core/AppBar';
 import Badge from '@material-ui/core/Badge';
@@ -20,6 +19,7 @@ import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
+import InsertCommentIcon from '@material-ui/icons/InsertComment';
 import { makeStyles } from '@material-ui/core/styles';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItem from '@material-ui/core/ListItem';
@@ -61,6 +61,20 @@ const useStyles = makeStyles((theme) => ({
   },
   fullList: {
     width: 'auto',
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'start',
+    alignItems:'center',
+    color:Color.greyWebTitle,
+    borderBottom:'solid 0.5px grey',
+    //backgroundColor:Color.veryLightGrey,
+    padding:'20px'
+  },
+  headerTitle:{
+    display:'flex',
+    flexDirection:'column',
+    alignItems:'start'
   },
   listGrid: {
     width: '100%',
@@ -266,65 +280,64 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
 
 
   return (
-    <div className={classes.root}>
-      
-      <GridList cellHeight={200} className={classes.listGrid}>
-        {
-            inspektList
-            ?inspektList.sort((a,b) => b.id - a.id).map((expertise) => (
-                <GridListTile key={expertise.id}>
-                    {
-                        expertise.pictures
-                        ?<img src={Object.values(expertise.pictures)[0]}/>
-                        :null
-                    }
-                    <GridListTileBar
-                    title={expertise.machine.brand + ' ' + expertise.machine.model}
-                    subtitle={expertise.customer ? <span>Client: {expertise.customer.title && expertise.customer.title + ' ' +expertise.customer.name}</span> : null}
-                    actionIcon={
-                      <div>
-                        <IconButton className={classes.icon} onClick={() => setIsOpenShareMarketersValidation(true)}>
-                          <FontAwesomeIcon icon={faUserShield} style={{fontSize:'1em',color:'white'}}/>
-                        </IconButton>
-                        <IconButton className={classes.icon} onClick={() => machineClicked(expertise)}>
-                          <Badge badgeContent={expertise && expertise.quotations && expertise.quotations.length} color="secondary">
-                            <FontAwesomeIcon icon={faEye} style={{fontSize:'1em',color:'white'}}/>
-                          </Badge>
-                        </IconButton>
-                      </div>
-                    }
-                    />
-                </GridListTile>
-            )):
-              <div style={{width:'100%',textAlign:'center',marginTop:'40px',color:Color.lightGrey}}>Aucun INSPEKT à évaluer pour le moment.</div>
-        }
-      </GridList>
-      <Dialog
-        open={isOpenShareMarketersValidation}
-        onClose={() => setIsOpenShareMarketersValidation(false)}
-        aria-labelledby="alert-shareInspekt-title"
-        aria-describedby="alert-shareInspekt-description"
-      >
-        <DialogTitle id="alert-shareInspekt-title">{"Partager cet Inspekt"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-shareInspekt-description">
-            Pour partager cette expertise avec une liste de marchands sécurisés et recevoir une offre d'achat vous devez mettre à niveau votre abonnement.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setIsOpenShareMarketersValidation(false)} color="primary" autoFocus>
-            Mettre mon abonnement à niveau
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <ExpertiseDetails
-        open={isExpertiseDetailsOpen}
-        setOpen={(isOpen) => setIsExpertiseDetailsOpen(isOpen)}
-        focusMachine={focusMachine}
-        setFocusMachine={(newFocusMachine) => setFocusMachine(newFocusMachine)}
-        logInfo={logInfo}
-        setStateFromChild={setStateFromChild}
-      />
-    </div>
+      <div className={classes.root}>
+        <GridList cellHeight={200} className={classes.listGrid}>
+          {
+              inspektList
+              ?inspektList.sort((a,b) => b.id - a.id).map((expertise) => (
+                  <GridListTile key={expertise.id}>
+                      {
+                          expertise.pictures
+                          ?<img src={Object.values(expertise.pictures)[0]}/>
+                          :null
+                      }
+                      <GridListTileBar
+                      title={expertise.machine.brand + ' ' + expertise.machine.model}
+                      subtitle={expertise.customer ? <span>Client: {expertise.customer.title && expertise.customer.title + ' ' +expertise.customer.name}</span> : null}
+                      actionIcon={
+                        <div>
+                          <IconButton className={classes.icon} onClick={() => setIsOpenShareMarketersValidation(true)}>
+                            <FontAwesomeIcon icon={faUserShield} style={{fontSize:'1em',color:'white'}}/>
+                          </IconButton>
+                          <IconButton className={classes.icon} onClick={() => machineClicked(expertise)}>
+                            <Badge badgeContent={expertise && expertise.quotations && expertise.quotations.length} color="secondary">
+                              <FontAwesomeIcon icon={faEye} style={{fontSize:'1em',color:'white'}}/>
+                            </Badge>
+                          </IconButton>
+                        </div>
+                      }
+                      />
+                  </GridListTile>
+              )):
+                <div style={{width:'100%',textAlign:'center',marginTop:'40px',color:Color.lightGrey}}>Aucun INSPEKT à évaluer pour le moment.</div>
+          }
+        </GridList>
+        <Dialog
+          open={isOpenShareMarketersValidation}
+          onClose={() => setIsOpenShareMarketersValidation(false)}
+          aria-labelledby="alert-shareInspekt-title"
+          aria-describedby="alert-shareInspekt-description"
+        >
+          <DialogTitle id="alert-shareInspekt-title">{"Partager cet Inspekt"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-shareInspekt-description">
+              Pour partager cette expertise avec une liste de marchands sécurisés et recevoir une offre d'achat vous devez mettre à niveau votre abonnement.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setIsOpenShareMarketersValidation(false)} color="primary" autoFocus>
+              Mettre mon abonnement à niveau
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <ExpertiseDetails
+          open={isExpertiseDetailsOpen}
+          setOpen={(isOpen) => setIsExpertiseDetailsOpen(isOpen)}
+          focusMachine={focusMachine}
+          setFocusMachine={(newFocusMachine) => setFocusMachine(newFocusMachine)}
+          logInfo={logInfo}
+          setStateFromChild={setStateFromChild}
+        />
+      </div>
   );
 }

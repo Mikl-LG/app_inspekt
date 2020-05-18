@@ -23,7 +23,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function SimpleBottomNavigation({setNavigation}) {
+export default function SimpleBottomNavigation({setNavigation,deleteSearchText}) {
   const classes = useStyles();
   const [value, setValue] = React.useState(1);
 
@@ -33,6 +33,7 @@ export default function SimpleBottomNavigation({setNavigation}) {
       onChange={(event, newValue) => {
         setValue(newValue);
         setNavigation(newValue);
+        deleteSearchText();
       }}
       showLabels
       className={classes.root}

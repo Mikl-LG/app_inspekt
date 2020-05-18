@@ -1,6 +1,4 @@
 import React, { useEffect } from 'react';
-import Moment from 'moment';
-import Axios from 'axios';
 
 import AppBar from '@material-ui/core/AppBar';
 import Badge from '@material-ui/core/Badge';
@@ -124,7 +122,6 @@ export default function ExpertiseDetails(props) {
 
       const detailToSet = focusMachine.orderedDetailsToPrint.find((element) => element === detail);
       const index = focusMachine.orderedDetailsToPrint.findIndex((element) => element === detail)
-      console.log('detailToSet : ',detailToSet);
       if(detailToSet.visibleOnPdf === true){
         detailToSet.visibleOnPdf = false
       }else{
@@ -132,7 +129,6 @@ export default function ExpertiseDetails(props) {
       }
   
       focusMachine.orderedDetailsToPrint.splice(index,1,detailToSet);
-      console.log('focusMachine from checkDetails : ',focusMachine);
       setFocusMachine({...focusMachine});
     
     
@@ -157,7 +153,7 @@ export default function ExpertiseDetails(props) {
       ...(focusMachine.quotations || []),     // array
       inputQuotations                         // quotation object*
     ]);
-    console.log('quotations : ',quotations);
+
     const body = await Promise.resolve({
       expId : focusMachine.id,
       status: 'inspekt',
@@ -181,7 +177,6 @@ export default function ExpertiseDetails(props) {
     let fetching = await fetch(url, fetchOptions)
     let error = await Promise.resolve(!fetching.ok)
     let response = !error && await Promise.resolve(fetching.json());
-    console.log(error,response)
 
     if(error == false){
       setSnackbar({message : 'Votre cotation est enregistrée.',type:'snackbarSuccess',isOpen:true});
@@ -218,10 +213,6 @@ export default function ExpertiseDetails(props) {
     }
     
   }
-
-  useEffect(() => {
-    console.log('focusMachine : ',focusMachine);
-  })
 
   return (
     <div>

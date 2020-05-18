@@ -4,6 +4,7 @@ import Moment from 'moment';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
+import InputBase from '@material-ui/core/InputBase';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -19,7 +20,9 @@ import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import SearchIcon from '@material-ui/icons/Search';
 import Switch from '@material-ui/core/Switch';
+import StorageIcon from '@material-ui/icons/Storage';
 import DeleteIcon from '@material-ui/icons/Delete';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -31,11 +34,6 @@ import FormsCatalog from '../constants/FormsCatalog';
 import getPdf from '../components/expertisePdf';
 import ImageSlider from '../components/imageslider';
 import Natures from '../constants/Natures';
-
-
-function createData(id, date, salesman, nature, brand, model, details, year, estimatedBuyingPrice) {
-  return { id, date, salesman, nature, brand, model, details, year, estimatedBuyingPrice };
-}
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -73,6 +71,7 @@ const headCells = [
   { id: 'details', numeric: true, disablePadding: false, label: 'Détails' },
   { id: 'year', numeric: true, disablePadding: false, label: 'Année' },
   { id: 'estimatedBuyingPrice', numeric: true, disablePadding: false, label: 'Cotation' },
+  { id: 'machineDetails', numeric: true, disablePadding: false, label: '' },
 ];
 
 function EnhancedTableHead(props) {
@@ -191,8 +190,31 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     marginBottom: theme.spacing(2),
   },
+  search: {
+    position: 'relative',
+    borderRadius: theme.shape.borderRadius,
+    marginRight: theme.spacing(2),
+    marginLeft: 0,
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+      marginLeft: theme.spacing(3),
+      width: 'auto',
+    },
+  },
+  searchIcon: {
+    padding: theme.spacing(0, 2),
+    height: '100%',
+    position: 'absolute',
+    pointerEvents: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   table: {
     minWidth: 750,
+  },
+  TableCell: {
+    fontSize:'0.7em'
   },
   visuallyHidden: {
     border: 0,
@@ -207,7 +229,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromChild}) {
+export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromChild,searchText}) {
   const classes = useStyles();
 
   ///////// CATALOGS \\\\\\\\\\
@@ -229,26 +251,52 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(100);
   const [isExpertiseDetailsOpen,setIsExpertiseDetailsOpen] = React.useState(false);
   const [focusMachine,setFocusMachine] = React.useState({});
 
-  const rows = qotList.map((element) => {
-    return {
-      id : element.id,
-      date : Moment(element.addedOn).format('MMMM-YYYY'),
-      salesman: logInfo.cieMembers[element.openedBy].name,
-      nature : element.machine.nature.name,
-      brand : element.machine.brand,
-      model : element.machine.model,
-      details : element.machine.model,
-      year : element.machine.year,
-      estimatedBuyingPrice : element.quotation.estimatedBuyingPrice,
-      expertiseObject : element
-    };
-  });
+  
 
-  console.log('rows : ',rows);
+  const machineFeatureToString = (machineFeatures) => {
+
+    const getFeatureTitle = (property) => { //RETURN THE TITLE OF A MACHINE FEATURES PROPERTY
+      if(machineFeatureCatalog){
+        for (let[key,value] of Object.entries(machineFeatureCatalog.addOns)){
+          if(value.property == property){
+           return value.title;
+          }
+        }
+      }
+    }
+    let output = [];
+    if(machineFeatures){
+      for (let [key,value] of Object.entries(machineFeatures)){
+        //console.log('value : ',getFeatureTitle(key) + ' : ' + value);
+        output = [...output,getFeatureTitle(key) + ' : ' + value];
+      }
+    }
+    return output.join(' - ');
+  }
+
+    let rows = [];
+    const keyWords = searchText.split(' ');
+    qotList.forEach((element) => {
+      if(JSON.stringify(element).toUpperCase().includes(keyWords[0].toUpperCase())){
+        rows = [...rows, {
+          id : element.id,
+          date : Moment(element.addedOn).format('MMMM-YYYY'),
+          salesman: logInfo.cieMembers[element.openedBy].name,
+          nature : element.machine.nature.name,
+          brand : element.machine.brand,
+          model : element.machine.model,
+          details : machineFeatureToString(element.machineFeatures),
+          year : element.machine.year,
+          estimatedBuyingPrice : element.quotation.estimatedBuyingPrice,
+          expertiseObject : element
+        }]
+        var value = new RegExp(keyWords.join('|').toUpperCase()).test(JSON.stringify(element).toUpperCase());
+      }
+    });
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -305,7 +353,6 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
   const machineClicked = (expertise) => {
 
     ////////// MACHINE ARRAY BUILD \\\\\\\\\\
-      console.log('expertise : ',expertise);
     let machineToArray = [];
 
     let customer = {
@@ -343,7 +390,6 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
         visibleOnPdf:true
       });
     /**ARRAY OF ALL THE ADDONS AVAILABLE AT STEP 3, ORDERED AS ON THE APPLICATION FORM */
-    console.log('natureList : ',natureList);
     const machineAddonsAvailable = natureList.filter(
       (element) => element.value === expertise.machine.nature.key)
       [0].formStepsTypes[2].addOns.map(
@@ -421,11 +467,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
   }
 
   useEffect(()=>{
-      console.log('qotList : ',qotList);
       console.log('rows : ',rows);
-      console.log('order : ',order);
-      console.log('orderBy : ',orderBy);
-      console.log('selected : ',selected);
   })
 
   return (
@@ -472,18 +514,18 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
                           onClick={(event) => handleClick(event, row.id)}
                         />
                       </TableCell>
-                      <TableCell component="th" id={labelId} scope="row" padding="none">
+                      <TableCell className={classes.TableCell} component="th" id={labelId} scope="row" padding="none">
                         {row.id}
                       </TableCell>
-                      <TableCell align="right">{row.date}</TableCell>
-                      <TableCell align="right">{row.salesman}</TableCell>
-                      <TableCell align="right">{row.nature}</TableCell>
-                      <TableCell align="right">{row.brand}</TableCell>
-                      <TableCell align="right">{row.model}</TableCell>
-                      <TableCell align="right">{row.details}</TableCell>
-                      <TableCell align="right">{row.year}</TableCell>
-                      <TableCell align="right">{row.estimatedBuyingPrice}</TableCell>
-                      <TableCell align="right">
+                      <TableCell className={classes.TableCell} align="center" padding="none">{row.date}</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none">{row.salesman}</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none">{row.nature}</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none">{row.brand}</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none">{row.model}</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none">{row.details}</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none">{row.year}</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none">{row.estimatedBuyingPrice}</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none">
                       <FontAwesomeIcon
                         icon={faEye}
                         style={{fontSize:'1em',color:Color.inspektBlue}}

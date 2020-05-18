@@ -1,5 +1,5 @@
-import React from 'react';
-import {connect} from 'react-redux';
+import React, { useEffect } from 'react';
+import Axios from 'axios';
 
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AccountCircle from '@material-ui/icons/AccountCircle';
@@ -7,9 +7,10 @@ import AppBar from '@material-ui/core/AppBar';
 import Badge from '@material-ui/core/Badge';
 import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close';
+import Container from '@material-ui/core/Container';
 import Dialog from '@material-ui/core/Dialog';
 import Divider from '@material-ui/core/Divider';
-import Toolbar from '@material-ui/core/Toolbar';
+import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import InputBase from '@material-ui/core/InputBase';
 import List from '@material-ui/core/List';
@@ -21,14 +22,31 @@ import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import NotificationsIcon from '@material-ui/icons/Notifications';
+import Paper from '@material-ui/core/Paper';
 import SearchIcon from '@material-ui/icons/Search';
 import Slide from '@material-ui/core/Slide';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TextField from '@material-ui/core/TextField';
+import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
 import Color from '../constants/color.js';
 import logo from '../inspektLogo_white.png';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCogs,faSave,faUser } from '@fortawesome/free-solid-svg-icons';
+import Login from '../views/login.js';
 
 const useStyles = makeStyles((theme) => ({
+  appBar: {
+    position: 'relative',
+  },
   grow: {
     flexGrow: 1,
   },
@@ -98,10 +116,22 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 function PrimarySearchAppBar(props) {
 
+  const {cieMembers,logInfo,setStateFromChild,search,setSearch} = props;
+  console.log('props : ',props)
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [isUserDetailOpen,setIsUserDetailOpen] = React.useState(false);
+  const [tabValue, setTabValue] = React.useState(0);
+  const [userInformations,setUserInformations] = React.useState({});
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
+  const handleChangeUserInformation = (event,key) => {
+    setUserInformations({...userInformations,[key]:event.target.value})
+  }
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -123,6 +153,23 @@ function PrimarySearchAppBar(props) {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const updateUser = async() => {
+
+    const token = logInfo.token;
+    const axiosParams = await Promise.resolve({
+      method: "post",
+      url: `https://inspekt.herokuapp.com/api?request=MERGE_USER&token=${token}`,
+      // FormData object containing all images in 'filedata'
+      data:{configuration:{name : 'Mikal Le Gallic'}},
+      config: {Accept: 'application/json','Content-Type': 'application/json',}
+    })
+
+    const {data, status} = await Axios(axiosParams);
+    console.log(data,status)
+
+    //UPDATE INSPEKT THANKS TO SET_EXP (SIMILAR TO QOT ADD) -> ADD FEATURES INTO THE KEY (QUOTATION, PARTICULARITIES ARE KEYS)
+  }
+
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
@@ -134,8 +181,6 @@ function PrimarySearchAppBar(props) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={() => setIsUserDetailOpen(true)}>Mon compte</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Configuration</MenuItem>
     </Menu>
   );
 
@@ -172,6 +217,10 @@ function PrimarySearchAppBar(props) {
     </Menu>
   );
 
+  useEffect(() => {
+    console.log('userInformations : ',userInformations);
+  })
+
   return (
     <div className={classes.grow}>
       <AppBar position="static">
@@ -196,6 +245,8 @@ function PrimarySearchAppBar(props) {
                 input: classes.inputInput,
               }}
               inputProps={{ 'aria-label': 'search' }}
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
             />
           </div>
           <div className={classes.grow} />
@@ -229,8 +280,8 @@ function PrimarySearchAppBar(props) {
           </div>
         </Toolbar>
       </AppBar>
-      {renderMobileMenu}
-      {renderMenu}
+          {renderMenu}
+          {renderMobileMenu}
       <Dialog
         fullScreen
         open={isUserDetailOpen}
@@ -242,27 +293,122 @@ function PrimarySearchAppBar(props) {
               <CloseIcon />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
-              Votre compte utilisateur
+              <FontAwesomeIcon icon={faCogs} style={{fontSize:'1.5em',marginRight:'10px'}}/>
+              Paramètres et autorisations
             </Typography>
           </Toolbar>
         </AppBar>
-        <List>
+        <Container style={{paddingTop:'25px'}}>
+          <Paper square>
+            <Tabs
+              value={tabValue}
+              indicatorColor="primary"
+              textColor="primary"
+              onChange={handleTabChange}
+              aria-label="disabled tabs example"
+              centered
+            >
+              <Tab label="Profil" />
+              <Tab label="Concession" />
+              <Tab label="Réglages" />
+              <Tab label="Statistiques" />
+            </Tabs>
+          </Paper>
           {
-            [{key:'name',title:'Nom'},
-            {key:'phoneNumber',title:'Numéro de téléphone'},
-            {key:'email',title:'Email'}]
-            .map((element) => (
-              <ListItem button>
-                <ListItemText/>
-              </ListItem>
-
-            ))
+            tabValue === 0 &&
+            <div>
+              <Typography variant="h6" style={{marginTop:'25px'}}>
+                <FontAwesomeIcon icon={faUser} style={{color:Color.inspektBlue,marginRight:'15px'}}/>
+                Modifiez votre profil et consultez vos informations
+              </Typography>
+              <Grid container>
+                <Grid item xs={6} lg={6} style={{marginTop:'25px'}}>
+                  <List>
+                    {
+                      [{key:'name',title:'Nom'},
+                      {key:'phoneNumber',title:'Numéro de téléphone'},
+                      {key:'email',title:'Email'}]
+                      .map((element) => (
+                        <div style={{display:'flex'}}>
+                          <TextField
+                            defaultValue={logInfo.user && logInfo.user[element.key]}
+                            label={logInfo.user && element.title}
+                            style={{width:'100%',margin:'15px'}}
+                            variant="outlined"
+                            onChange={(event) => handleChangeUserInformation(event,element.key)}
+                          >
+                            {
+                              logInfo.user && logInfo.user[element.key]
+                            }
+                          </TextField>
+                        </div>
+                      ))
+                    }
+                  </List>
+                  <Button style={{width:'100%'}} color="primary" onClick={() => updateUser()}>
+                    <FontAwesomeIcon icon={faSave}/>
+                  </Button>
+                </Grid>
+              </Grid>
+            </div>
           }
           
-        </List>
+          {
+            tabValue === 1 &&
+            <div>
+              <Grid container xs={12} lg={12} style={{padding:'15px'}}>
+                <Grid item xs={6} lg={6} style={{marginTop:'25px',width:'100%'}}>
+                  <div style={{display:'flex',justifyContent:'center'}}>
+                    <div>
+                      <img src={logInfo.company && logInfo.company.header} width='200px'/>
+                    </div>
+                  </div>
+                  <div style={{display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column'}}>
+                    <div style={{fontWeight:'bold'}}>{logInfo.company.name.toUpperCase()}</div>
+                    <div style={{fontSize:'0.8em'}}>{logInfo.company.address.toUpperCase()}</div>
+                    <div style={{fontSize:'0.8em'}}>
+                      {logInfo.company.postCode.toUpperCase() + ' ' + logInfo.company.city.toUpperCase()}
+                    </div>
+                    <div style={{fontSize:'0.8em'}}>{'SIRET : ' + logInfo.company.legalNumber.toUpperCase()}</div>
+                  </div>
+                  
+                </Grid>
+                <Grid item xs={6} lg={6} style={{marginTop:'25px',width:'100%'}}>
+                <TableContainer component={Paper}>
+                  <Table className={classes.table} size="small" aria-label="a dense table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Utilisateur</TableCell>
+                        <TableCell align="right">Licence</TableCell>
+                        <TableCell align="right">Email</TableCell>
+                        <TableCell align="right">Téléphone</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {logInfo.company.members && logInfo.company.members.map((user) => (
+                        logInfo.cieMembers[user]
+                        &&
+                        <TableRow key={logInfo.cieMembers[user].email}>
+                          <TableCell component="th" scope="row">
+                            {logInfo.cieMembers[user].name}
+                          </TableCell>
+                          <TableCell align="center">{logInfo.cieMembers[user].licence}</TableCell>
+                          <TableCell align="center">{logInfo.cieMembers[user].email}</TableCell>
+                          <TableCell align="center">{logInfo.cieMembers[user].phoneNumber}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>                  
+                </Grid>
+              </Grid>
+            </div>
+            
+            }
+        </Container>
       </Dialog>
     </div>
   );
 }
 
-export default connect(state => state)(PrimarySearchAppBar)
+export default PrimarySearchAppBar

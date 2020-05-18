@@ -23,6 +23,7 @@ class Home extends Component{
         super(props);
         this.state={
             navigation:1,
+            searchText:''
             //logInfo:'mikl' //RAT DELETE
         };
     }
@@ -104,8 +105,10 @@ class Home extends Component{
                     <div>
                         <AppBar
                             cieMembers = {cieMembers} 
-                            logInfo={logInfo}
-                            setStateFromChild={this.setStateFromChild}
+                            logInfo = {logInfo}
+                            setStateFromChild = {this.setStateFromChild}
+                            search = {this.state.searchText}
+                            setSearch = {(searchText) => this.setState({searchText:searchText})}
                         />
                         <Container>
                             <Header navigation = {navigation}/>
@@ -130,12 +133,15 @@ class Home extends Component{
                                                 cieMembers = {cieMembers} 
                                                 logInfo={logInfo}
                                                 setStateFromChild={this.setStateFromChild}
+                                                searchText={this.state.searchText}
                                             />
                                         :null
                                 )
                             }
                         </Container>
-                        <BottomTabNavigator setNavigation = {this.setNavigation}/>
+                        <BottomTabNavigator
+                            setNavigation = {this.setNavigation}
+                            deleteSearchText = {() => this.setState({searchText:''})}/>
                     </div>
                 :
                 <Login
