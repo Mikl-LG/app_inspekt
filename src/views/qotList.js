@@ -4,29 +4,28 @@ import Moment from 'moment';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
-import InputBase from '@material-ui/core/InputBase';
+import Chip from '@material-ui/core/Chip';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import MenuItem from '@material-ui/core/MenuItem';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
+import Select from '@material-ui/core/Select';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import SearchIcon from '@material-ui/icons/Search';
 import Switch from '@material-ui/core/Switch';
-import StorageIcon from '@material-ui/icons/Storage';
-import DeleteIcon from '@material-ui/icons/Delete';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { faEye,faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 
 import Color from '../constants/color.js';
 import ExpertiseDetails from '../components/expertiseDetails';
@@ -35,156 +34,100 @@ import getPdf from '../components/expertisePdf';
 import ImageSlider from '../components/imageslider';
 import Natures from '../constants/Natures';
 
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
 
 const headCells = [
-  { id: 'id', numeric: false, disablePadding: true, label: 'id' },
-  { id: 'date', numeric: true, disablePadding: false, label: 'Date' },
-  { id: 'salesman', numeric: true, disablePadding: false, label: 'Commercial' },
-  { id: 'nature', numeric: true, disablePadding: false, label: 'Nature' },
-  { id: 'brand', numeric: true, disablePadding: false, label: 'Marque' },
-  { id: 'model', numeric: true, disablePadding: false, label: 'Modèle' },
-  { id: 'details', numeric: true, disablePadding: false, label: 'Détails' },
-  { id: 'year', numeric: true, disablePadding: false, label: 'Année' },
-  { id: 'estimatedBuyingPrice', numeric: true, disablePadding: false, label: 'Cotation' },
-  { id: 'machineDetails', numeric: true, disablePadding: false, label: '' },
+  { id: 'id', select: false, label: 'id' },
+  { id: 'date', select: false, label: 'Date' },
+  { id: 'salesman', select: true, label: 'Commercial' },
+  { id: 'nature', select: true, label: 'Nature' },
+  { id: 'brand', select: true, label: 'Marque' },
+  { id: 'model', select: false, label: 'Modèle' },
+  { id: 'details', select: false, label: 'Détails' },
+  { id: 'year', select: false, label: 'Année' },
+  { id: 'estimatedBuyingPrice', select: false, label: 'Cotation' },
+  { id: 'machineDetails', select: false, label: '' },
 ];
 
-function EnhancedTableHead(props) {
-  const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
+function LoadSelectHeadTable(props){
+  const {logInfo,qotList,sort,setSort} = props;
+  const list = {
+    salesman : [ ...new Set(qotList.map((element) => (
+    logInfo.cieMembers[element.openedBy].name
+    ))) ].sort(),
+    nature: [ ...new Set(qotList.map((element) => (
+    element.machine.nature.name
+    ))) ].sort(),
+    brand: [ ...new Set(qotList.map((element) => (
+    element.machine.brand
+    ))) ].sort(),
+    model:[ ...new Set(qotList.map((element) => (
+    element.machine.model && element.machine.model
+    ))) ].sort()
+  }
 
-  return (
+  return(
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{ 'aria-label': 'select all qots' }}
-          />
-        </TableCell>
         {headCells.map((headCell) => (
+          headCell.select === false
+          ?
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'default'}
-            sortDirection={orderBy === headCell.id ? order : false}
+            align='center'
           >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <span className={classes.visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </span>
-              ) : null}
-            </TableSortLabel>
+            {headCell.label}
           </TableCell>
+          :
+            <TableCell
+            key={headCell.id}
+            align='center'
+            >
+              <FormControl style={{display:'flex'}}>
+              <InputLabel id="demo-mutiple-chip-label" style={{fontSize:'1em'}}>{headCell.label}</InputLabel>
+              <Select
+                labelId="demo-mutiple-chip-label"
+                id="demo-mutiple-chip"
+                style={{minWidth: 120,maxWidth: 150,fontSize:'1em'}}
+                multiple
+                value={sort[headCell.id]}
+                onChange={(event) => setSort({...sort,[headCell.id]:event.target.value})}
+                MenuProps={MenuProps}
+              >
+                {
+                list[headCell.id].map((element) => (
+                  <MenuItem value={element} style={{fontSize:'1em'}}>
+                    {element}
+                  </MenuItem>
+                ))
+                }
+              </Select>
+              <FontAwesomeIcon
+                icon={faTimesCircle}
+                style={{color:Color.warning,alignSelf:'center',marginTop:'5px'}}
+                onClick={() => setSort({...sort,[headCell.id]:[]})}/>
+              </FormControl>
+            </TableCell>
         ))}
-      </TableRow>
+    </TableRow>
     </TableHead>
-  );
+  )
 }
 
-EnhancedTableHead.propTypes = {
-  classes: PropTypes.object.isRequired,
-  numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-};
-
-const useToolbarStyles = makeStyles((theme) => ({
-  root: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(1),
-  },
-  highlight:
-    theme.palette.type === 'light'
-      ? {
-          color: theme.palette.primary.main,
-          backgroundColor: lighten(theme.palette.primary.light, 0.85),
-        }
-      : {
-          color: theme.palette.text.primary,
-          backgroundColor: theme.palette.secondary.dark,
-        },
-  title: {
-    flex: '1 1 100%',
-  },
-}));
-
-const EnhancedTableToolbar = (props) => {
-  const classes = useToolbarStyles();
-  const { numSelected } = props;
-
-  return (
-    <Toolbar
-      className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0,
-      })}
-    >
-      {numSelected > 0 ? (
-        <Typography className={classes.title} color={Color.inspektBlue} variant="subtitle1" component="div">
-          {numSelected} sélectionné(s)
-        </Typography>
-      ) : (
-        null
-      )}
-
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton aria-label="delete">
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        null
-      )}
-    </Toolbar>
-  );
-};
-
-EnhancedTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-};
-
 const useStyles = makeStyles((theme) => ({
+  
   root: {
     width: '100%',
+    marginBottom:'70px'
   },
   paper: {
     width: '100%',
@@ -214,7 +157,8 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 750,
   },
   TableCell: {
-    fontSize:'0.7em'
+    fontSize:'0.8em',
+    padding:'5px'
   },
   visuallyHidden: {
     border: 0,
@@ -245,17 +189,13 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
     })
   });
   const [natureList,setNatureList] = React.useState(Natures.Natures);
-
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('salesman');
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(100);
   const [isExpertiseDetailsOpen,setIsExpertiseDetailsOpen] = React.useState(false);
   const [focusMachine,setFocusMachine] = React.useState({});
+  const [sort,setSort] = React.useState({salesman:[],nature:[],brand:[]});
 
-  
+  const sortHandleChange = (event,key) => {
+    setSort({...sort,[key]:event.target.value});
+  };
 
   const machineFeatureToString = (machineFeatures) => {
 
@@ -280,75 +220,31 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
 
     let rows = [];
     const keyWords = searchText.split(' ');
+    let qotListFiltered = [];
     qotList.forEach((element) => {
-      if(JSON.stringify(element).toUpperCase().includes(keyWords[0].toUpperCase())){
-        rows = [...rows, {
-          id : element.id,
-          date : Moment(element.addedOn).format('MMMM-YYYY'),
-          salesman: logInfo.cieMembers[element.openedBy].name,
-          nature : element.machine.nature.name,
-          brand : element.machine.brand,
-          model : element.machine.model,
-          details : machineFeatureToString(element.machineFeatures),
-          year : element.machine.year,
-          estimatedBuyingPrice : element.quotation.estimatedBuyingPrice,
-          expertiseObject : element
-        }]
-        var value = new RegExp(keyWords.join('|').toUpperCase()).test(JSON.stringify(element).toUpperCase());
-      }
+      if(
+        JSON.stringify(element).toUpperCase().includes(keyWords[0].toUpperCase())
+        && new RegExp(sort.salesman.join('|')).test(logInfo.cieMembers[element.openedBy].name) === true
+        && new RegExp(sort.nature.join('|')).test(element.machine.nature.name) === true
+        && new RegExp(sort.brand.join('|')).test(element.machine.brand) === true
+        )
+        qotListFiltered = [...qotListFiltered,element];
     });
-
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
-
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
-
-    setSelected(newSelected);
-  };
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const handleChangeDense = (event) => {
-    setDense(event.target.checked);
-  };
-
-  const isSelected = (name) => selected.indexOf(name) !== -1;
-
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+    
+    qotListFiltered.forEach((element) => {
+      rows = [...rows, {
+        id : element.id,
+        date : Moment(element.addedOn).format('MMMM-YYYY'),
+        salesman: logInfo.cieMembers[element.openedBy].name,
+        nature : element.machine.nature.name,
+        brand : element.machine.brand,
+        model : element.machine.model,
+        details : machineFeatureToString(element.machineFeatures),
+        year : element.machine.year,
+        estimatedBuyingPrice : element.quotation.estimatedBuyingPrice,
+        expertiseObject : element
+      }]
+    });
 
   const machineClicked = (expertise) => {
 
@@ -467,54 +363,38 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
   }
 
   useEffect(()=>{
-      console.log('rows : ',rows);
+      console.log('sort : ',sort);
   })
 
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
           <Table
             className={classes.table}
             aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
             aria-label="enhanced table"
           >
-            <EnhancedTableHead
-              classes={classes}
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+            <LoadSelectHeadTable
+              logInfo={logInfo}
+              qotList={qotListFiltered}
+              sort={sort}
+              setSort={setSort}
             />
             <TableBody>
               {rows
-              && stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.id);
+              && rows.map((row, index) => {
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow
                       hover
                       role="checkbox"
-                      aria-checked={isItemSelected}
                       tabIndex={-1}
                       key={row.id}
-                      selected={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          inputProps={{ 'aria-labelledby': labelId }}
-                          onClick={(event) => handleClick(event, row.id)}
-                        />
-                      </TableCell>
-                      <TableCell className={classes.TableCell} component="th" id={labelId} scope="row" padding="none">
+                      
+                      <TableCell className={classes.TableCell} component="th" id={labelId} scope="row"  align="center" padding="none">
                         {row.id}
                       </TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none">{row.date}</TableCell>
@@ -534,28 +414,10 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
                     </TableRow>
                   );
                 })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[100, 250, 500,1000]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
       </Paper>
-      <FormControlLabel
-        control={<Switch checked={dense} color="primary" onChange={handleChangeDense} />}
-        label="Mode condensé"
-      />
       <ExpertiseDetails
         open={isExpertiseDetailsOpen}
         setOpen={(isOpen) => setIsExpertiseDetailsOpen(isOpen)}
