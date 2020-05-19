@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import Moment from 'moment';
 
-import PropTypes from 'prop-types';
-import clsx from 'clsx';
+import CancelIcon from '@material-ui/icons/Cancel';
 import { lighten, makeStyles } from '@material-ui/core/styles';
 import Chip from '@material-ui/core/Chip';
 import Input from '@material-ui/core/Input';
@@ -30,8 +29,6 @@ import { faEye,faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import Color from '../constants/color.js';
 import ExpertiseDetails from '../components/expertiseDetails';
 import FormsCatalog from '../constants/FormsCatalog';
-import getPdf from '../components/expertisePdf';
-import ImageSlider from '../components/imageslider';
 import Natures from '../constants/Natures';
 
 const ITEM_HEIGHT = 48;
@@ -45,22 +42,30 @@ const MenuProps = {
   },
 };
 
-const headCells = [
-  { id: 'id', select: false, label: 'id' },
-  { id: 'date', select: false, label: 'Date' },
-  { id: 'salesman', select: true, label: 'Commercial' },
-  { id: 'nature', select: true, label: 'Nature' },
-  { id: 'brand', select: true, label: 'Marque' },
-  { id: 'model', select: false, label: 'Modèle' },
-  { id: 'details', select: false, label: 'Détails' },
-  { id: 'year', select: false, label: 'Année' },
-  { id: 'estimatedBuyingPrice', select: false, label: 'Cotation' },
-  { id: 'machineDetails', select: false, label: '' },
-];
-
 function LoadSelectHeadTable(props){
   const {logInfo,qotList,sort,setSort} = props;
-  const list = {
+
+  const headCells = [
+    { id: 'id', select: true, width:'1vi', label: 'id', selectOptions : [ ...new Set(qotList.map((element) => (element.id))) ].sort() },
+    { id: 'date', select: true, width:'8vi', label: 'Date', selectOptions : [ ...new Set(qotList.map((element) => (Moment(element.addedOn).format('MMMM-YYYY')))) ].sort() },
+    { id: 'salesman', select: true, width:'20vi', label: 'Commercial', selectOptions : [ ...new Set(qotList.map((element) => (
+      logInfo.cieMembers[element.openedBy].name))) ].sort() },
+    { id: 'nature', select: true, width:'12vi', label: 'Nature', selectOptions : [ ...new Set(qotList.map((element) => (
+      element.machine.nature.name))) ].sort() },
+    { id: 'brand', select: true, width:'12vi', label: 'Marque',selectOptions : [ ...new Set(qotList.map((element) => (
+      element.machine.brand))) ].sort() },
+    { id: 'model', select: true, width:'18vi', label: 'Modèle', selectOptions : [ ...new Set(qotList.map((element) => (
+      element.machine.model))) ].sort() },
+    { id: 'details', select: true, width:'30vi', label: 'Détails',selectOptions : [] },
+    { id: 'year', select: true, label: 'Année',selectOptions : [ ...new Set(qotList.map((element) => (
+      element.machine.year))) ].sort() },
+    { id: 'estimatedBuyingPrice', width:'7vi', select: true, label: 'Cotation',selectOptions : [ ...new Set(qotList.map((element) => (element.quotation.estimatedBuyingPrice))) ].sort() },
+    { id: 'machineDetails', width:'2vi', select: false, label: '',selectOptions : [] },
+  ];
+
+  console.log('sort : ',sort);
+
+  /*const list = {
     salesman : [ ...new Set(qotList.map((element) => (
     logInfo.cieMembers[element.openedBy].name
     ))) ].sort(),
@@ -73,7 +78,12 @@ function LoadSelectHeadTable(props){
     model:[ ...new Set(qotList.map((element) => (
     element.machine.model && element.machine.model
     ))) ].sort()
-  }
+  }*/
+
+  let autoList = {}
+  headCells.forEach((headCell) => {
+    autoList = {...autoList,[headCell.id] : headCell.selectOptions}
+  })
 
   return(
     <TableHead>
@@ -93,28 +103,37 @@ function LoadSelectHeadTable(props){
             align='center'
             >
               <FormControl style={{display:'flex'}}>
-              <InputLabel id="demo-mutiple-chip-label" style={{fontSize:'1em'}}>{headCell.label}</InputLabel>
+              <InputLabel
+                id="demo-mutiple-chip-label"
+                style={{fontSize:'0.8em',fontWeight:'bold',color:Color.secondary,width:'100%',textAlign:'center'}}
+              >
+                {headCell.label}
+              </InputLabel>
               <Select
                 labelId="demo-mutiple-chip-label"
                 id="demo-mutiple-chip"
-                style={{minWidth: 120,maxWidth: 150,fontSize:'1em'}}
+                style={{minWidth: headCell.minWidth,maxWidth: headCell.maxWidth,fontSize:'1em',textAlign:'center'}}
                 multiple
                 value={sort[headCell.id]}
                 onChange={(event) => setSort({...sort,[headCell.id]:event.target.value})}
                 MenuProps={MenuProps}
+                IconComponent={() => (
+                  sort[headCell.id].length > 0
+                  ? <CancelIcon 
+                      style={{fontSize:'1em',cursor:'pointer',color:Color.warning}}
+                      onClick={() => setSort({...sort,[headCell.id]:[]})} />
+                  : null
+                )}
               >
                 {
-                list[headCell.id].map((element) => (
+                autoList[headCell.id] && autoList[headCell.id].map((element) => (
+                  element &&
                   <MenuItem value={element} style={{fontSize:'1em'}}>
                     {element}
                   </MenuItem>
                 ))
                 }
               </Select>
-              <FontAwesomeIcon
-                icon={faTimesCircle}
-                style={{color:Color.warning,alignSelf:'center',marginTop:'5px'}}
-                onClick={() => setSort({...sort,[headCell.id]:[]})}/>
               </FormControl>
             </TableCell>
         ))}
@@ -191,11 +210,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
   const [natureList,setNatureList] = React.useState(Natures.Natures);
   const [isExpertiseDetailsOpen,setIsExpertiseDetailsOpen] = React.useState(false);
   const [focusMachine,setFocusMachine] = React.useState({});
-  const [sort,setSort] = React.useState({salesman:[],nature:[],brand:[]});
-
-  const sortHandleChange = (event,key) => {
-    setSort({...sort,[key]:event.target.value});
-  };
+  const [sort,setSort] = React.useState({id:[],date:[],salesman:[],nature:[],brand:[],model:[],details:[],year:[],estimatedBuyingPrice:[]});
 
   const machineFeatureToString = (machineFeatures) => {
 
@@ -224,9 +239,14 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
     qotList.forEach((element) => {
       if(
         JSON.stringify(element).toUpperCase().includes(keyWords[0].toUpperCase())
+        && new RegExp(sort.id.join('|')).test(element.id) === true
+        && new RegExp(sort.date.join('|')).test(Moment(element.addedOn).format('MMMM-YYYY')) === true
         && new RegExp(sort.salesman.join('|')).test(logInfo.cieMembers[element.openedBy].name) === true
         && new RegExp(sort.nature.join('|')).test(element.machine.nature.name) === true
         && new RegExp(sort.brand.join('|')).test(element.machine.brand) === true
+        && new RegExp(sort.model.join('|')).test(element.machine.model) === true
+        && new RegExp(sort.year.join('|')).test(element.machine.year) === true
+        && new RegExp(sort.estimatedBuyingPrice.join('|')).test(element.quotation.estimatedBuyingPrice) === true
         )
         qotListFiltered = [...qotListFiltered,element];
     });

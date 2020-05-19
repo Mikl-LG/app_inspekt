@@ -296,7 +296,7 @@ export default function ExpertiseDetails(props) {
                           icon={focusMachine.orderedDetailsToPrint[index].visibleOnPdf && focusMachine.orderedDetailsToPrint[index].visibleOnPdf == true ? faCheck : faTimesCircle}
                           style={{
                             fontSize:'1em',
-                            color:focusMachine.orderedDetailsToPrint[index].visibleOnPdf && focusMachine.orderedDetailsToPrint[index].visibleOnPdf ? Color.softGrey : Color.warning,
+                            color:focusMachine.orderedDetailsToPrint[index].visibleOnPdf && focusMachine.orderedDetailsToPrint[index].visibleOnPdf ? Color.success : Color.warning,
                             marginRight:'15px'}}
                           onClick={(event) => checkDetailsToPrint(element)}
                         />
