@@ -215,11 +215,11 @@ export default function NewExpertise({setStateFromChild,logInfo}){
 
     setPictureList(pictureToSet);
 
-    setMachine({nature:{name:natureInput.text,key:natureInput.value}}); //remplacer text et value par name et key
+    setMachine({nature:{name:natureInput.name,key:natureInput.key}}); //remplacer text et value par name et key
 
     setNature(natureInput);
     
-    setBrands(formsCatalog[natureInput.value].brands);
+    setBrands(formsCatalog[natureInput.key].brands);
 
     setStateFromChild({nature:natureInput});
 
@@ -348,7 +348,7 @@ export default function NewExpertise({setStateFromChild,logInfo}){
 
   /**USEEFFECT ONLY USED ON CONSOLE */
   useEffect(() => {
-    console.log('machine : ',machine);
+    console.log('brands : ',brands);
   })
 
     const classes = useStyles();
@@ -419,7 +419,7 @@ export default function NewExpertise({setStateFromChild,logInfo}){
               >
                 {
                   natureList && natureList.map((nature) => (
-                    <option key={nature.value} value={JSON.stringify(nature)}>{nature.text}</option>
+                    <option key={nature.key} value={JSON.stringify(nature)}>{nature.name}</option>
                   ))
                 }
               </Select>
@@ -434,6 +434,7 @@ export default function NewExpertise({setStateFromChild,logInfo}){
                     (
                       input.property == 'brand'
                       ?
+                        
                         <div key={input.property}>
                           <InputLabel>Marque</InputLabel>
                           <Select

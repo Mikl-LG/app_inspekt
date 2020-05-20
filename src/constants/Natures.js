@@ -3,12 +3,12 @@ import Steps from './Steps';
 
 const Natures = [
     {
-        text: "Aligneuse de pierres",
-        value: "aligneuse",
+        name: "Aligneuse de pierres",
+        key: "aligneuse",
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: [] // ex. ['tires'] (used by NewEvaluation.js)
+                addOns: ["nbrHectares"] // ex. ['tires'] (used by NewEvaluation.js)
             },
             3: {
                 addOns: ["usureGenerale","largeurTravailMetres","typeAligneusePierres","attelageOutil","repliageChassis","nombrePoutres","sectionPoutre","usureSocs","typeReglageAngle","miseAuTransport","commandesHydrauliques","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite"]
@@ -20,15 +20,14 @@ const Natures = [
         }
     },
     {
-        text: "Andaineur",
-        value: "rake",
+        name: "Andaineur",
+        key: "rake",
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: []
             },
             3: {
-                addOns: ["usureGenerale","largeurTravailMetres","attelageOutil","nombreRotors","nombreDentsARemplacer","miseEnAndain","suiviSol","essieuPrincipal","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsAndaineur","conformite"]
+                addOns: ["usureGenerale","largeurTravailMetres","attelageOutil","nombreRotors","nombreBrasRotors","nombreDentsARemplacer","miseEnAndain","suiviSol","essieuPrincipal","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsAndaineur","conformite"]
             },
             4:{
                 type:'trailed',
@@ -37,8 +36,8 @@ const Natures = [
         }
     },
     {
-        text: "Autochargeuse",
-        value: "silageTrailer",
+        name: "Autochargeuse",
+        key: "silageTrailer",
         formStepsTypes : {
             2: {
                 type: 'regular',
@@ -54,15 +53,15 @@ const Natures = [
         }
     },
     {
-        text: "Balayeuse",
-        value: "sweeper",
+        name: "Balayeuse",
+        key: "sweeper",
         formStepsTypes : {
             2: {
                 type: 'regular',
                 addOns: []
             },
             3:{
-                addOns:["usureGenerale","largeurTravailNumerique","entrainementOutil","attelageOutil","repliageChassis","commandesHydrauliques","typeReglageAngle","usureChassis","usureBalais","miseAuTransport","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite"]
+                addOns:["usureGenerale","largeurTravailMetres","entrainementOutil","attelageOutil","repliageChassis","commandesHydrauliques","typeReglageAngle","usureChassis","usureBalais","miseAuTransport","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite"]
             },
             4:{
                 type:'trailed',
@@ -71,8 +70,8 @@ const Natures = [
         }
     },
     {
-        text: "Benne",
-        value: "trailer",
+        name: "Benne",
+        key: "trailer",
         formStepsTypes : {
             2: {
                 type: 'regular',
@@ -88,12 +87,11 @@ const Natures = [
         }
     },
     {
-        text: "Betaillere",
-        value: "livestockTrailer",
+        name: "Betaillere",
+        key: "livestockTrailer",
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: []
             },
             3:{
                 addOns: ["usureGenerale","chargeUtile","materiauxCaisse","usureChassis","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsBetaillere","conformite"]
@@ -105,12 +103,12 @@ const Natures = [
         }
     },
     {
-        text: "Broyeur",
-        value: "crusher",
+        name: "Broyeur",
+        key: "crusher",
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: []
+                addOns: ["nbrHectares"]
             },
             3:{
                 addOns: ["usureGenerale","largeurTravailMetres","typeBroyeur","attelageOutil","repliageChassis","nombreCouteauxAremplacer","miseAuTransport","commandesHydrauliques","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsBroyeur","conformite"]
@@ -122,8 +120,8 @@ const Natures = [
         }
     },
     {
-        text: "Chargeur Frontal",
-        value: "frontLoader",
+        name: "Chargeur Frontal",
+        key: "frontLoader",
         formStepsTypes : {
             2: {
                 type: 'regular',
@@ -139,12 +137,12 @@ const Natures = [
         }
     },
     {
-        text: "Charrue",
-        value: "plough",
+        name: "Charrue",
+        key: "plough",
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: []
+                addOns: ["nbrHectares"]
             },
             3:{
                 addOns:["usureGenerale","typeCharrue","nombreSocs","securiteTravailSol","hauteurDegagement","entrePointes","sectionPoutre","diametreFusee","largeurTravailPouces","varilarge","typeSocs","usureSocs","typePointes","usurePointes","typeRasettes","usureRasettes","typeVersoirs","usureVersoirs","commandesHydrauliques","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite"]
@@ -156,8 +154,8 @@ const Natures = [
         }
     },
     {
-        text: "Combine de Semis",
-        value: "drillCombination",
+        name: "Combine de Semis",
+        key: "drillCombination",
         formStepsTypes : {
             2: {
                 type: 'regular',
@@ -173,15 +171,15 @@ const Natures = [
         }
     },
     {
-        text: "Cueilleur",
-        value: "harvestingPlatform",
+        name: "Cueilleur",
+        key: "harvestingPlatform",
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: []
+                addOns: ["nbrHectares"]
             },
             3:{
-                addOns:["usureGenerale","largeurTravailMetres","typeCueilleur","nombreRangs","usureRouleauxEpanouilleurs","usureVis","usureCouteaux","usureChainesAlimentation","usureChaines","optionsCueilleur","conformite"]
+                addOns:["usureGenerale","largeurTravailMetres","typeCueilleur","nombreRangs","ecartementRangs","reglagePlaques","marqueTablierAttelageMoissonneuse","usureRouleauxEpanouilleurs","usureVis","usureCouteaux","usureChainesAlimentation","usureChaines","optionsCueilleur","conformite"]
             },
             4:{
                 addOns:["broyeur","rouleauxEpanouilleurs","visAlimentation"]
@@ -189,12 +187,12 @@ const Natures = [
         }
     },
     {
-        text: "Dechaumeur",
-        value: "tillage",
+        name: "Dechaumeur",
+        key: "tillage",
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: []
+                addOns: ["nbrHectares"]
             },
             3:{
                 addOns:["usureGenerale","largeurTravailMetres","attelageOutil","repliageChassis","sectionPoutre","nombreSocsDisques","typeSocsDisques","usureSocsDisques","securiteTravailSol","typeReglageAngle","hauteurDegagement","typeRouleau","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite"]
@@ -206,15 +204,15 @@ const Natures = [
         }
     },
     {
-        text: "Derouleuse",
-        value: "forageUnroller",
+        name: "Derouleuse",
+        key: "forageUnroller",
         formStepsTypes : {
             2: {
                 type: 'regular',
                 addOns: []
             },
             3:{
-                addOns:["usureGenerale","attelageOutilManutention","tablierAttelage","usureTapis","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsDerouleuse","conformite"]
+                addOns:["usureGenerale","attelageOutil","tablierAttelage","usureTapis","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsDerouleuse","conformite"]
             },
             4:{
                 type:'trailed',
@@ -223,15 +221,15 @@ const Natures = [
         }
     },
     {
-        text: "Desileuse pailleuse",
-        value: "cattleFeeder",
+        name: "Desileuse pailleuse",
+        key: "cattleFeeder",
         formStepsTypes : {
             2: {
                 type: 'regular',
                 addOns: []
             },
             3:{
-                addOns:["usureGenerale","attelageOutilManutention","tablierAttelage","capaciteEnM3","entrainementTurbine","usureTurbine","nombreDemeleurs","entrainementDemeleurs","usureDemeleurs","vitessePDF","usureTapis","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite"]
+                addOns:["usureGenerale","attelageOutil","capaciteEnM3","entrainementTurbine","usureTurbine","nombreDemeleurs","entrainementDemeleurs","usureDemeleurs","vitessePDF","usureTapis","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite"]
             },
             4:{
                 type:'trailed',
@@ -240,15 +238,15 @@ const Natures = [
         }
     },
     {
-        text: "Enrubanneuse",
-        value: "wrapper",
+        name: "Enrubanneuse",
+        key: "wrapper",
         formStepsTypes : {
             2: {
                 type: 'regular',
                 addOns: ["nbrBottes"]
             },
             3:{
-                addOns:["usureGenerale","rotationEnrubanneuse","nombreRouleaux","nombreCourroies","commandesEnrubanneuse","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsEnrubanneuse","conformite"]
+                addOns:["usureGenerale","attelageOutil","diametreMaxBotte","rotationEnrubanneuse","nombreRouleaux","nombreCourroies","commandesEnrubanneuse","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsEnrubanneuse","conformite"]
             },
             4:{
                 type:'trailed',
@@ -257,8 +255,8 @@ const Natures = [
         }
     },
     {
-        text: "Ensileuse",
-        value: "forageHarvester",
+        name: "Ensileuse",
+        key: "forageHarvester",
         formStepsTypes : {
             2: {
                 type: 'regular',
@@ -274,15 +272,15 @@ const Natures = [
         }
     },
     {
-        text: "Epandeur engrais",
-        value: "fertilizerSpreader",
+        name: "Epandeur engrais",
+        key: "fertilizerSpreader",
         formStepsTypes : {
             2: {
                 type: 'regular',
                 addOns: []
             },
             3:{
-                addOns:["usureGenerale","largeurTravailEngrais","capaciteEnLitres","attelageOutil","entrainementOutil","commandesHydrauliques","freinageOutil","usureAubes","usurePeinture","usureTremie","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsEpandeurEngrais","conformite"]
+                addOns:["usureGenerale","largeurTravailMetres","capaciteEnLitres","attelageOutil","entrainementOutil","commandesHydrauliques","freinageOutil","usureAubes","usurePeinture","usureTremie","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsEpandeurEngrais","conformite"]
             },
             4:{
                 type:'trailed',
@@ -291,15 +289,15 @@ const Natures = [
         }
     },
     {
-        text: "Epandeur fumier",
-        value: "manureSpreader",
+        name: "Epandeur fumier",
+        key: "manureSpreader",
         formStepsTypes : {
             2: {
                 type: 'regular',
                 addOns: []
             },
             3:{
-                addOns:["usureGenerale","capaciteEnM3","chargeUtile","largeurTravailNumerique","herissons","remorquePorte","usureHerissons","usureChainesBarettes","attelageRemorque","suspensionFleche","typeEssieuRemorque","sectionEssieu","commandesHydrauliques","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsEpandeurFumier","conformite"]
+                addOns:["usureGenerale","capaciteEnM3","chargeUtile","largeurTravailMetres","herissons","remorquePorte","usureHerissons","usureChainesBarettes","attelageRemorque","suspensionFleche","typeEssieuRemorque","sectionEssieu","commandesHydrauliques","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsEpandeurFumier","conformite"]
             },
             4:{
                 type:'trailed',
@@ -308,8 +306,8 @@ const Natures = [
         }
     },
     {
-        text: "Epareuse",
-        value: "hedgeCutters",
+        name: "Epareuse",
+        key: "reachMower",
         formStepsTypes : {
             2: {
                 type: 'regular',
@@ -325,15 +323,15 @@ const Natures = [
         }
     },
     {
-        text: "Faneuse",
-        value: "tedder",
+        name: "Faneuse",
+        key: "tedder",
         formStepsTypes : {
             2: {
                 type: 'regular',
                 addOns: []
             },
             3: {
-                addOns: ["usureGenerale","largeurTravailNumerique","attelageOutil","nombreRotors","nombreBrasRotors","nombreDentsARemplacer","commandesHydrauliques","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsFaneuse","conformite"]
+                addOns: ["usureGenerale","largeurTravailMetres","attelageOutil","nombreRotors","armRotorNumber","nombreDentsARemplacer","commandesHydrauliques","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsFaneuse","conformite"]
             },
             4:{
                 type:'trailed',
@@ -342,15 +340,15 @@ const Natures = [
         }
     },
     {
-        text: "Faucheuse",
-        value: "mower",
+        name: "Faucheuse",
+        key: "mower",
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: []
+                addOns: ["nbrHectares"]
             },
             3: {
-                addOns: ["usureGenerale","typeFaucheuse","largeurTravailNumerique","attelageOutil","repliageChassis","nombreAssiettesTambours","fixationCouteaux","vitessePDF","conditionneur","usureDisques","usureLamier","commandesHydrauliques","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsFaucheuse","conformite"]
+                addOns: ["usureGenerale","faucheuseType","largeurTravailMetres","attelageOutil","repliageChassis","nombreAssiettesTambours","fixationCouteaux","vitessePDF","conditionneur","usureDisques","usureLamier","commandesHydrauliques","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsFaucheuse","conformite"]
             },
             4:{
                 type:'trailed',
@@ -359,8 +357,8 @@ const Natures = [
         }
     },
     {
-        text: "Godet",
-        value: "dipper",
+        name: "Godet",
+        key: "dipper",
         formStepsTypes : {
             2: {
                 type: 'regular',
@@ -376,8 +374,8 @@ const Natures = [
         }
     },
     {
-        text: "Godet Desileur",
-        value: "feedingDipper",
+        name: "Godet Desileur",
+        key: "feedingDipper",
         formStepsTypes : {
             2: {
                 type: 'regular',
@@ -393,12 +391,12 @@ const Natures = [
         }
     },
     {
-        text: "Herse Rotative",
-        value: "rotativeHarrow",
+        name: "Herse Rotative",
+        key: "rotativeHarrow",
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: []
+                addOns: ["nbrHectares"]
             },
             3:{
                 addOns:["usureGenerale","largeurTravailMetres","attelageOutil","repliageChassis","nombreRotors","fixationDentsHerse","nombreDentsARemplacer","typeRouleau","commandesHydrauliques","optionsHerse","conformite"]
@@ -410,8 +408,8 @@ const Natures = [
         }
     },
     {
-        text: "Lame",
-        value: "blade",
+        name: "Lame",
+        key: "blade",
         formStepsTypes : {
             2: {
                 type: 'regular',
@@ -427,15 +425,15 @@ const Natures = [
         }
     },
     {
-        text: "Melangeuse",
-        value: "mixFeeder",
+        name: "Melangeuse",
+        key: "mixFeeder",
         formStepsTypes : {
             2: {
                 type: 'regular',
                 addOns: []
             },
             3:{
-                addOns:["usureGenerale","attelageOutil","capaciteEnM3","entrainementTurbine","usureTurbine","nombreDemeleurs","entrainementDemeleurs","usureDemeleurs","vitessePDF","usureTapis","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsMelangeuse","conformite"]
+                addOns:["usureGenerale","attelageOutil","capaciteEnM3","entrainementTurbine","usureTurbine","nombreDemeleurs","entrainementDemeleurs","usureDemeleurs","vitessePDF","usureTapis","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsDesileuse","conformite"]
             },
             4:{
                 type:'trailed',
@@ -444,8 +442,8 @@ const Natures = [
         }
     },
     {
-        text: "Moissonneuse",
-        value: "combineHarvester",
+        name: "Moissonneuse",
+        key: "combineHarvester",
         formStepsTypes : {
             2: {
                 type: 'regular',
@@ -461,12 +459,12 @@ const Natures = [
         }
     },
     {
-        text: "Outil de plombage",
-        value: "heavyRolls",
+        name: "Outil de plombage",
+        key: "heavyRolls",
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: []
+                addOns: ["nbrHectares"]
             },
             3:{
                 addOns:["usureGenerale","largeurTravailMetres","attelageOutil","repliageChassis","usureRouleaux","typeRouleau","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite"]
@@ -478,8 +476,8 @@ const Natures = [
         }
     },
     {
-        text: "Porteur Multifonction",
-        value: "porteur_multifonction",
+        name: "Porteur Multifonction",
+        key: "porteur_multifonction",
         formStepsTypes : {
             2: {
                 type: 'regular',
@@ -497,8 +495,8 @@ const Natures = [
         }
     },
     {
-        text: "Presse balles rondes",
-        value: "baler",       
+        name: "Presse balles rondes",
+        key: "baler",       
         formStepsTypes : {
             2: {
                 type: 'regular',
@@ -514,8 +512,8 @@ const Natures = [
         }
     },
     {
-        text: "Presse haute densite",
-        value: "largeSquarebaler",
+        name: "Presse haute densite",
+        key: "largeSquarebaler",
         formStepsTypes : {
             2: {
                 type: 'regular',
@@ -531,15 +529,15 @@ const Natures = [
         }
     },
     {
-        text: "Pulverisateur",
-        value: "pulverisateur",
+        name: "Pulverisateur",
+        key: "pulverisateur",
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: []
+                addOns: ["nbrHectares"]
             },
             3:{
-                addOns:["usureGenerale","largeurTravailMetres","materiauxRampe","capaciteEnLitres","attelageOutil","entrainementOutil","commandesHydrauliques","typePompe","debitPompe","regulation","repliageRampe","nombreTroncons","correcteurDeversPulverisateur","geometrieVariable","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsPulverisateur","conformite"]
+                addOns:["usureGenerale","largeurTravailMetres","materiauxRampe","capaciteEnLitres","attelageOutil","entrainementOutil","commandesHydrauliques","typePompe","debitPompe","regulation","repliageRampe","nombreTroncons","portesBuses","correcteurDeversPulverisateur","geometrieVariable","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsPulverisateur","conformite"]
             },
             4:{
                 type:'trailed',
@@ -548,12 +546,12 @@ const Natures = [
         }
     },
     {
-        text: "Semoir",
-        value: "drill",
+        name: "Semoir en ligne",
+        key: "inlineDrill",
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: []
+                addOns: ["nbrHectares"]
             },
             3:{
                 addOns:["usureGenerale","typeSemoir","largeurTravailMetres","attelageOutil","repliageChassis","nombreRangs","typeRouleau","capaciteEnLitres","typeDistribution","typeEnterrage","usureSocs","commandesHydrauliques","optionsSemoir","conformite"]
@@ -565,8 +563,25 @@ const Natures = [
         }
     },
     {
-        text: "Tasse Avant",
-        value: "frontRoll",
+        name: "Semoir monograine",
+        key: "precisionSeeder",
+        formStepsTypes : {
+            2: {
+                type: 'regular',
+                addOns: ["nbrHectares"]
+            },
+            3:{
+                addOns:["usureGenerale","typeSemoir","largeurTravailMetres","attelageOutil","repliageChassis","nombreRangs","typeRouleau","capaciteEnLitres","typeDistribution","typeRotorDoseur","typeDisqueDoseur","diametreDisquesSemeurs","typeEnterrage","usureSocs","commandesHydrauliques","optionsSemoir","conformite"]
+            },
+            4:{
+                type:'trailed',
+                addOns:["dents","rouleau","boitier","cuve","socs","rampe"]
+            }
+        }
+    },
+    {
+        name: "Tasse Avant",
+        key: "frontRoll",
         formStepsTypes : {
             2: {
                 type: 'regular',
@@ -582,8 +597,8 @@ const Natures = [
         }
     },
     {
-        text: "Telescopique",
-        value: "telehandler",
+        name: "Telescopique",
+        key: "telehandler",
         formStepsTypes : {
             2: {
                 type: 'regular',
@@ -599,8 +614,8 @@ const Natures = [
         }
     },
     {
-        text: "Tonne a lisier",
-        value: "manureTankSpreader",
+        name: "Tonne a lisier",
+        key: "manureTankSpreader",
         formStepsTypes : {
             2: {
                 type: 'regular',
@@ -616,8 +631,8 @@ const Natures = [
         }
     },
     {
-        text: "Tracteur",
-        value: "tractor",
+        name: "Tracteur",
+        key: "tractor",
         formStepsTypes : {
             2: {
                 type: 'regular',
@@ -628,7 +643,7 @@ const Natures = [
             },
             4:{
                 type:'regular',
-                addOns:["compteur","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","interieurCabine_1","interieurCabine_2","carteGrise"]
+                addOns:["compteur","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","interieurCabine_1","interieurCabine_2","carteGrise","attelage"]
             }
         }
     }

@@ -135,17 +135,17 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
     const classes = useStyles();
 
     ///////// CATALOGS \\\\\\\\\\
-
-    const [machineFeatureCatalog,setMachineFeatureCatalog] = React.useState(() => {
-      FormsCatalog.formSteps({step:3}).then((value) => {
-        setMachineFeatureCatalog(value);
-      })
-    });
     const [machineCatalog,setMachineCatalog] = React.useState(() => {
       FormsCatalog.formSteps({step:2}).then((value) => {
         setMachineCatalog(value);
       })
     });
+    const [machineFeatureCatalog,setMachineFeatureCatalog] = React.useState(() => {
+      FormsCatalog.formSteps({step:3}).then((value) => {
+        setMachineFeatureCatalog(value);
+      })
+    });
+    
     const [natureList,setNatureList] = React.useState(Natures.Natures);
 
     ///////// VARIABLES \\\\\\\\\\
@@ -196,11 +196,8 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
           value:expertise.machine.nature.name,
           visibleOnPdf:true
         });
-      /**ARRAY OF ALL THE ADDONS AVAILABLE AT STEP 3, ORDERED AS ON THE APPLICATION FORM */
-      const machineAddonsAvailable = natureList.filter(
-        (element) => element.value === expertise.machine.nature.key)
-        [0].formStepsTypes[2].addOns.map(
-          (element) => (machineCatalog.addOns[element]));
+
+      /**ARRAY OF ALL THE ADDONS AVAILABLE AT STEP 2, ORDERED AS ON THE APPLICATION FORM */
 
         machineCatalog.regular.map((element) => {
           for (let [key,value] of Object.entries(expertise.machine)){
@@ -212,9 +209,13 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
           }
         })
 
-          machineAddonsAvailable.map((element) => {
+        const machineAddonsAvailable = natureList.filter(
+          (element) => element.key === expertise.machine.nature.key) // UPDATE FCN change value with KEY
+          [0].formStepsTypes[2].addOns.map(
+            (element) => (machineCatalog.addOns[element]));
+
+        machineAddonsAvailable.forEach((element) => {
         for (let [key,value] of Object.entries(expertise.machine)){
-          console.log(key,value);
           if(key === element.property){
             element.value = value;
             element.visibleOnPdf = true;
@@ -226,16 +227,16 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
 
       /**ARRAY OF ALL THE ADDONS AVAILABLE AT STEP 3, ORDERED AS ON THE APPLICATION FORM */
       const machineFeatureAddonsAvailable = natureList.filter(
-        (element) => element.value === expertise.machine.nature.key)
+        (element) => element.key === expertise.machine.nature.key)
         [0].formStepsTypes[3].addOns.map(
           (element) => (machineFeatureCatalog.addOns[element]));
-      console.log('machineFeatureAddonsAvailable : ',machineFeatureAddonsAvailable);
 
       /**SETTING MACHINEFEATURE_HOOK WITH THE COMPLETE ADDONS : TITLE - PROPERTY - VALUE */
-      machineFeatureAddonsAvailable.map((element) => {
+      machineFeatureAddonsAvailable.forEach((element) => {
         if(expertise.machineFeatures){
           for (let [key,value] of Object.entries(expertise.machineFeatures)){
             if(element.property && key === element.property){
+              console.log(key,element);
               element.value = value;
               element.visibleOnPdf = true;
               machineToArray.push(element);

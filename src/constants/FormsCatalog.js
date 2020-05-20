@@ -1,4 +1,5 @@
 
+
 /* FORMS COMPONENTS*/
 
 const numberOneToTwenty = Array.from(new Array(20)).map((e, i) => String(i + 1));           // 1 to 20
@@ -230,59 +231,13 @@ const formsCatalog = {
         ]
     },
 
-    drill:{
-        brands:[
-            "ACCORD",
-            "AGRAM",
-            "AGUIRE",
-            "ALPEGO",
-            "AMAZONE",
-            "CLAYDON",
-            "GASPARDO",
-            "GREAT PLAINS",
-            "HERRIAU",
-            "HORSCH",
-            "HOWARD",
-            "JOHN DEERE",
-            "KONGSKILDE",
-            "KUHN",
-            "KVERNELAND",
-            "KOCKERLING",
-            "KUBOTA",
-            "LELY",
-            "LEMKEN",
-            "MASCHIO",
-            "MONOSEM",
-            "NODET",
-            "PERREIN",
-            "POTTINGER",
-            "RABE",
-            "ROGER",
-            "SKY",
-            "SLY",
-            "SULKY",
-            "VICON",
-            "VADERSTAD",
-            //DIVIDER
-            "ABA",
-            "AGRO-MASZ",
-            "AGRISEM",
-            "CARRE",
-            "HASSIA",
-            "KRONE",
-            "NORDSTEIN",
-            "RAU",
-            "TULIP",
-            "VOGEL & NOOT"
-        ]
-    },
-
     drillCombination:{
         brands:[
             "ACCORD",
             "AGRAM",
             "ALPEGO",
             "AMAZONE",
+            "CLAYDON",
             "GASPARDO",
             "KUHN",
             "KVERNELAND",
@@ -693,6 +648,53 @@ const formsCatalog = {
         ]
     },
 
+    inlineDrill:{
+        brands:[
+            "ACCORD",
+            "AGRAM",
+            "AGUIRE",
+            "ALPEGO",
+            "AMAZONE",
+            "CLAYDON",
+            "GASPARDO",
+            "GREAT PLAINS",
+            "HERRIAU",
+            "HORSCH",
+            "HOWARD",
+            "JOHN DEERE",
+            "KONGSKILDE",
+            "KUHN",
+            "KVERNELAND",
+            "KOCKERLING",
+            "KUBOTA",
+            "LELY",
+            "LEMKEN",
+            "MASCHIO",
+            "MONOSEM",
+            "NODET",
+            "PERREIN",
+            "POTTINGER",
+            "RABE",
+            "ROGER",
+            "SKY",
+            "SLY",
+            "SULKY",
+            "VICON",
+            "VADERSTAD",
+            //DIVIDER
+            "ABA",
+            "AGRO-MASZ",
+            "AGRISEM",
+            "CARRE",
+            "HASSIA",
+            "KRONE",
+            "NORDSTEIN",
+            "RAU",
+            "TULIP",
+            "VOGEL & NOOT"
+        ]
+    },
+
     largeSquarebaler:{
         brands:[
             "CASE",
@@ -957,6 +959,127 @@ const formsCatalog = {
                 "ZIEGLER"
             ],// end mower brands
 
+    },
+
+    precisionSeeder:{
+        brands:[
+            "ACCORD",
+            "AGRAM",
+            "AGUIRE",
+            "ALPEGO",
+            "AMAZONE",
+            "CLAYDON",
+            "GASPARDO",
+            "GREAT PLAINS",
+            "HERRIAU",
+            "HORSCH",
+            "HOWARD",
+            "JOHN DEERE",
+            "KONGSKILDE",
+            "KUHN",
+            "KVERNELAND",
+            "KOCKERLING",
+            "KUBOTA",
+            "LELY",
+            "LEMKEN",
+            "MASCHIO",
+            "MONOSEM",
+            "NODET",
+            "PERREIN",
+            "POTTINGER",
+            "RABE",
+            "ROGER",
+            "SKY",
+            "SLY",
+            "SULKY",
+            "VICON",
+            "VADERSTAD",
+            //DIVIDER
+            "ABA",
+            "AGRO-MASZ",
+            "AGRISEM",
+            "CARRE",
+            "HASSIA",
+            "KRONE",
+            "NORDSTEIN",
+            "RAU",
+            "TULIP",
+            "VOGEL & NOOT"
+        ]
+    },
+
+    reachMower:{
+        brands:[
+            "AGRAM",
+            "AGRIMAT",
+            "BERRY",
+            "BERTI",
+            "BOMFORD",
+            "DESVOYS",
+            "FERRI",
+            "GYRAX",
+            "KIROGN",
+            "KUHN",
+            "LAGARDE",
+            "MC CONNEL",
+            "NICOLAS",
+            "NOREMAT",
+            "ROUSSEAU",
+            "SMA",
+            "TAIL'NET",
+            //DIVIDER
+            "AGRICOM",
+            "AGRIMASTER",
+            "AGRISAV",
+            "ASSALONI",
+            "BECCHIO",
+            "BOXER",
+            "CMS",
+            "CMV",
+            "CANGINI",
+            "CARROY",
+            "CARROY",
+            "COSMA",
+            "CARROY",
+            "DUCKER",
+            "ENERGREEN",
+            "FALCO NERO",
+            "FEMAC",
+            "FERABOLI",
+            "FISCHER",
+            "FLIEGL",
+            "FRONTONI",
+            "GL1",
+            "GILBERS",
+            "GYRAX",
+            "HYDRAC",
+            "HYMACH",
+            "JP FRANCE",
+            "LONGATI",
+            "MAJOR",
+            "MAROLIN",
+            "MASCHIO",
+            "MORIS",
+            "MULAG",
+            "NIUBO",
+            "ORSI",
+            "OSMA",
+            "POLYVERT",
+            "QUITTE",
+            "PERUGINI",
+            "QUITTE",
+            "RABAUD",
+            "RINIERI",
+            "RYETEC",
+            "SAMASZ",
+            "SAUERBURGER",
+            "SLANETRAC",
+            "SPEARHEAD",
+            "SUIRE",
+            "TWOSE",
+            "TWYMAN",
+            "WERGNANI"
+        ]
     },
 
     plough:{
@@ -1651,7 +1774,7 @@ rotativeHarrow:{
      * /////////////////////////////////////[ STEP_1_COMPONENTS ]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
      */
 
-    ownerTitles:["CUMA", "EARL", "ETA", "EURL", "GAEC", "GIE", "MONSIEUR", "MADAME", "SARL", "SCEA", "SCEV", "SNC"],
+    ownerTitles:["CUMA", "EARL", "ETA", "EURL", "GAEC", "GIE", "MONSIEUR", "MADAME", "SARL", "SCEA", "SCEV", "SNC", "ETS"],
        
 
 
@@ -1835,7 +1958,8 @@ rotativeHarrow:{
     implementFoldable:[
         "FIXE",
         "REPLIAGE HORIZONTAL",
-        "REPLIAGE VERTICAL"
+        "REPLIAGE VERTICAL",
+        "TELESCOPIQUE"
     ],
 
     implementHandCommand:[
@@ -1846,7 +1970,9 @@ rotativeHarrow:{
     ],
 
     implementWrapperHandCommand:[
+        "BOITIER PROGRAMMABLE",
         "ELECTRIQUE",
+        "JOYSTICK",
         "MECANIQUE",
         "TELECOMMANDE"
     ],
@@ -1862,7 +1988,7 @@ rotativeHarrow:{
 
     implementLinkageType:[
         "PORTE",
-        "TRAINE (relevage)",
+        "SEMI-PORTE",
         "TRAINE (piton)",
     ],
 
@@ -2250,7 +2376,12 @@ rotativeHarrow:{
                 addOns: {
                     "nbrBottes": {
                         title: 'Nombre bottes',
-                        property: 'nbrBottes',
+                        property: 'baleCounter',
+                        numeric: true
+                    },
+                    "nbrHectares": {
+                        title: 'Nombre hectares',
+                        property: 'hectaresCounter',
                         numeric: true
                     },
                     "cptrBottes": {
@@ -2475,15 +2606,21 @@ rotativeHarrow:{
                         data: formsCatalog.silageTrailerUnload
                     },
 
+                    "diametreDisquesSemeurs":{
+                        title:'Diamètre disques semeurs (cm)',
+                        property:'seedingDiscDiameter',
+                        numeric: true,
+                    },
                     "diametreFusee":{
                         title:'Diamètre fusée',
                         property:'rotateAxleDiameter',
                         numeric: true,
                     },
 
-                    "diametreBotte":{
-                        title:'Diamètre de bottes (cm)',
+                    "diametreMaxBotte":{
+                        title:'Diamètre maxi bottes (cm)',
                         property:'baleDiameter',
+                        numeric: true,
                     },
 
                     "dimensionPneumatiques":{
@@ -2512,6 +2649,12 @@ rotativeHarrow:{
                         title:'Distrib. AR',
                         property:'rearValves',
                         data : formsCatalog.rearValves
+                    },
+
+                    "ecartementRangs":{
+                        title:'Ecartement rangs',
+                        property:'rowDistance',
+                        numeric:true
                     },
 
                     "eclateur":{
@@ -2619,7 +2762,7 @@ rotativeHarrow:{
                     "largeurCoupe":{
                         title:'Largeur coupe (m)',
                         property:'cutterbarWidth',
-                        data: formsCatalog.floatFromThreeToFifteen
+                        numeric: true,
                     },
 
                     "largeurGodet":{
@@ -2629,15 +2772,15 @@ rotativeHarrow:{
                     },
 
                     "largeurPickUp":{
-                        title:'Largeur (m)',
+                        title:'Largeur pick-up (cm)',
                         property:'pickUpWidth',
-                        data: formsCatalog.number150to250
+                        numeric: true,
                     },
 
                     "largeurTravailMetres":{
                         title:'Largeur travail (mètres)',
                         property:'implementWorkingWidth',
-                        data: formsCatalog.implementWorkingWidth
+                        numeric: true,
                     },
 
                     "largeurTravailNumerique":{
@@ -2649,7 +2792,7 @@ rotativeHarrow:{
                     "largeurTravailPouces":{
                         title:'Largeur travail (pouces)',
                         property:'implementWorkingWidth',
-                        data: formsCatalog.implementWorkingWidth
+                        numeric: true,
                     },
 
                     "liageBotte":{
@@ -2662,12 +2805,6 @@ rotativeHarrow:{
                         title:'Liage',
                         property:'squareBaleString',
                         data: ["DOUBLE NOEUD","SIMPLE NOEUD"]
-                    },
-
-                    "longueur":{
-                        title:"Longueur",
-                        property:"length",
-                        type:"numeric"
                     },
 
                     "longueurFleche":{
@@ -2705,6 +2842,12 @@ rotativeHarrow:{
                         title:'Marque pneus AR',
                         property:'rearTyreBrand',
                         data: formsCatalog.tyreBrands
+                    },
+
+                    "marqueTablierAttelageMoissonneuse":{
+                        title:'Marque compatible',
+                        property:'combineBrandLinkage',
+                        data: formsCatalog.combineHarvester.brands
                     },
 
                     "materiauxCaisse":{
@@ -2752,96 +2895,97 @@ rotativeHarrow:{
                     "nombreAssiettesTambours":{
                         title:'Nombre assiettes/tambours',
                         property:'platesDrumsNumber',
-                        data: formsCatalog.numberOneToTwenty
+                        numeric:true
                     },
 
                     "nombreBrasRotors":{
                         title:'Nombre de bras/rotors',
                         property:'armRotorNumber',
-                        data: formsCatalog.numberOneToTwenty
+                        numeric:true
                     },
 
                     "nombreCourroies":{
                         title:'Nombre de courroies',
                         property:'beltNumber',
-                        data: formsCatalog.numberOneToTwenty
+                        numeric:true
                     },
 
                     "nombreCouteaux":{
                         title:'Nombre de couteaux',
                         property:'knifeNumber',
-                        data: formsCatalog.numberOneToTwenty
+                        numeric:true
                     },
 
                     "nombreCouteauxBroyeur":{
                         title:'Nombre couteaux broyeur',
                         property:'rotorKnifeNumber',
-                        type:'numeric'
+                        numeric:true
                     },
 
                     "nombreCouteauxAremplacer":{
                         title:'Couteaux à remplacer',
                         property:'knifeToReplace',
-                        data: formsCatalog.numberOneToFifty
+                        numeric:true
                     },
 
                     "nombreDentsARemplacer":{
                         title:'Nombre de dents à remplacer',
                         property:'toothToReplace',
-                        data: formsCatalog.numberOneToTwenty
+                        numeric: true,
                     },
 
                     "nombreDemeleurs":{
                         title:'Nombre de démêleurs',
                         property:'unravelNumber',
-                        data: formsCatalog.numberOneToTwenty
+                        numeric:true
                     },
 
                     "nombrePoutres":{
                         title:'Nombre de poutres',
                         property:'beamNumber',
-                        data: formsCatalog.numberOneToTwenty
+                        numeric:true
                     },
 
                     "nombreRangs":{
                         title:'Nombre de rangs',
                         property:'rowNumber',
-                        data: formsCatalog.numberOneToFifty
+                        numeric:true
                     },
 
                     "nombreRotors":{
                         title:'Nombre de rotors',
                         property:'rotorNumber',
-                        data: formsCatalog.numberOneToTwenty
+                        numeric:true
                     },
 
                     "nombreRouleaux":{
                         title:'Nombre de rouleaux',
                         property:'rollNumber',
-                        data: formsCatalog.numberOneToTwenty
+                        numeric:true
                     },
 
                     "nombreSocs":{
                         title:'Nombre de socs',
                         property:'ploughShareNumber',
-                        data: formsCatalog.numberOneToTwenty
+                        numeric:true
                     },
 
                     "nombreSocsDisques":{
                         title:'Nombre de socs/disques',
                         property:'ploughShareDiscNumber',
-                        data: formsCatalog.numberOneToFifty
+                        numeric:true
                     },
 
                     "nombreTroncons":{
                         title:'Nombre de troncons',
                         property:'spayingSectionNumber',
-                        data: formsCatalog.numberOneToFifty
+                        numeric:true
                     },
 
                     "nombreVitesses":{
                         title:'Nombre de vitesses',
                         property:'gearRange',
+                        numeric:true
                         
                     },
 
@@ -2939,6 +3083,7 @@ rotativeHarrow:{
                             "BROYEUR A COUTEAUX",
                             "BROYEUR A ROULEAUX",
                             "REPLIAGE HYDRAULIQUE",
+                            "SUIVI SOL AUTOMATIQUE",
                             "VIS LATERALES"
                         ]  
                     },
@@ -2970,6 +3115,8 @@ rotativeHarrow:{
                         property : 'wrapperOptions',
                         toggle:[
                             "BRAS DE CHARGEMENT",
+                            "BRAS DE DEPOSE A PLAT",
+                            "COMPTEUR DE TOURS",
                             "EJECTEUR"
                         ]  
                     },
@@ -3231,6 +3378,12 @@ rotativeHarrow:{
                         data: ["AUTOMATIQUE","MANUEL"]
                     },
 
+                    "reglagePlaques":{
+                        title:'Réglages des plaques',
+                        property:'implementFoldable',
+                        data: formsCatalog.implementPowerTransmission
+                    },
+
                     "regulation":{
                         title:'Régulation',
                         property:'sprayingRegulation',
@@ -3264,7 +3417,7 @@ rotativeHarrow:{
                     "rotationEnrubanneuse":{
                         title:'Rotation',
                         property:'wrapperRotation',
-                        data: formsCatalog.wrapperRotation
+                        data: ["SATELITTES","TABLE TOURNANTE"]
                     },
 
                     "rouesDirectrices":{
@@ -3327,6 +3480,12 @@ rotativeHarrow:{
                         data : formsCatalog.handlingInterface
                     },
 
+                    "teteAttelage":{
+                        title:'Tête d\'attelage',
+                        property:'telehandlerInterface',
+                        data : ['CATERPILLAR','KRAMER','MANITOU','MERLO','Q-FIT','AUTRE']
+                    },
+
                     "transmissionAutomoteur":{
                         title:'Transmission',
                         property:'automotiveTransmission',
@@ -3373,6 +3532,12 @@ rotativeHarrow:{
                         title:'Type',
                         property:'harvestingPlatformType',
                         data : ["Maïs","Soja","Tournesol"]
+                    },
+
+                    "typeDisqueDoseur":{
+                        title:'Type disque doseur',
+                        property:'dosingDiscType',
+                        data: ["COLZA","MAIS","SORGHO","TOURNESOL"]
                     },
 
                     "typeDistribution":{
@@ -3433,6 +3598,12 @@ rotativeHarrow:{
                         title:'Réglage angle',
                         property:'tiltSettingType',
                         data: formsCatalog.implementPowerTransmission
+                    },
+
+                    "typeRotorDoseur":{
+                        title:'Type de rotor doseur',
+                        property:'dosingRotorType',
+                        data: ["CEREALES","ENGRAIS", "MAIS"]
                     },
 
                     "typeSemoir":{
@@ -3807,6 +3978,11 @@ rotativeHarrow:{
                 ],
 
                 addOns:{
+                    "attelage":{
+                        title:'Attelage',
+                        property:'linkage',
+                        picture: true
+                    },
                     "aubes":{
                         title:'Aubes',
                         property:'vanes',
@@ -4117,5 +4293,3 @@ rotativeHarrow:{
 }
 
 export default formsCatalog
-
-
