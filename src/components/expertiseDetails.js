@@ -154,6 +154,8 @@ export default function ExpertiseDetails(props) {
       inputQuotations                         // quotation object*
     ]);
 
+    console.log('quotations : ',quotations)
+
     const body = await Promise.resolve({
       expId : focusMachine.id,
       status: 'inspekt',

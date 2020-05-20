@@ -3,6 +3,7 @@ import Axios from 'axios';
 
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 import AppBar from '@material-ui/core/AppBar';
 import Badge from '@material-ui/core/Badge';
 import Button from '@material-ui/core/Button';
@@ -10,6 +11,9 @@ import CloseIcon from '@material-ui/icons/Close';
 import Container from '@material-ui/core/Container';
 import Dialog from '@material-ui/core/Dialog';
 import Divider from '@material-ui/core/Divider';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import InputBase from '@material-ui/core/InputBase';
@@ -41,23 +45,42 @@ import Color from '../constants/color.js';
 import logo from '../inspektLogo_white.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCogs,faSave,faUser } from '@fortawesome/free-solid-svg-icons';
-import Login from '../views/login.js';
+import SnackBar from '../components/snackBar';
+import { FormControl } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
     position: 'relative',
   },
+  button : {
+    backgroundColor : Color.inspektBlue,
+    color : 'white',
+    margin:'auto'
+  },
+  formList : {
+    marginTop:'25px',
+    display:'flex',
+    flexDirection:'column',
+    alignItems:'center'
+  },
   grow: {
     flexGrow: 1,
   },
+  inputRoot: {
+    color: 'inherit',
+  },
+  inputInput: {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+      width: '20ch',
+    },
+  },
   menuButton: {
     marginRight: theme.spacing(2),
-  },
-  title: {
-    display: 'none',
-    [theme.breakpoints.up('sm')]: {
-      display: 'block',
-    },
   },
   search: {
     position: 'relative',
@@ -83,19 +106,6 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  inputRoot: {
-    color: 'inherit',
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '20ch',
-    },
-  },
   sectionDesktop: {
     display: 'none',
     [theme.breakpoints.up('md')]: {
@@ -106,6 +116,20 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     [theme.breakpoints.up('md')]: {
       display: 'none',
+    },
+  },
+  sectionTitle : {
+    color:Color.lightgrey
+  },
+  textfield : {
+    fontSize:'0.8em',
+    marginBottom:'5px',
+    width:'100%'
+  },
+  title: {
+    display: 'none',
+    [theme.breakpoints.up('sm')]: {
+      display: 'block',
     },
   },
 }));
@@ -120,17 +144,71 @@ function PrimarySearchAppBar(props) {
   console.log('props : ',props)
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [createCompany,setCreateCompany] = React.useState({});
+  const [createUser,setCreateUser] = React.useState({});
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [isUserDetailOpen,setIsUserDetailOpen] = React.useState(false);
   const [tabValue, setTabValue] = React.useState(0);
-  const [userInformations,setUserInformations] = React.useState({});
+  const [modifiableUserInformations,setModifiableUserInformations] = React.useState({});
+  const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
+
+  const createNewCompany = async() => {
+
+    const token = logInfo.token;
+    const axiosParams = await Promise.resolve({
+      method: "post",
+      url: `https://inspekt.herokuapp.com/api?request=CREATE_COMPANY&token=${token}`,
+      // FormData object containing all images in 'filedata'
+      data:createCompany,
+      config: {Accept: 'application/json','Content-Type': 'application/json',}
+    })
+
+    const {data, status} = await Axios(axiosParams);
+    console.log(status,data);
+    if(status === 200){
+      //setStateFromChild({logInfo : {...logInfo,user : data}})
+      setSnackbar({message : 'Concession créée avec succès.',type:'snackbarSuccess',isOpen:true});
+    }
+  }
+
+  const createNewUser = async() => {
+
+    const token = logInfo.token;
+    try{
+    const axiosParams = await Promise.resolve({
+      method: "post",
+      url: `https://inspekt.herokuapp.com/api?request=CREATE_ACCOUNT&token=${token}`,
+      // FormData object containing all images in 'filedata'
+      data:createUser,
+      config: {Accept: 'application/json','Content-Type': 'application/json',}
+    })
+
+    const {data, status} = await Axios(axiosParams);
+    
+    console.log(status,data);
+    if(status === 200){
+      //setStateFromChild({logInfo : {...logInfo,user : data}})
+      setSnackbar({message : 'Utilisateur créé avec succès.',type:'snackbarSuccess',isOpen:true});
+    }
+    }catch(error){
+      console.log('erreur Axios : ',error.response)
+    }
+  }
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
 
   const handleChangeUserInformation = (event,key) => {
-    setUserInformations({...userInformations,[key]:event.target.value})
+    setModifiableUserInformations({...modifiableUserInformations,[key]:event.target.value})
+  }
+
+  const handleChangeCreateCompany = (event,key) => {
+    event.target.value && setCreateCompany({...createCompany,[key]:event.target.value})
+  }
+
+  const handleChangeCreateUser = (event,key) => {
+    event.target.value && setCreateUser({...createUser,[key]:event.target.value})
   }
 
   const isMenuOpen = Boolean(anchorEl);
@@ -155,17 +233,26 @@ function PrimarySearchAppBar(props) {
 
   const updateUser = async() => {
 
+    let updatedData = {};
+    for (let[key,value] of Object.entries(modifiableUserInformations)){
+      updatedData = {...updatedData,[key] : value}
+    }
+
     const token = logInfo.token;
     const axiosParams = await Promise.resolve({
       method: "post",
       url: `https://inspekt.herokuapp.com/api?request=MERGE_USER&token=${token}`,
       // FormData object containing all images in 'filedata'
-      data:{configuration:{name : 'Mikal Le Gallic'}},
+      data:updatedData,
       config: {Accept: 'application/json','Content-Type': 'application/json',}
     })
 
     const {data, status} = await Axios(axiosParams);
-    console.log(data,status)
+    if(status === 200){
+      setStateFromChild({logInfo : {...logInfo,user : data}})
+      setSnackbar({message : 'Ton profil a été mis à jour.',type:'snackbarSuccess',isOpen:true});
+    }
+    
 
     //UPDATE INSPEKT THANKS TO SET_EXP (SIMILAR TO QOT ADD) -> ADD FEATURES INTO THE KEY (QUOTATION, PARTICULARITIES ARE KEYS)
   }
@@ -218,7 +305,7 @@ function PrimarySearchAppBar(props) {
   );
 
   useEffect(() => {
-    console.log('userInformations : ',userInformations);
+    console.log('createUser : ',createUser);
   })
 
   return (
@@ -298,7 +385,7 @@ function PrimarySearchAppBar(props) {
             </Typography>
           </Toolbar>
         </AppBar>
-        <Container style={{paddingTop:'25px'}}>
+        <Container style={{paddingTop:'25px',paddingBottom:'25px'}}>
           <Paper square>
             <Tabs
               value={tabValue}
@@ -312,18 +399,19 @@ function PrimarySearchAppBar(props) {
               <Tab label="Concession" />
               <Tab label="Réglages" />
               <Tab label="Statistiques" />
+              {logInfo.user.licence === 'admin' && <Tab label="Supervision" />}
             </Tabs>
           </Paper>
           {
             tabValue === 0 &&
             <div>
-              <Typography variant="h6" style={{marginTop:'25px'}}>
+              <Typography className={classes.sectionTitle} variant="h6" style={{marginTop:'25px'}}>
                 <FontAwesomeIcon icon={faUser} style={{color:Color.inspektBlue,marginRight:'15px'}}/>
-                Modifiez votre profil et consultez vos informations
+                Ici tu peux modifier tes informations.
               </Typography>
               <Grid container>
-                <Grid item xs={6} lg={6} style={{marginTop:'25px'}}>
-                  <List>
+                <Grid item xs={6} lg={6} className={classes.formList}>
+                  <List style={{width:'100%'}}>
                     {
                       [{key:'name',title:'Nom'},
                       {key:'phoneNumber',title:'Numéro de téléphone'},
@@ -345,7 +433,7 @@ function PrimarySearchAppBar(props) {
                       ))
                     }
                   </List>
-                  <Button style={{width:'100%'}} color="primary" onClick={() => updateUser()}>
+                  <Button className={classes.button} onClick={() => updateUser()}>
                     <FontAwesomeIcon icon={faSave}/>
                   </Button>
                 </Grid>
@@ -403,10 +491,83 @@ function PrimarySearchAppBar(props) {
                 </Grid>
               </Grid>
             </div>
-            
             }
+            {
+            tabValue === 4 &&
+            <div>
+              <Grid container>
+                <Grid item xs={6} lg={6} style={{marginTop:'25px'}}>
+                  <ExpansionPanel>
+                    <ExpansionPanelSummary style={{display:'flex',alignItems:'center'}}>
+                      <AddCircleIcon color="primary"/>
+                      <Typography className={classes.sectionTitle} variant='h6' style={{marginLeft:'5px'}}>Nouvelle concession</Typography>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails>
+                      <FormControl style={{width:'100%'}} className={classes.formList}>
+                        {
+                          [
+                            {title:'Raison sociale',key:'name'},
+                            {title:'Adresse',key:'address'},
+                            {title:'Code postal',key:'postCode'},
+                            {title:'Ville',key:'city'},
+                            {title:'Siren',key:'legalNumber'},
+                            {title:'Nombre d\'utilisateurs',key:'usersAvailable'},
+                          ].map((element) => (
+                            <TextField
+                              className={classes.textfield}
+                              variant='outlined'
+                              label={element.title}
+                              onChange={(event) => handleChangeCreateCompany(event,element.key)}/>
+                          ))
+                        }
+                        <Button className={classes.button} onClick={() => createNewCompany()}>
+                          <FontAwesomeIcon icon={faSave}/>
+                        </Button>
+                      </FormControl>
+                    </ExpansionPanelDetails>
+                  </ExpansionPanel>
+                  <ExpansionPanel>
+                    <ExpansionPanelSummary>
+                      <AddCircleIcon color="primary"/>
+                      <Typography variant='h6' className={classes.sectionTitle} style={{marginLeft:'5px'}}>Nouvel utilisateur</Typography>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails>
+                      <FormControl style={{width:'100%'}} className={classes.formList}>
+                        {
+                          [
+                            {title:'Identifiant concession',key:'cieId'},
+                            {title:'Nom d\'utilisateur',key:'name'},
+                            {title:'Email',key:'email'},
+                            {title:'Licence',key:'licence'},
+                            {title:'avatar',key:'avatar'},
+                            {title:'Téléphone portable',key:'phoneNumber'},
+                          ].map((element) => (
+                            <TextField
+                              className={classes.textfield}
+                              variant='outlined'
+                              label={element.title}
+                              onChange={(event) => handleChangeCreateUser(event,element.key)}/>
+                          ))
+                        }
+                        <Button className={classes.button} onClick={() => createNewUser()}>
+                          <FontAwesomeIcon icon={faSave}/>
+                        </Button>
+                      </FormControl>
+                    </ExpansionPanelDetails>
+                  </ExpansionPanel>
+                  
+                </Grid>
+              </Grid>
+            </div>
+          }
         </Container>
       </Dialog>
+      <SnackBar
+        handleClose={() => setSnackbar({isopen : false})}
+        message={snackbar.message}
+        type={snackbar.type}
+        isOpen={snackbar.isOpen}
+      />
     </div>
   );
 }

@@ -16,7 +16,7 @@ export default function MaterialUIPickers({setAvalaibleDate}) {
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
-    setAvalaibleDate(Moment(date).format('x'));
+    setAvalaibleDate(Moment(date).valueOf());
 
     console.log('date : ',Moment(date).format('x'));
   };

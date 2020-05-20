@@ -229,19 +229,19 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
         (element) => element.value === expertise.machine.nature.key)
         [0].formStepsTypes[3].addOns.map(
           (element) => (machineFeatureCatalog.addOns[element]));
-        
+      console.log('machineFeatureAddonsAvailable : ',machineFeatureAddonsAvailable);
+
       /**SETTING MACHINEFEATURE_HOOK WITH THE COMPLETE ADDONS : TITLE - PROPERTY - VALUE */
       machineFeatureAddonsAvailable.map((element) => {
         if(expertise.machineFeatures){
           for (let [key,value] of Object.entries(expertise.machineFeatures)){
-            if(key === element.property){
+            if(element.property && key === element.property){
               element.value = value;
               element.visibleOnPdf = true;
               machineToArray.push(element);
             }
           }
         }
-        
       })
 
       ////////// QUOTATIONS ARRAY BUILD \\\\\\\\\\
@@ -275,7 +275,8 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
     }
 
     useEffect(() => {
-      console.log('focusMachine : ',focusMachine);
+      
+      console.log('natureList : ',natureList);
     })
 
 
@@ -292,8 +293,8 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
                           :null
                       }
                       <GridListTileBar
-                      title={expertise.machine.brand + ' ' + expertise.machine.model}
-                      subtitle={expertise.customer ? <span>Client: {expertise.customer.title && expertise.customer.title + ' ' +expertise.customer.name}</span> : null}
+                      title={['brand','model'].map((element) => (element && expertise.machine[element])).join(' ')}
+                      subtitle={JSON.stringify(expertise.customer) != '{}' && expertise.customer && <span>Client: {['title','name','city'].map((element) => (element && expertise.customer[element])).join(' ')}</span>}
                       actionIcon={
                         <div>
                           <IconButton className={classes.icon} onClick={() => setIsOpenShareMarketersValidation(true)}>

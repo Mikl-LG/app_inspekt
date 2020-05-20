@@ -215,7 +215,7 @@ export default function NewExpertise({setStateFromChild,logInfo}){
 
     setPictureList(pictureToSet);
 
-    setMachine({nature:{name:natureInput.text,key:natureInput.value}});
+    setMachine({nature:{name:natureInput.text,key:natureInput.value}}); //remplacer text et value par name et key
 
     setNature(natureInput);
     
@@ -233,7 +233,7 @@ export default function NewExpertise({setStateFromChild,logInfo}){
 
     if(activeStep === steps.length -1){
 
-      setLoader({isOpen:true,title:'Sauvegarde en cours...',content:'Bien joué : on vérifie que tout va bien et on sauvegarde votre expertise.'})
+      setLoader({isOpen:true,title:'Sauvegarde en cours...',content:'Bien joué : on vérifie que tout va bien et on sauvegarde ton expertise.'})
 
       const token = logInfo.token;
       let pictures = {};
@@ -281,15 +281,15 @@ export default function NewExpertise({setStateFromChild,logInfo}){
           )
         }
       }
-      
 
       const body = await Promise.resolve({
         customer:customer, 
+        machine: machine, 
         machineFeatures: machineFeatures, 
         pictures:pictures, 
         particularities: particularities, 
         status: 'inspekt',
-        machine: machine, 
+        
     })
 
     ////////// ADD INSPEKT TO S3 \\\\\\\\\\
@@ -322,7 +322,7 @@ export default function NewExpertise({setStateFromChild,logInfo}){
 
     }else if(activeStep === 2 && !nature){
       
-      setSnackbar({message : 'Vous êtes très rapide! Mais vous devez sélectionner une nature pour continuer.',type:'snackbarWarning',isOpen:true});
+      setSnackbar({message : 'Tu es très rapide! Mais tu dois sélectionner une nature pour continuer.',type:'snackbarWarning',isOpen:true});
 
     }else{
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -348,7 +348,7 @@ export default function NewExpertise({setStateFromChild,logInfo}){
 
   /**USEEFFECT ONLY USED ON CONSOLE */
   useEffect(() => {
-    console.log('particularities : ',particularities);
+    console.log('machine : ',machine);
   })
 
     const classes = useStyles();
