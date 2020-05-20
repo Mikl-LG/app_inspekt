@@ -233,7 +233,12 @@ export default function ExpertiseDetails(props) {
             </IconButton>
             <Typography variant="h6" className={classes.title}>
               {
-                focusMachine && focusMachine.machine && focusMachine.machine.nature.name + ' ' + focusMachine.machine.brand + ' ' + focusMachine.machine.model}
+                focusMachine 
+                && focusMachine.machine 
+                && focusMachine.machine.nature.name + ' ' +['brand','model'].map(
+                  (e) => (focusMachine.machine[e] && focusMachine.machine[e])
+                ).join(' ')
+              }
             </Typography>
             {
               focusMachine.status === 'inspekt'

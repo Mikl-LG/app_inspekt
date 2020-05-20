@@ -25,6 +25,7 @@ const Natures = [
         formStepsTypes : {
             2: {
                 type: 'regular',
+                addOns:[]
             },
             3: {
                 addOns: ["usureGenerale","largeurTravailMetres","attelageOutil","nombreRotors","nombreBrasRotors","nombreDentsARemplacer","miseEnAndain","suiviSol","essieuPrincipal","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsAndaineur","conformite"]
@@ -92,6 +93,7 @@ const Natures = [
         formStepsTypes : {
             2: {
                 type: 'regular',
+                addOns: []
             },
             3:{
                 addOns: ["usureGenerale","chargeUtile","materiauxCaisse","usureChassis","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsBetaillere","conformite"]
