@@ -113,7 +113,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function ExpertiseDetails(props) {
   const classes = useStyles();
-  const {open,setOpen,focusMachine,setFocusMachine,logInfo,setStateFromChild} = props;
+  const {open,setOpen,focusMachine,setFocusMachine,logInfo,setStateFromChild,getQots,getInspekts} = props;
   const [drawer,setDrawer] = React.useState({isOpen:false});
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [inputQuotations, setInputQuotations] = React.useState({});
@@ -141,7 +141,7 @@ export default function ExpertiseDetails(props) {
 
     const body = await Promise.resolve({
       expId : focusMachine.id,
-      cieId : logInfo.user.cieId,
+      cieId : focusMachine.cieId && focusMachine.cieId,
       quotation: quotation
     })
 
@@ -199,8 +199,12 @@ export default function ExpertiseDetails(props) {
 
   const inspektDelete = async(expertise) => {
     console.log('cieId : ',logInfo.company.id)
-    const body = await Promise.resolve({ expId : expertise.id, cieId : logInfo.company.id })
-    const url = `https://inspekt.herokuapp.com/api?request=REMOVE_INSPEKT&token=${logInfo.token}`
+    const body = await Promise.resolve(
+      { expId : expertise.id, 
+        //cieId : logInfo.company.id,
+        //status : 'inspekt'
+      })
+    const url = `https://inspekt.herokuapp.com/api?request=REMOVE_EXPERTISE&token=${logInfo.token}`
     let fetchOptions = await Promise.resolve(
         {
             method: 'POST',
@@ -231,7 +235,11 @@ export default function ExpertiseDetails(props) {
     inputQuotations.timestamp = Date.now();
 
     const quotations = await Promise.resolve([
-      ...(focusMachine.quotations || []),     // array
+      ...(focusMachine.quotations.map((element) => ({
+            estimatedBuyingPrice : element.estimatedBuyingPrice,
+            userId : element.userId,
+            timestamp : element.timestamp
+          })) || []),     // array
       inputQuotations                         // quotation object*
     ]);
 
@@ -267,7 +275,7 @@ export default function ExpertiseDetails(props) {
         closeQuotation(inputQuotations)
       }else{
         setSnackbar({message : 'Votre cotation est enregistrée.',type:'snackbarSuccess',isOpen:true});
-        setStateFromChild({inspektList:response});
+        getInspekts()
         setDrawer({isOpen:false});
         setOpen(false);
       } 
@@ -281,7 +289,7 @@ export default function ExpertiseDetails(props) {
   }
 
   useEffect(()=>{
-    console.log('qoterMode : ',qoterMode);
+    
   })
 
   return (

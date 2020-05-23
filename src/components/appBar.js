@@ -144,12 +144,16 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 function PrimarySearchAppBar(props) {
 
-  const {cieMembers,logInfo,setStateFromChild,search,setSearch} = props;
+  const {cieMembers,logInfo,setStateFromChild,search,setSearch,stateMenuItems} = props;
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [createCompany,setCreateCompany] = React.useState({});
   const [createUser,setCreateUser] = React.useState({});
   const [expanded,setExpanded] = React.useState();
+  const [hiddenInput,setHiddenInput] = React.useState(
+    logInfo.user.config && logInfo.user.config.hiddenInput || []);
+  const [hiddenStateItems,setHiddenStateItems] = React.useState(
+    logInfo.user.config && logInfo.user.config.hiddenStateItems || []);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [isUserDetailOpen,setIsUserDetailOpen] = React.useState(false);
   const [tabValue, setTabValue] = React.useState(0);
@@ -157,7 +161,6 @@ function PrimarySearchAppBar(props) {
      logInfo.user.config || false
   );
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
-  const [hiddenInput,setHiddenInput] = React.useState(logInfo.user.config && logInfo.user.config.hiddenInput || []);
 
   const createNewCompany = async() => {
 
@@ -171,7 +174,7 @@ function PrimarySearchAppBar(props) {
     })
 
     const {data, status} = await Axios(axiosParams);
-    console.log(status,data);
+
     if(status === 200){
       //setStateFromChild({logInfo : {...logInfo,user : data}})
       setSnackbar({message : 'Concession créée avec succès.',type:'snackbarSuccess',isOpen:true});
@@ -192,7 +195,7 @@ function PrimarySearchAppBar(props) {
 
     const {data, status} = await Axios(axiosParams);
     
-    console.log(status,data);
+
     if(status === 200){
       //setStateFromChild({logInfo : {...logInfo,user : data}})
       setSnackbar({message : 'Utilisateur créé avec succès.',type:'snackbarSuccess',isOpen:true});
@@ -230,6 +233,29 @@ function PrimarySearchAppBar(props) {
 
     setHiddenInput(newSelected);
     setModifiableUserInformations({...modifiableUserInformations,hiddenInput : newSelected})
+
+  }
+
+  const handleChangeHiddenStateItems = (key) => {
+
+    const selectedIndex = hiddenStateItems.indexOf(key);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(hiddenStateItems, key);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(hiddenStateItems.slice(1));
+    } else if (selectedIndex === hiddenStateItems.length - 1) {
+      newSelected = newSelected.concat(hiddenStateItems.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        hiddenStateItems.slice(0, selectedIndex),
+        hiddenStateItems.slice(selectedIndex + 1),
+      );
+    }
+
+    setHiddenStateItems(newSelected);
+    setModifiableUserInformations({...modifiableUserInformations,hiddenStateItems : newSelected})
 
   }
 
@@ -333,7 +359,7 @@ function PrimarySearchAppBar(props) {
   );
 
   useEffect(() => {
-    console.log('modifiableUserInformations : ',modifiableUserInformations);
+    
   })
 
   return (
@@ -606,6 +632,33 @@ function PrimarySearchAppBar(props) {
                                   color="primary"
                                 />}
                               label={element.title}
+                            />
+                          ))
+                        }
+                      </FormControl>
+                    </ExpansionPanelDetails>
+                  </ExpansionPanel>
+                  <ExpansionPanel 
+                    square
+                    style={{width:'100%'}}
+                    expanded={expanded === 'hiddenStateItems'}
+                    onChange={(event) => expanded === 'hiddenStateItems' ? setExpanded(''):setExpanded('hiddenStateItems')}>
+                    <ExpansionPanelSummary style={{display:'flex',alignItems:'center'}}>
+                      <Typography className={classes.sectionTitle} variant='subtitle1'>Masquer des statuts d'affaire</Typography>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails className={classes.centeredList}>
+                      <FormControl style={{width:'100%',alignSelf:'center'}}>
+                        {
+                          stateMenuItems.map((element) => (
+                            <FormControlLabel
+                              control={
+                                <Switch
+                                  checked={hiddenStateItems.indexOf(element) > -1 ? true : false}
+                                  onChange={() => handleChangeHiddenStateItems(element)}
+                                  name={element}
+                                  color="primary"
+                                />}
+                              label={element}
                             />
                           ))
                         }

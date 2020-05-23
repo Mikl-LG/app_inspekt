@@ -24,12 +24,13 @@ import SearchIcon from '@material-ui/icons/Search';
 import Switch from '@material-ui/core/Switch';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye,faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import { faClock,faEye,faFrown,faMoneyCheck,faSpinner,faTrashAlt,faTrophy } from '@fortawesome/free-solid-svg-icons';
 
 import Color from '../constants/color.js';
 import ExpertiseDetails from '../components/expertiseDetails';
 import FormsCatalog from '../constants/FormsCatalog';
 import Natures from '../constants/Natures';
+import SnackBar from '../components/snackBar';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -43,7 +44,7 @@ const MenuProps = {
 };
 
 function LoadSelectHeadTable(props){
-  const {logInfo,qotList,sort,setSort} = props;
+  const {logInfo,qotList,sort,setSort,tempSort,setTempSort,stateMenuItemsFiltered} = props;
 
   const headCells = [
     { id: 'id', select: true, width:'1vi', label: 'id', selectOptions : [ ...new Set(qotList.map((element) => (element.id))) ].sort() },
@@ -59,31 +60,33 @@ function LoadSelectHeadTable(props){
     { id: 'details', select: true, width:'30vi', label: 'Détails',selectOptions : [] },
     { id: 'year', select: true, label: 'Année',selectOptions : [ ...new Set(qotList.map((element) => (
       element.machine.year))) ].sort() },
-    { id: 'estimatedBuyingPrice', width:'7vi', select: true, label: 'Cotation',selectOptions : [ ...new Set(qotList.map((element) => (element.quotation.estimatedBuyingPrice))) ].sort() },
+    { id: 'estimatedBuyingPrice', width:'7vi', select: true, label: 'Cotation',selectOptions : [ ...new Set(qotList.map((element) => (element.quotation ? element.quotation.estimatedBuyingPrice : undefined))) ].sort() },
+    { id: 'qotState', width:'10vi', select: true, label: 'Affaire',selectOptions : [ ...new Set(qotList.map((element) => (element.state && element.state))) ].sort() },
     { id: 'machineDetails', width:'2vi', select: false, label: '',selectOptions : [] },
   ];
-
-  console.log('sort : ',sort);
-
-  /*const list = {
-    salesman : [ ...new Set(qotList.map((element) => (
-    logInfo.cieMembers[element.openedBy].name
-    ))) ].sort(),
-    nature: [ ...new Set(qotList.map((element) => (
-    element.machine.nature.name
-    ))) ].sort(),
-    brand: [ ...new Set(qotList.map((element) => (
-    element.machine.brand
-    ))) ].sort(),
-    model:[ ...new Set(qotList.map((element) => (
-    element.machine.model && element.machine.model
-    ))) ].sort()
-  }*/
 
   let autoList = {}
   headCells.forEach((headCell) => {
     autoList = {...autoList,[headCell.id] : headCell.selectOptions}
   })
+
+  const handleSelectTempSort = (key,value) =>{
+    let newSelected = tempSort[key];
+    console.log('newSelected : ',key);
+    const selectedIndex = newSelected.indexOf(value);
+
+    if(selectedIndex == -1){
+      newSelected = [...newSelected,...value];
+    }else{
+      newSelected.splice(selectedIndex,1)
+    }
+    setTempSort({...tempSort,[key]:newSelected})
+  }
+
+  const resetSort = (key) => {
+    setSort({...sort,[key]:[]})
+    setTempSort({...sort,[key]:[]})
+  }
 
   return(
     <TableHead>
@@ -115,13 +118,14 @@ function LoadSelectHeadTable(props){
                 style={{minWidth: headCell.minWidth,maxWidth: headCell.maxWidth,fontSize:'1em',textAlign:'center'}}
                 multiple
                 value={sort[headCell.id]}
-                onChange={(event) => setSort({...sort,[headCell.id]:event.target.value})}
+                onChange={(event) => handleSelectTempSort(headCell.id,event.target.value)}
+                onClose={() => setSort(tempSort)}
                 MenuProps={MenuProps}
                 IconComponent={() => (
                   sort[headCell.id].length > 0
                   ? <CancelIcon 
                       style={{fontSize:'1em',cursor:'pointer',color:Color.warning}}
-                      onClick={() => setSort({...sort,[headCell.id]:[]})} />
+                      onClick={() => resetSort([headCell.id])} />
                   : null
                 )}
               >
@@ -192,7 +196,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromChild,searchText}) {
+export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromChild,getQots,searchText,stateMenuItemsFiltered}) {
   const classes = useStyles();
 
   ///////// CATALOGS \\\\\\\\\\
@@ -210,7 +214,9 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
   const [natureList,setNatureList] = React.useState(Natures.Natures);
   const [isExpertiseDetailsOpen,setIsExpertiseDetailsOpen] = React.useState(false);
   const [focusMachine,setFocusMachine] = React.useState({});
-  const [sort,setSort] = React.useState({id:[],date:[],salesman:[],nature:[],brand:[],model:[],details:[],year:[],estimatedBuyingPrice:[]});
+  const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
+  const [sort,setSort] = React.useState({id:[],date:[],salesman:[],nature:[],brand:[],model:[],details:[],year:[],qotState:[],estimatedBuyingPrice:[]});
+  const [tempSort,setTempSort] = React.useState({id:[],date:[],salesman:[],nature:[],brand:[],model:[],details:[],year:[],qotState:[],estimatedBuyingPrice:[]});
 
   const machineFeatureToString = (machineFeatures) => {
 
@@ -246,7 +252,8 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
         && new RegExp(sort.brand.join('|')).test(element.machine.brand) === true
         && new RegExp(sort.model.join('|')).test(element.machine.model) === true
         && new RegExp(sort.year.join('|')).test(element.machine.year) === true
-        && new RegExp(sort.estimatedBuyingPrice.join('|')).test(element.quotation.estimatedBuyingPrice) === true
+        //&& new RegExp(sort.estimatedBuyingPrice.join('|')).test(element.quotation.estimatedBuyingPrice) === true
+        && new RegExp(sort.qotState.join('|')).test(element.state) === true
         )
         qotListFiltered = [...qotListFiltered,element];
     });
@@ -261,57 +268,72 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
         model : element.machine.model,
         details : machineFeatureToString(element.machineFeatures),
         year : element.machine.year,
-        estimatedBuyingPrice : element.quotation.estimatedBuyingPrice,
+        estimatedBuyingPrice : element.quotation ? element.quotation.estimatedBuyingPrice : 'undefined',
+        state : element.state ? element.state : 'En-cours',
         expertiseObject : element
       }]
     });
 
-  const machineClicked = (expertise) => {
+    const machineClicked = (expertise) => {
 
-    ////////// MACHINE ARRAY BUILD \\\\\\\\\\
-    let machineToArray = [];
+      ////////// MACHINE ARRAY BUILD \\\\\\\\\\
+        
+      let machineToArray = [];
 
-    let customer = {
-      title:'Client',
-      property:'customer',
-      value:['title','name','city'].map((element) => (
-      expertise.customer && expertise.customer[element] && ' ' + expertise.customer[element]
-      )).join(' '),
-      visibleOnPdf:true}
-    
-      machineToArray.push(
+      let customer = {
+        title:'Client',
+        property:'customer',
+        value:['title','name','city'].map((element) => (
+        expertise.customer && expertise.customer[element] && ' ' + expertise.customer[element]
+        )).join(' '),
+        visibleOnPdf:true}
+      
+        machineToArray.push(
+          {
+            title:'Id',
+            property:'id',
+            value:expertise.id,
+            visibleOnPdf:true
+          },
+          customer,{
+            title:'Commercial',
+            property:'salesman',
+            value:logInfo.cieMembers[expertise.openedBy].name,
+            visibleOnPdf:true
+          },
+          {
+            title:'Date de création',
+            property:'date',
+            value:Moment(expertise.openedOn).format('DD MMMM YYYY'),
+            visibleOnPdf:true
+          },
+        'divider',
         {
-          title:'Id',
-          property:'id',
-          value:expertise.id,
+          title:'Nature',
+          property:'nature',
+          value:expertise.machine.nature.name,
           visibleOnPdf:true
-        },
-        customer,{
-          title:'Commercial',
-          property:'salesman',
-          value:logInfo.cieMembers[expertise.openedBy].name,
-          visibleOnPdf:true
-        },
-        {
-          title:'Date de création',
-          property:'date',
-          value:Moment(expertise.openedOn).format('DD MMMM YYYY'),
-          visibleOnPdf:true
-        },
-      'divider',
-      {
-        title:'Nature',
-        property:'nature',
-        value:expertise.machine.nature.name,
-        visibleOnPdf:true
-      });
-    /**ARRAY OF ALL THE ADDONS AVAILABLE AT STEP 3, ORDERED AS ON THE APPLICATION FORM */
-    const machineAddonsAvailable = natureList.filter(
-      (element) => element.value === expertise.machine.nature.key)
-      [0].formStepsTypes[2].addOns.map(
-        (element) => (machineCatalog.addOns[element]));
+        });
 
-      machineCatalog.regular.map((element) => {
+      /**ARRAY OF ALL THE ADDONS AVAILABLE AT STEP 2, ORDERED AS ON THE APPLICATION FORM */
+
+        machineCatalog.regular.map((element) => {
+          for (let [key,value] of Object.entries(expertise.machine)){
+            if(key === element.property){
+              element.value = value;
+              element.visibleOnPdf = true;
+              machineToArray.push(element);
+            }
+          }
+        })
+
+        const machineAddonsAvailable = natureList.filter(
+          (element) => element.key === expertise.machine.nature.key) // UPDATE FCN change value with KEY
+          [0].formStepsTypes[2].addOns.map(
+            (element) => (machineCatalog.addOns[element])
+        );
+
+        machineAddonsAvailable.forEach((element) => {
         for (let [key,value] of Object.entries(expertise.machine)){
           if(key === element.property){
             element.value = value;
@@ -320,70 +342,102 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
           }
         }
       })
+      machineToArray.push('divider');
 
-        machineAddonsAvailable.map((element) => {
-      for (let [key,value] of Object.entries(expertise.machine)){
-        console.log(key,value);
-        if(key === element.property){
-          element.value = value;
-          element.visibleOnPdf = true;
-          machineToArray.push(element);
-        }
-      }
-    })
-    machineToArray.push('divider');
+      /**ARRAY OF ALL THE ADDONS AVAILABLE AT STEP 3, ORDERED AS ON THE APPLICATION FORM */
+      const machineFeatureAddonsAvailable = natureList.filter(
+        (element) => element.key === expertise.machine.nature.key)
+        [0].formStepsTypes[3].addOns.map(
+          (element) => (machineFeatureCatalog.addOns[element]));
 
-    /**ARRAY OF ALL THE ADDONS AVAILABLE AT STEP 3, ORDERED AS ON THE APPLICATION FORM */
-    const machineFeatureAddonsAvailable = natureList.filter(
-      (element) => element.value === expertise.machine.nature.key)
-      [0].formStepsTypes[3].addOns.map(
-        (element) => (machineFeatureCatalog.addOns[element]));
-      
-    /**SETTING MACHINEFEATURE_HOOK WITH THE COMPLETE ADDONS : TITLE - PROPERTY - VALUE */
-    machineFeatureAddonsAvailable.map((element) => {
-      if(expertise.machineFeatures){
-        for (let [key,value] of Object.entries(expertise.machineFeatures)){
-          if(key === element.property){
-            element.value = value;
-            element.visibleOnPdf = true;
-            machineToArray.push(element);
+      /**SETTING MACHINEFEATURE_HOOK WITH THE COMPLETE ADDONS : TITLE - PROPERTY - VALUE */
+      machineFeatureAddonsAvailable.forEach((element) => {
+        if(expertise.machineFeatures){
+          for (let [key,value] of Object.entries(expertise.machineFeatures)){
+            if(element.property && key === element.property){
+
+              element.value = value;
+              element.visibleOnPdf = true;
+              machineToArray.push(element);
+            }
           }
         }
+      })
+
+      ////////// QUOTATIONS ARRAY BUILD \\\\\\\\\\
+
+      const setUserToQuotations = (quotationList) => {
+        let quotationsToArray = [];
+        if(quotationList){
+          quotationList.map((element) => {
+            element.userDetail = cieMembers[element.userId];
+            quotationsToArray.push(element);
+          });
+        }
+      
+        expertise.quotations = quotationsToArray; // replace the quotation array with a user included array
       }
       
-    })
-
-    ////////// QUOTATIONS ARRAY BUILD \\\\\\\\\\
-    const setUserToQuotations = (quotationList) => {
-      let quotationsToArray = [];
-      if(quotationList){
-        quotationList.map((element) => {
-          element.userDetail = cieMembers[element.userId];
-          quotationsToArray.push(element);
-        });
+      setUserToQuotations(expertise.quotations) //ADD USER DETAIL TO THE QUOTATIONS ARRAY
+      
+      ////////// MACHINE PICTURES ARRAY BUILD \\\\\\\\\\
+      let pictureArrayList = [];
+      if(expertise.pictures){
+        for (let [key,value] of Object.entries(expertise.pictures)){
+          pictureArrayList.push(value);
+        }
       }
-
-      expertise.quotations = quotationsToArray; // replace the quotation array with a user included array
+      
+      expertise.imageList = pictureArrayList;
+      expertise.orderedDetailsToPrint = machineToArray;
+      setFocusMachine(expertise);
+      setIsExpertiseDetailsOpen(true)
     }
 
-    setUserToQuotations(expertise.quotations) //ADD USER DETAIL TO THE QUOTATIONS ARRAY
-    
-    ////////// MACHINE PICTURES ARRAY BUILD \\\\\\\\\\
-    let pictureArrayList = [];
-    if(expertise.pictures){
-      for (let [key,value] of Object.entries(expertise.pictures)){
-        pictureArrayList.push(value);
+    const updateQotState = async(qot,state) => {
+
+      if(logInfo.user.licence === 'admin' || logInfo.user.licence === 'qoter'){
+        const body = await Promise.resolve({
+          expId : qot.id,
+          status: 'qot',
+          merge: {            // {object} list des quotations à jour
+            state
+          },
+          /**cieId is required if the qot is not from the user company but from a linkage */
+          cieId:qot.cieId && qot.cieId
+        })
+      
+        //**ADD COTATION REQUEST**\\
+        const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
+        let fetchOptions = await Promise.resolve(
+            {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body)
+            }
+        )
+        let fetching = await fetch(url, fetchOptions)
+        let error = await Promise.resolve(!fetching.ok)
+        let response = !error && await Promise.resolve(fetching.json());
+
+        if(error == false){
+            setSnackbar({message : 'Mise à jour réussie',type:'snackbarSuccess',isOpen:true});
+            getQots()
+        }else{
+          setSnackbar({message : 'Echec de la mise à jour',type:'snackbarWarning',isOpen:true});
+        }
+      }else{
+        setSnackbar({message : 'Oups! Seul ton boss peut modifier un statut',type:'snackbarWarning',isOpen:true});
       }
     }
-    
-    expertise.imageList = pictureArrayList;
-    expertise.orderedDetailsToPrint = machineToArray;
-    setFocusMachine(expertise);
-    setIsExpertiseDetailsOpen(true)
-  }
 
   useEffect(()=>{
       console.log('sort : ',sort);
+      console.log('tempSort : ',tempSort)
   })
 
   return (
@@ -400,10 +454,13 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
               qotList={qotListFiltered}
               sort={sort}
               setSort={setSort}
+              tempSort={tempSort}
+              setTempSort={setTempSort}
+              stateMenuItemsFiltered={stateMenuItemsFiltered}
             />
             <TableBody>
               {rows
-              && rows.map((row, index) => {
+              && rows.sort((a,b)=>(b.id - a.id)).map((row, index) => {
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
@@ -424,12 +481,57 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
                       <TableCell className={classes.TableCell} align="center" padding="none">{row.model}</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none">{row.details}</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none">{row.year}</TableCell>
-                      <TableCell className={classes.TableCell} align="center" padding="none">{row.estimatedBuyingPrice}</TableCell>
+                      <TableCell className={classes.TableCell} align="right" padding="none">{row.estimatedBuyingPrice}</TableCell>
+                      <TableCell className={classes.TableCell} align="left" padding="none">
+                      {
+                        <Select
+                        id={row.state}
+                        value={row.state}
+                        style={{fontSize:'0.9em'}}
+                        IconComponent={() => (
+                          row.state == 'Perdue'
+                          ? <FontAwesomeIcon 
+                              style={{fontSize:'1em',cursor:'pointer',color:Color.warning}}
+                              icon={faFrown}/>
+                          : row.state == 'Gagnée'
+                            ? <FontAwesomeIcon 
+                                style={{fontSize:'1em',cursor:'pointer',color:Color.success}}
+                                icon={faTrophy}/>
+                            : row.state == 'Annulée'
+                              ? <FontAwesomeIcon 
+                                  style={{fontSize:'1em',cursor:'pointer',color:Color.lightgrey}}
+                                  icon={faTrashAlt}/>
+                              : row.state == 'Reportée'
+                                ? <FontAwesomeIcon 
+                                style={{fontSize:'1em',cursor:'pointer',color:Color.secondary}}
+                                icon={faClock}/>
+                                :row.state == 'Dépôt-vente'
+                                ? <FontAwesomeIcon 
+                                style={{fontSize:'1em',cursor:'pointer',color:Color.lightgrey}}
+                                icon={faMoneyCheck}/>
+                                : <FontAwesomeIcon 
+                                  style={{fontSize:'1em',cursor:'pointer',color:Color.inspektBlue}}
+                                  icon={faSpinner}/>
+                        )}
+                        onChange={(event) => updateQotState(row.expertiseObject,event.target.value)}
+                        MenuProps={MenuProps}
+                      >
+                        {
+                        stateMenuItemsFiltered.map((e) => (
+                          <MenuItem value={e} style={{fontSize:'0.8em'}}>
+                            {e}
+                          </MenuItem>
+                        ))
+                        }
+                      </Select>
+                    }
+                      </TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none">
                       <FontAwesomeIcon
                         icon={faEye}
                         style={{fontSize:'1em',color:Color.inspektBlue}}
-                        onClick={() => machineClicked(row.expertiseObject)}/>
+                        onClick={() => machineClicked(row.expertiseObject)}
+                      />
                       </TableCell>
                     </TableRow>
                   );
@@ -439,13 +541,20 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
         </TableContainer>
       </Paper>
       <ExpertiseDetails
-        open={isExpertiseDetailsOpen}
-        setOpen={(isOpen) => setIsExpertiseDetailsOpen(isOpen)}
-        focusMachine={focusMachine}
-        setFocusMachine={(newFocusMachine) => setFocusMachine(newFocusMachine)}
-        logInfo={logInfo}
-        setStateFromChild={setStateFromChild}
-      />
+          open={isExpertiseDetailsOpen}
+          setOpen={(isOpen) => setIsExpertiseDetailsOpen(isOpen)}
+          focusMachine={focusMachine}
+          setFocusMachine={(newFocusMachine) => setFocusMachine(newFocusMachine)}
+          logInfo={logInfo}
+          setStateFromChild={setStateFromChild}
+          getQots={getQots}
+        />
+        <SnackBar
+          handleClose={() => setSnackbar({isopen : false})}
+          message={snackbar.message}
+          type={snackbar.type}
+          isOpen={snackbar.isOpen}
+        />
     </div>
   );
 }

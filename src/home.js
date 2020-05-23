@@ -24,7 +24,6 @@ class Home extends Component{
         this.state={
             navigation:1,
             searchText:''
-            //logInfo:'mikl' //RAT DELETE
         };
     }
 
@@ -76,7 +75,7 @@ class Home extends Component{
         this.setState({navigation : targetNav});
     };
 
-    setStateFromChild= (param) => {
+    setStateFromChild = (param) => {
         this.setState(param);
     }
 
@@ -96,6 +95,13 @@ class Home extends Component{
         const qotList = this.state.qotList && this.state.qotList;
         const cieMembers = this.state.logInfo && this.state.logInfo.cieMembers;
         const logInfo = this.state.logInfo;
+        const stateMenuItems = ['Annulée','Dépôt-vente','En-cours','Gagnée','Perdue','Reportée'];
+        const stateMenuItemsFiltered = ['Annulée','Dépôt-vente','En-cours','Gagnée','Perdue','Reportée'].map((element) => (
+            this.state.logInfo 
+            && this.state.logInfo.user.config 
+            && this.state.logInfo.user.config.hiddenStateItems
+            && this.state.logInfo.user.config.hiddenStateItems.indexOf(element) == -1 ? element : null
+          ));
 
         return(
             <ThemeProvider theme={this.theme}>
@@ -109,6 +115,7 @@ class Home extends Component{
                             setStateFromChild = {this.setStateFromChild}
                             search = {this.state.searchText}
                             setSearch = {(searchText) => this.setState({searchText:searchText})}
+                            stateMenuItems={stateMenuItems}
                         />
                         <Container>
                             <Header navigation = {navigation}/>
@@ -126,6 +133,7 @@ class Home extends Component{
                                             cieMembers = {cieMembers} 
                                             logInfo={logInfo}
                                             setStateFromChild={this.setStateFromChild}
+                                            getInspekts={this.getInspekts}
                                         />
                                         :navigation === 2
                                         ?   <QotList
@@ -133,7 +141,9 @@ class Home extends Component{
                                                 cieMembers = {cieMembers} 
                                                 logInfo={logInfo}
                                                 setStateFromChild={this.setStateFromChild}
+                                                getQots={this.getQots}
                                                 searchText={this.state.searchText}
+                                                stateMenuItemsFiltered={stateMenuItemsFiltered}
                                             />
                                         :null
                                 )

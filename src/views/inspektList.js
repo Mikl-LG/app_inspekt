@@ -131,7 +131,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStateFromChild}) {
+export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStateFromChild,getInspekts}) {
     const classes = useStyles();
 
     ///////// CATALOGS \\\\\\\\\\
@@ -340,6 +340,7 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
           setFocusMachine={(newFocusMachine) => setFocusMachine(newFocusMachine)}
           logInfo={logInfo}
           setStateFromChild={setStateFromChild}
+          getInspekts={getInspekts}
         />
       </div>
   );
