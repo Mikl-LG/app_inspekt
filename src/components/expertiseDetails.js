@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 
 import AppBar from '@material-ui/core/AppBar';
 import Badge from '@material-ui/core/Badge';
+import { borders } from '@material-ui/system';
 import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close';
 import clsx from 'clsx';
@@ -13,6 +14,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
@@ -23,6 +25,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 import SaveIcon from '@material-ui/icons/Save';
+import Switch from '@material-ui/core/Switch';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -111,10 +114,10 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function ExpertiseDetails(props) {
   const classes = useStyles();
   const {open,setOpen,focusMachine,setFocusMachine,logInfo,setStateFromChild} = props;
-  
   const [drawer,setDrawer] = React.useState({isOpen:false});
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [inputQuotations, setInputQuotations] = React.useState({});
+  const [qoterMode,setQoterMode] = React.useState()
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
   const [isOpenDeleteValidation,setIsOpenDeleteValidation] = React.useState(false);
 
@@ -134,37 +137,18 @@ export default function ExpertiseDetails(props) {
     
   }
 
-  const editPdf = (type) => {
-    //type = ficheExpertise || bonReprise || contreExpertise
-    setAnchorEl(null);
-    getPdf(focusMachine.orderedDetailsToPrint,type)
-  }
-
-  const handleChangeQuotations = (event,key) => {
-    setInputQuotations({...inputQuotations,[key]:event.target.value});
-  };
-
-  const saveNewQuotation = async() => {
-
-    inputQuotations.userId = logInfo.user.id;
-    inputQuotations.timestamp = Date.now();
-
-    const quotations = await Promise.resolve([
-      ...(focusMachine.quotations || []),     // array
-      inputQuotations                         // quotation object*
-    ]);
-
-    console.log('quotations : ',quotations)
+  const closeQuotation = async(quotation) => {
 
     const body = await Promise.resolve({
       expId : focusMachine.id,
-      status: 'inspekt',
-      merge: {            // {object} list des quotations à jour
-        quotations
-      }
+      cieId : logInfo.user.cieId,
+      quotation: quotation
     })
 
-    const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
+    console.log('quotationFromCloseQuotation : ',quotation)
+
+    //**ADD COTATION REQUEST**\\
+    const url = `https://inspekt.herokuapp.com/api?request=CLOSE_QUOTATIONS&token=${logInfo.token}`
     let fetchOptions = await Promise.resolve(
         {
             method: 'POST',
@@ -179,18 +163,43 @@ export default function ExpertiseDetails(props) {
     let fetching = await fetch(url, fetchOptions)
     let error = await Promise.resolve(!fetching.ok)
     let response = !error && await Promise.resolve(fetching.json());
+    const {inspekts,qots} = response;
 
     if(error == false){
-      setSnackbar({message : 'Votre cotation est enregistrée.',type:'snackbarSuccess',isOpen:true});
-      setStateFromChild({inspektList:response});
+      setSnackbar({message : 'Cette machine est désormais évaluée, beau boulot.',type:'snackbarSuccess',isOpen:true});
+      setStateFromChild({inspektList:inspekts,qotList:qots});
       setDrawer({isOpen:false});
       setOpen(false);
-      setInputQuotations({});
+    }
+  }
+
+  const editPdf = (type) => {
+    //type = ficheExpertise || bonReprise || contreExpertise
+    setAnchorEl(null);
+    getPdf(focusMachine.orderedDetailsToPrint,type)
+  }
+
+  /**
+   *  === HANDLE CHANGE GROUP ===
+   */
+  const handleChangeQuotations = (event,key) => {
+    setInputQuotations({...inputQuotations,[key]:event.target.value});
+  };
+
+
+  const handleQoterModeChange = () => {
+    if(qoterMode == true){
+      setQoterMode(false)
+    }else{
+      setQoterMode(true);
+      setSnackbar({
+        message : 'Dans ce mode, ta cotation clôturera définitivement l\’évaluation de cette machine.',type:'snackbarWarning',isOpen:true});
     }
   }
 
   const inspektDelete = async(expertise) => {
-    const body = await Promise.resolve({ expId : expertise.id })
+    console.log('cieId : ',logInfo.company.id)
+    const body = await Promise.resolve({ expId : expertise.id, cieId : logInfo.company.id })
     const url = `https://inspekt.herokuapp.com/api?request=REMOVE_INSPEKT&token=${logInfo.token}`
     let fetchOptions = await Promise.resolve(
         {
@@ -215,6 +224,65 @@ export default function ExpertiseDetails(props) {
     }
     
   }
+
+  const saveNewQuotation = async() => {
+
+    inputQuotations.userId = logInfo.user.id;
+    inputQuotations.timestamp = Date.now();
+
+    const quotations = await Promise.resolve([
+      ...(focusMachine.quotations || []),     // array
+      inputQuotations                         // quotation object*
+    ]);
+
+    const body = await Promise.resolve({
+      expId : focusMachine.id,
+      status: 'inspekt',
+      merge: {            // {object} list des quotations à jour
+        quotations
+      },
+      /**cieId is required if the inspekt is not from the user company but from a linkage */
+      cieId:focusMachine.cieId && focusMachine.cieId
+    })
+
+    //**ADD COTATION REQUEST**\\
+    const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
+    let fetchOptions = await Promise.resolve(
+        {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body)
+        }
+    )
+    let fetching = await fetch(url, fetchOptions)
+    let error = await Promise.resolve(!fetching.ok)
+    let response = !error && await Promise.resolve(fetching.json());
+
+    if(error == false){
+      if(qoterMode === true){
+        closeQuotation(inputQuotations)
+      }else{
+        setSnackbar({message : 'Votre cotation est enregistrée.',type:'snackbarSuccess',isOpen:true});
+        setStateFromChild({inspektList:response});
+        setDrawer({isOpen:false});
+        setOpen(false);
+      } 
+    }
+  }
+
+  const startCotation = () => {
+    setQoterMode(logInfo.user.config.isDefaultQoter === true ? true : false);
+    setDrawer({isOpen:true});
+
+  }
+
+  useEffect(()=>{
+    console.log('qoterMode : ',qoterMode);
+  })
 
   return (
     <div>
@@ -250,7 +318,7 @@ export default function ExpertiseDetails(props) {
             </Tooltip>
             }
             <Tooltip title="Ajouter une cotation">
-              <Button autoFocus color="inherit" onClick={() => setDrawer({isOpen:true})}>
+              <Button autoFocus color="inherit" onClick={() => startCotation()}>
                 <Badge badgeContent={focusMachine.quotations && focusMachine.quotations.length} color="secondary">
                   <FontAwesomeIcon icon={faCalculator} style={{fontSize:'1.5em'}}/>
                 </Badge>
@@ -292,6 +360,13 @@ export default function ExpertiseDetails(props) {
           </Grid>
           <Grid item xs={12} sm={6} lg={6}>
             <div className={classes.detailMachineContainer}>
+              <Typography
+                variant="subtitle2"
+                style={{width:'100%',textAlign:'center'}}>
+                  Informations machine
+              </Typography>
+              <Divider/>
+
               {
                 focusMachine.orderedDetailsToPrint && focusMachine.orderedDetailsToPrint.map((element,index) => (
                   element == 'divider' 
@@ -320,7 +395,6 @@ export default function ExpertiseDetails(props) {
                     </ListItemText> 
                 ))
               }
-              <Divider/>
             </div>
           </Grid>
         </Grid>
@@ -349,8 +423,13 @@ export default function ExpertiseDetails(props) {
       </Dialog>
       <Drawer anchor='right' open={drawer.isOpen} onClose={() => setDrawer({isOpen:false})}>
         <div
-          className={clsx(classes.list, {[classes.fullList]: false,})}
+          className={clsx(classes.list, {[classes.fullList]: false})}
           role="presentation"
+          style={
+            qoterMode === true
+            ? {border : '5px solid', borderColor:Color.inspektBlue}
+            :{border : 'none'}
+          }
         >
           {
             focusMachine.status === 'inspekt'
@@ -359,8 +438,12 @@ export default function ExpertiseDetails(props) {
                 {title : 'Prix de vente',key:'customerEstimatedSalePrice'},
                 {title : 'Prix marchand',key:'marketerEstimatedSalePrice'},
                 {title : 'Préparation estimée',key:'estimatedRepairCost'},
+                {title : 'Préparation estimée (marchand)',key:'estimatedMarketerRepairCost'},
+                {title : 'Cote SIMO',key:'simoQuotation'},
                 {title : 'Prix d\'achat',key:'estimatedBuyingPrice'},
               ].map((value, index) => (
+                (logInfo.user.config.hiddenInput || []).indexOf(value.key) == -1
+                &&
                 <ListItem key={value.key}>
                   <TextField
                     label={value.title}
@@ -381,12 +464,21 @@ export default function ExpertiseDetails(props) {
                 />
               </ListItem>
               <div
-                style={{width:'100%',display:'flex',justifyContent:'center',marginTop:'20px',marginBottom:'20px'}}>
+                style={{width:'100%',display:'flex',flexDirection:'column',alignItems:'center',marginTop:'20px',marginBottom:'20px'}}>
+                {
+                  logInfo.user.licence != 'inspekter'
+                  && <Switch 
+                      checked={qoterMode}
+                      disabled={inputQuotations.estimatedBuyingPrice ? false : true}
+                      defaultChecked={false}
+                      color="primary"
+                      onChange={handleQoterModeChange}
+                    />
+                }
                 <Button
                   disabled={inputQuotations.estimatedBuyingPrice ? false : true}
                   variant="contained"
                   color="primary"
-                  className={classes.button}
                   startIcon={<SaveIcon />}
                   style={{width:'auto'}}
                   onClick={() => (saveNewQuotation())}
@@ -420,6 +512,8 @@ export default function ExpertiseDetails(props) {
                       {title : 'Prix de vente',key:'customerEstimatedSalePrice'},
                       {title : 'Prix marchand',key:'marketerEstimatedSalePrice'},
                       {title : 'Préparation estimée',key:'estimatedRepairCost'},
+                      {title : 'Préparation estimée (marchand)',key:'estimatedMarketerRepairCost'},
+                      {title : 'Cote SIMO',key:'simoQuotation'},
                       {title : 'Prix d\'achat',key:'estimatedBuyingPrice'},
                     ].map((value) => (
                       <div 

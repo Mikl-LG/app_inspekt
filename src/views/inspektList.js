@@ -212,7 +212,8 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
         const machineAddonsAvailable = natureList.filter(
           (element) => element.key === expertise.machine.nature.key) // UPDATE FCN change value with KEY
           [0].formStepsTypes[2].addOns.map(
-            (element) => (machineCatalog.addOns[element]));
+            (element) => (machineCatalog.addOns[element])
+        );
 
         machineAddonsAvailable.forEach((element) => {
         for (let [key,value] of Object.entries(expertise.machine)){
@@ -236,7 +237,7 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
         if(expertise.machineFeatures){
           for (let [key,value] of Object.entries(expertise.machineFeatures)){
             if(element.property && key === element.property){
-              console.log(key,element);
+
               element.value = value;
               element.visibleOnPdf = true;
               machineToArray.push(element);
@@ -277,7 +278,7 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
 
     useEffect(() => {
       
-      console.log('natureList : ',natureList);
+      //console.log('natureList : ',natureList);
     })
 
 

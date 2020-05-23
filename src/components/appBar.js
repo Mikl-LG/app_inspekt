@@ -14,6 +14,7 @@ import Divider from '@material-ui/core/Divider';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import InputBase from '@material-ui/core/InputBase';
@@ -29,6 +30,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import Paper from '@material-ui/core/Paper';
 import SearchIcon from '@material-ui/icons/Search';
 import Slide from '@material-ui/core/Slide';
+import Switch from '@material-ui/core/Switch';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Table from '@material-ui/core/Table';
@@ -44,7 +46,7 @@ import Typography from '@material-ui/core/Typography';
 import Color from '../constants/color.js';
 import logo from '../inspektLogo_white.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCogs,faSave,faUser } from '@fortawesome/free-solid-svg-icons';
+import { faCogs,faSave,faUser,faUsers } from '@fortawesome/free-solid-svg-icons';
 import SnackBar from '../components/snackBar';
 import { FormControl } from '@material-ui/core';
 
@@ -53,15 +55,17 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
   },
   button : {
-    backgroundColor : Color.inspektBlue,
-    color : 'white',
-    margin:'auto'
+    margin:'auto',
+    marginTop : '15px'
   },
-  formList : {
-    marginTop:'25px',
+  container:{
+    marginTop:'15px',
+  },
+  centeredList : {
     display:'flex',
     flexDirection:'column',
-    alignItems:'center'
+    alignItems:'center',
+    width:'100vi'
   },
   grow: {
     flexGrow: 1,
@@ -141,16 +145,19 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 function PrimarySearchAppBar(props) {
 
   const {cieMembers,logInfo,setStateFromChild,search,setSearch} = props;
-  console.log('props : ',props)
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [createCompany,setCreateCompany] = React.useState({});
   const [createUser,setCreateUser] = React.useState({});
+  const [expanded,setExpanded] = React.useState();
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [isUserDetailOpen,setIsUserDetailOpen] = React.useState(false);
   const [tabValue, setTabValue] = React.useState(0);
-  const [modifiableUserInformations,setModifiableUserInformations] = React.useState({});
+  const [modifiableUserInformations,setModifiableUserInformations] = React.useState(
+     logInfo.user.config || false
+  );
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
+  const [hiddenInput,setHiddenInput] = React.useState(logInfo.user.config && logInfo.user.config.hiddenInput || []);
 
   const createNewCompany = async() => {
 
@@ -195,20 +202,35 @@ function PrimarySearchAppBar(props) {
     }
   }
 
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
-
-  const handleChangeUserInformation = (event,key) => {
-    setModifiableUserInformations({...modifiableUserInformations,[key]:event.target.value})
-  }
-
   const handleChangeCreateCompany = (event,key) => {
     event.target.value && setCreateCompany({...createCompany,[key]:event.target.value})
   }
 
   const handleChangeCreateUser = (event,key) => {
     event.target.value && setCreateUser({...createUser,[key]:event.target.value})
+  }
+
+  const handleChangeHiddenInput = (key) => {
+
+    const selectedIndex = hiddenInput.indexOf(key);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(hiddenInput, key);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(hiddenInput.slice(1));
+    } else if (selectedIndex === hiddenInput.length - 1) {
+      newSelected = newSelected.concat(hiddenInput.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        hiddenInput.slice(0, selectedIndex),
+        hiddenInput.slice(selectedIndex + 1),
+      );
+    }
+
+    setHiddenInput(newSelected);
+    setModifiableUserInformations({...modifiableUserInformations,hiddenInput : newSelected})
+
   }
 
   const isMenuOpen = Boolean(anchorEl);
@@ -231,9 +253,17 @@ function PrimarySearchAppBar(props) {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const handleChangeUserInformation = (event,key) => {
+    setModifiableUserInformations({...modifiableUserInformations,[key]:event.target.value})
+  }
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
   const updateUser = async() => {
 
-    let updatedData = {};
+    let updatedData = {...logInfo.user.config};
     for (let[key,value] of Object.entries(modifiableUserInformations)){
       updatedData = {...updatedData,[key] : value}
     }
@@ -243,18 +273,16 @@ function PrimarySearchAppBar(props) {
       method: "post",
       url: `https://inspekt.herokuapp.com/api?request=MERGE_USER&token=${token}`,
       // FormData object containing all images in 'filedata'
-      data:updatedData,
+      data:{config:updatedData},
       config: {Accept: 'application/json','Content-Type': 'application/json',}
     })
 
     const {data, status} = await Axios(axiosParams);
     if(status === 200){
       setStateFromChild({logInfo : {...logInfo,user : data}})
-      setSnackbar({message : 'Ton profil a été mis à jour.',type:'snackbarSuccess',isOpen:true});
+      setSnackbar({message : 'Mise à jour réussie',type:'snackbarSuccess',isOpen:true});
     }
     
-
-    //UPDATE INSPEKT THANKS TO SET_EXP (SIMILAR TO QOT ADD) -> ADD FEATURES INTO THE KEY (QUOTATION, PARTICULARITIES ARE KEYS)
   }
 
   const menuId = 'primary-search-account-menu';
@@ -305,21 +333,14 @@ function PrimarySearchAppBar(props) {
   );
 
   useEffect(() => {
-    console.log('createUser : ',createUser);
+    console.log('modifiableUserInformations : ',modifiableUserInformations);
   })
 
   return (
     <div className={classes.grow}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="open drawer"
-          >
-            <MenuIcon />
-          </IconButton>
+          
           <img src={logo} height='30vh' alt='logo inspekt'/>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
@@ -397,7 +418,7 @@ function PrimarySearchAppBar(props) {
             >
               <Tab label="Profil" />
               <Tab label="Concession" />
-              <Tab label="Réglages" />
+              <Tab label="Paramètres" />
               <Tab label="Statistiques" />
               {logInfo.user.licence === 'admin' && <Tab label="Supervision" />}
             </Tabs>
@@ -405,12 +426,17 @@ function PrimarySearchAppBar(props) {
           {
             tabValue === 0 &&
             <div>
-              <Typography className={classes.sectionTitle} variant="h6" style={{marginTop:'25px'}}>
-                <FontAwesomeIcon icon={faUser} style={{color:Color.inspektBlue,marginRight:'15px'}}/>
-                Ici tu peux modifier tes informations.
+              <Typography
+                className={classes.sectionTitle}
+                variant="h6"
+                style={{color:Color.secondary,marginTop:'25px'}}
+              >
+                <FontAwesomeIcon icon={faUser} style={{color:Color.secondary,marginRight:'15px'}}/>
+                Ton profil
               </Typography>
-              <Grid container>
-                <Grid item xs={6} lg={6} className={classes.formList}>
+              <Divider/>
+              <Grid className={classes.container}>
+                <Grid item xs={6} lg={6} className={classes.centeredList}>
                   <List style={{width:'100%'}}>
                     {
                       [{key:'name',title:'Nom'},
@@ -433,8 +459,14 @@ function PrimarySearchAppBar(props) {
                       ))
                     }
                   </List>
-                  <Button className={classes.button} onClick={() => updateUser()}>
-                    <FontAwesomeIcon icon={faSave}/>
+                  <Button 
+                    disabled={JSON.stringify(logInfo.user.config) == JSON.stringify(modifiableUserInformations)}
+                    className={classes.button} 
+                    variant="contained"
+                    color="primary" 
+                    onClick={() => updateUser()}
+                    startIcon={<FontAwesomeIcon icon={faSave}/>}>
+                    SAUVEGARDER
                   </Button>
                 </Grid>
               </Grid>
@@ -444,8 +476,17 @@ function PrimarySearchAppBar(props) {
           {
             tabValue === 1 &&
             <div>
-              <Grid container xs={12} lg={12} style={{padding:'15px'}}>
-                <Grid item xs={6} lg={6} style={{marginTop:'25px',width:'100%'}}>
+              <Typography
+                className={classes.sectionTitle}
+                variant="h6"
+                style={{color:Color.secondary,marginTop:'25px'}}
+              >
+                <FontAwesomeIcon icon={faUsers} style={{color:Color.secondary,marginRight:'15px'}}/>
+                Ta concession
+              </Typography>
+              <Divider/>
+              <Grid container xs={12} lg={12} className={classes.container}>
+                <Grid item xs={12} lg={4} style={{marginTop:'25px',width:'100%'}}>
                   <div style={{display:'flex',justifyContent:'center'}}>
                     <div>
                       <img src={logInfo.company && logInfo.company.header} width='200px'/>
@@ -461,40 +502,163 @@ function PrimarySearchAppBar(props) {
                   </div>
                   
                 </Grid>
-                <Grid item xs={6} lg={6} style={{marginTop:'25px',width:'100%'}}>
-                <TableContainer component={Paper}>
-                  <Table className={classes.table} size="small" aria-label="a dense table">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Utilisateur</TableCell>
-                        <TableCell align="right">Licence</TableCell>
-                        <TableCell align="right">Email</TableCell>
-                        <TableCell align="right">Téléphone</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {logInfo.company.members && logInfo.company.members.map((user) => (
-                        logInfo.cieMembers[user]
-                        &&
-                        <TableRow key={logInfo.cieMembers[user].email}>
-                          <TableCell component="th" scope="row">
-                            {logInfo.cieMembers[user].name}
-                          </TableCell>
-                          <TableCell align="center">{logInfo.cieMembers[user].licence}</TableCell>
-                          <TableCell align="center">{logInfo.cieMembers[user].email}</TableCell>
-                          <TableCell align="center">{logInfo.cieMembers[user].phoneNumber}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>                  
+                <Grid item xs={12} lg={8} style={{marginTop:'25px',width:'100%'}}>
+                <ExpansionPanel 
+                    square
+                    style={{width:'100%'}}
+                    expanded={expanded === 'dealerUsers'}
+                    onChange={(event) => expanded === 'dealerUsers' ? setExpanded(''):setExpanded('dealerUsers')}>
+                    <ExpansionPanelSummary>
+                      <Typography className={classes.sectionTitle} variant='subtitle1'>Membres de ton équipe</Typography>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails className={classes.centeredList}>
+                      <TableContainer component={Paper}>
+                        <Table className={classes.table} size="small" aria-label="a dense table">
+                          <TableHead>
+                            <TableRow>
+                              <TableCell>Utilisateur</TableCell>
+                              <TableCell align="right">Licence</TableCell>
+                              <TableCell align="right">Email</TableCell>
+                              <TableCell align="right">Téléphone</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {logInfo.company.members && logInfo.company.members.map((user) => (
+                              logInfo.cieMembers[user]
+                              &&
+                              <TableRow key={logInfo.cieMembers[user].email}>
+                                <TableCell component="th" scope="row">
+                                  {logInfo.cieMembers[user].name}
+                                </TableCell>
+                                <TableCell align="center">{logInfo.cieMembers[user].licence}</TableCell>
+                                <TableCell align="center">{logInfo.cieMembers[user].email}</TableCell>
+                                <TableCell align="center">{logInfo.cieMembers[user].phoneNumber}</TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>   
+                    </ExpansionPanelDetails>
+                  </ExpansionPanel>
+                  <ExpansionPanel 
+                    square
+                    style={{width:'100%'}}
+                    expanded={expanded === 'customerUploader'}
+                    onChange={(event) => expanded === 'customerUploader' ? setExpanded(''):setExpanded('customerUploader')}>
+                    <ExpansionPanelSummary style={{display:'flex',alignItems:'center'}}>
+                      <Typography className={classes.sectionTitle} variant='subtitle1'>Charger ton fichier client</Typography>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails className={classes.centeredList}>
+                      <Typography variant='subtitle2'>Il te faut un fichier JSON ici.</Typography>
+                    </ExpansionPanelDetails>
+                  </ExpansionPanel>
+                  <ExpansionPanel 
+                    square
+                    style={{width:'100%'}}
+                    expanded={expanded === 'cameraDefinition'}
+                    onChange={(event) => expanded === 'cameraDefinition' ? setExpanded(''):setExpanded('cameraDefinition')}>
+                    <ExpansionPanelSummary style={{display:'flex',alignItems:'center'}}>
+                      <Typography className={classes.sectionTitle} variant='subtitle1' style={{marginLeft:'5px'}}>Résolution des images prises sur l'application mobile</Typography>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails className={classes.centeredList}>
+                      <Typography variant='subtitle2'>Tu peux gérer ce paramètre directement dans l'appli mobile.</Typography>
+                    </ExpansionPanelDetails>
+                  </ExpansionPanel>
                 </Grid>
               </Grid>
             </div>
             }
+
             {
-            tabValue === 4 &&
+            tabValue === 2 &&
             <div>
+              <Typography className={classes.sectionTitle} variant="h6" style={{color:Color.secondary,marginTop:'25px'}}>
+                <FontAwesomeIcon icon={faCogs} style={{color:Color.secondary,marginRight:'15px'}}/>
+                Optimise ton application web
+              </Typography>
+              <Divider/>
+              <Grid className={classes.container}>
+                <Grid item xs={6} lg={6} className={classes.centeredList}>
+                  <ExpansionPanel 
+                    square
+                    style={{width:'100%'}}
+                    expanded={expanded === 'hiddenInput'}
+                    onChange={(event) => expanded === 'hiddenInput' ? setExpanded(''):setExpanded('hiddenInput')}>
+                    <ExpansionPanelSummary style={{display:'flex',alignItems:'center'}}>
+                      <Typography className={classes.sectionTitle} variant='subtitle1'>Masquer des champs de cotation</Typography>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails className={classes.centeredList}>
+                      <FormControl style={{width:'100%',alignSelf:'center'}}>
+                        {
+                          [
+                            {title : 'Prix de vente',key:'customerEstimatedSalePrice'},
+                            {title : 'Prix marchand',key:'marketerEstimatedSalePrice'},
+                            {title : 'Préparation estimée',key:'estimatedRepairCost'},
+                            {title : 'Préparation estimée (marchand)',key:'estimatedMarketerRepairCost'},
+                            {title : 'Cote SIMO',key:'simoQuotation'}
+                          ].map((element) => (
+                            <FormControlLabel
+                              control={
+                                <Switch
+                                  checked={hiddenInput.indexOf(element.key) > -1 ? true : false}
+                                  onChange={() => handleChangeHiddenInput(element.key)}
+                                  name={element.key}
+                                  color="primary"
+                                />}
+                              label={element.title}
+                            />
+                          ))
+                        }
+                      </FormControl>
+                    </ExpansionPanelDetails>
+                  </ExpansionPanel>
+                  <ExpansionPanel 
+                    square
+                    style={{width:'100%'}}
+                    expanded={expanded === 'qoterMode'}
+                    onChange={(event) => expanded === 'qoterMode' ? setExpanded(''):setExpanded('qoterMode')}
+                  >
+                    <ExpansionPanelSummary style={{display:'flex',alignItems:'center'}}>
+                      <Typography className={classes.sectionTitle} variant='subtitle1'>Mode QOTER par défaut</Typography>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails className={classes.centeredList}>
+                      <FormControl style={{width:'100%',alignSelf:'center'}}>
+                        <FormControlLabel
+                          control={
+                            <Switch
+                              checked={modifiableUserInformations.isDefaultQoter}
+                              onChange={() =>
+                                modifiableUserInformations.isDefaultQoter == true 
+                                ? setModifiableUserInformations(
+                                  {...modifiableUserInformations,isDefaultQoter : false}) 
+                                : setModifiableUserInformations(
+                                    {...modifiableUserInformations,isDefaultQoter : true})
+                              }
+                              name='isDefaultQoter'
+                              color="primary"
+                            />}
+                          label="Activer"
+                        />
+                      </FormControl>
+                    </ExpansionPanelDetails>
+                  </ExpansionPanel>
+                  <Button 
+                    disabled={JSON.stringify(logInfo.user.config) == JSON.stringify(modifiableUserInformations)}
+                    className={classes.button} 
+                    variant="contained"
+                    color="primary" 
+                    onClick={() => updateUser()}
+                    startIcon={<FontAwesomeIcon icon={faSave}/>}>
+                    SAUVEGARDER
+                  </Button>
+                </Grid>
+              </Grid>
+            </div>
+          }
+
+            {
+            (tabValue === 4 && logInfo.user.licence ==='admin')
+            && <div>
               <Grid container>
                 <Grid item xs={6} lg={6} style={{marginTop:'25px'}}>
                   <ExpansionPanel>
@@ -503,7 +667,7 @@ function PrimarySearchAppBar(props) {
                       <Typography className={classes.sectionTitle} variant='h6' style={{marginLeft:'5px'}}>Nouvelle concession</Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
-                      <FormControl style={{width:'100%'}} className={classes.formList}>
+                      <FormControl style={{width:'100%'}} className={classes.centeredList}>
                         {
                           [
                             {title:'Raison sociale',key:'name'},
@@ -532,7 +696,7 @@ function PrimarySearchAppBar(props) {
                       <Typography variant='h6' className={classes.sectionTitle} style={{marginLeft:'5px'}}>Nouvel utilisateur</Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
-                      <FormControl style={{width:'100%'}} className={classes.formList}>
+                      <FormControl style={{width:'100%'}} className={classes.centeredList}>
                         {
                           [
                             {title:'Identifiant concession',key:'cieId'},

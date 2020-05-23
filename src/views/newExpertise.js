@@ -195,6 +195,21 @@ export default function NewExpertise({setStateFromChild,logInfo}){
     setMachineFeatures(machineFeatures);
   }
 
+  const machineFeaturesToggleChange = (property,value) => {
+    if(machineFeatures[property]){
+      const index = machineFeatures[property].indexOf(value);
+        if(index == -1){
+          setMachineFeatures({...machineFeatures,[property] : [...machineFeatures[property],value]})
+        }else{
+          machineFeatures[property].splice(index,1);
+          setMachineFeatures(machineFeatures);
+        }
+    }else{
+      let arrayValue = [value];
+      setMachineFeatures({...machineFeatures,[property] : arrayValue})
+    }
+  }
+
   const natureMachineHandleChange = async(target) => {
     const natureInput = JSON.parse(target.value);
 
@@ -219,7 +234,7 @@ export default function NewExpertise({setStateFromChild,logInfo}){
 
     setNature(natureInput);
     
-    setBrands(formsCatalog[natureInput.key].brands);
+    formsCatalog[natureInput.key] && setBrands(formsCatalog[natureInput.key].brands);
 
     setStateFromChild({nature:natureInput});
 
@@ -291,7 +306,6 @@ export default function NewExpertise({setStateFromChild,logInfo}){
         status: 'inspekt',
         
     })
-
     ////////// ADD INSPEKT TO S3 \\\\\\\\\\
 
       const url = `https://inspekt.herokuapp.com/api?request=CREATE_INSPEKT&token=${token}`
@@ -348,7 +362,7 @@ export default function NewExpertise({setStateFromChild,logInfo}){
 
   /**USEEFFECT ONLY USED ON CONSOLE */
   useEffect(() => {
-    console.log('brands : ',brands);
+    console.log('machineFeatures : ',machineFeatures);
   })
 
     const classes = useStyles();
@@ -434,7 +448,8 @@ export default function NewExpertise({setStateFromChild,logInfo}){
                     (
                       input.property == 'brand'
                       ?
-                        
+                        brands.length > 0
+                        ?
                         <div key={input.property}>
                           <InputLabel>Marque</InputLabel>
                           <Select
@@ -451,6 +466,19 @@ export default function NewExpertise({setStateFromChild,logInfo}){
                             ))
                           }
                           </Select>
+                        </div>
+                        :
+                        <div key={input.property}>
+                          <TextField
+                            key={input.property}
+                            className={classes.optionsInput}
+                            id='brand'
+                            label='Marque'
+                            variant="outlined"
+                            value={machine.brand && machine.brand}
+                            onChange={(e) => machineHandleChange(e.target,'brand')}
+                          >
+                          </TextField>
                         </div>
                       :
                         <div key={input.property}>
@@ -572,7 +600,7 @@ export default function NewExpertise({setStateFromChild,logInfo}){
                                 control={
                                   <Switch
                                     //checked={state.jason}
-                                    //onChange={handleChange}
+                                    onChange={() => machineFeaturesToggleChange(machineFeaturesFormList.addOns[input].property,data)}
                                     color="primary"
                                     name={data}
                                 />}

@@ -30,7 +30,7 @@ const formsCatalog = {
         "4 RM"
     ],
 
-    multifonction: [
+    multiplefonction: [
         "Bras multifonction",
         "Chariot dépose tête",
         "Chassis porte-masses",
@@ -43,7 +43,7 @@ const formsCatalog = {
         "Taille rase",
     ],
 
-    porteurOptions: [
+    carrierOptions: [
         "Anti-patinage",
         "Régulateur vitesse",
         "TPI"
@@ -966,32 +966,23 @@ const formsCatalog = {
             "ACCORD",
             "AGRAM",
             "AGUIRE",
-            "ALPEGO",
             "AMAZONE",
             "CLAYDON",
             "GASPARDO",
             "GREAT PLAINS",
-            "HERRIAU",
             "HORSCH",
             "HOWARD",
             "JOHN DEERE",
             "KONGSKILDE",
             "KUHN",
             "KVERNELAND",
-            "KOCKERLING",
             "KUBOTA",
-            "LELY",
             "LEMKEN",
             "MASCHIO",
             "MONOSEM",
             "NODET",
             "PERREIN",
             "POTTINGER",
-            "RABE",
-            "ROGER",
-            "SKY",
-            "SLY",
-            "SULKY",
             "VICON",
             "VADERSTAD",
             //DIVIDER
@@ -1835,8 +1826,10 @@ rotativeHarrow:{
     ],
 
     boomFoldable:[
-        "4 MORCEAUX",
-        "6 MORCEAUX"
+        "2 SECTIONS",
+        "4 SECTIONS",
+        "6 SECTIONS",
+        "8 SECTIONS"
     ],
 
     buryingType:[
@@ -2377,37 +2370,37 @@ rotativeHarrow:{
                     "nbrBottes": {
                         title: 'Nombre bottes',
                         property: 'baleCounter',
-                        numeric: true
+                        numeric: "number-pad"
                     },
                     "nbrHectares": {
                         title: 'Nombre hectares',
                         property: 'hectaresCounter',
-                        numeric: true
+                        numeric: "number-pad"
                     },
                     "cptrBottes": {
                         title: 'Compteur bottes',
                         property: 'cptrBottes',
-                        numeric: true
+                        numeric: "number-pad"
                     }, 
                     "hrsMoteur": {
                         title: 'Heures moteur',
                         property: 'motorHours',
-                        numeric: true
+                        numeric: "number-pad"
                     },
                     "hrsCptr": {
                         title: 'Heures compteur',
                         property: 'counterHours',
-                        numeric: true
+                        numeric: "number-pad"
                     },
                     "hrsRotor": {
                         title: 'Heures rotor',
                         property: 'rotorHours',
-                        numeric: true
+                        numeric: "number-pad"
                     },
                     "hrsBatteur": {
                         title: 'Heures batteur',
                         property: 'batteurHours',
-                        numeric: true
+                        numeric: "number-pad"
                     },
                 },
 
@@ -2501,7 +2494,7 @@ rotativeHarrow:{
                     "canalPresse":{
                         title:'Canal',
                         property : 'squareBalerChannel',
-                        toggle:[
+                        data:[
                             "80 X 50",
                             "80 X 60",
                             "80 X 70",
@@ -2518,19 +2511,19 @@ rotativeHarrow:{
                     "capaciteEnLitres":{
                         title:'Capacité (litres)',
                         property:'literCapacity',
-                        numeric: true,
+                        numeric: "number-pad"
                     },
 
                     "capaciteEnM3":{
                         title:'Capacité (m3)',
                         property:'squareMeterCapacity',
-                        numeric: true,
+                        numeric: "number-pad"
                     },
 
                     "capaciteEnTonnes":{
                         title:'Capacité (T)',
                         property:'squareMeterCapacity',
-                        data:formsCatalog.tonsFrom1To10
+                        numeric: "decimal-pad"
                     },
 
                     "chandelles":{
@@ -2542,7 +2535,7 @@ rotativeHarrow:{
                     "chargeUtile":{
                         title:'Charge utile (T)',
                         property:'tonsCapacity',
-                        numeric: true,
+                        numeric: "decimal-pad"
                     },
 
                     "chariot":{
@@ -2595,9 +2588,9 @@ rotativeHarrow:{
                     },
 
                     "debitPompe":{
-                        title:'Débit pompe',
+                        title:'Débit pompe (l/min)',
                         property:'pumpOutput',
-                        data: formsCatalog.pumpOutput
+                        numeric: "number-pad"
                     },
 
                     "dechargementRemorque":{
@@ -2609,18 +2602,18 @@ rotativeHarrow:{
                     "diametreDisquesSemeurs":{
                         title:'Diamètre disques semeurs (cm)',
                         property:'seedingDiscDiameter',
-                        numeric: true,
+                        numeric: "number-pad"
                     },
                     "diametreFusee":{
-                        title:'Diamètre fusée',
+                        title:'Diamètre fusée (mm)',
                         property:'rotateAxleDiameter',
-                        numeric: true,
+                        numeric: "number-pad"
                     },
 
                     "diametreMaxBotte":{
                         title:'Diamètre maxi bottes (cm)',
                         property:'baleDiameter',
-                        numeric: true,
+                        numeric: "number-pad"
                     },
 
                     "dimensionPneumatiques":{
@@ -2654,7 +2647,7 @@ rotativeHarrow:{
                     "ecartementRangs":{
                         title:'Ecartement rangs',
                         property:'rowDistance',
-                        numeric:true
+                        numeric: "number-pad"
                     },
 
                     "eclateur":{
@@ -2682,9 +2675,9 @@ rotativeHarrow:{
                     },
 
                     "entrePointes":{
-                        title:'Entre pointes',
+                        title:'Entre pointes (cm)',
                         property:'sharePloughSpaceBetween',
-                        numeric: true,
+                        numeric: "number-pad"
                     },
 
                     "eparpilleur":{
@@ -2736,9 +2729,9 @@ rotativeHarrow:{
                     },
 
                     "hauteurDegagement":{
-                        title : 'Hauteur de dégagement',
+                        title : 'Hauteur de dégagement (cm)',
                         property:'tillageHeight',
-                        numeric: true,
+                        numeric: "number-pad"
                     },
 
                     "herissons":{
@@ -2756,43 +2749,37 @@ rotativeHarrow:{
                     "largeurCanal":{
                         title:'Largeur canal (cm)',
                         property:'channelWidth',
-                        numeric: true,
+                        numeric: "number-pad"
                     },
 
                     "largeurCoupe":{
                         title:'Largeur coupe (m)',
                         property:'cutterbarWidth',
-                        numeric: true,
+                        numeric: "decimal-pad"
                     },
 
                     "largeurGodet":{
                         title:'Largeur (m)',
                         property:'dipperWidth',
-                        numeric: true,
+                        numeric: "decimal-pad"
                     },
 
                     "largeurPickUp":{
-                        title:'Largeur pick-up (cm)',
+                        title:'Largeur pick-up (m)',
                         property:'pickUpWidth',
-                        numeric: true,
+                        numeric: "decimal-pad"
                     },
 
                     "largeurTravailMetres":{
-                        title:'Largeur travail (mètres)',
+                        title:'Largeur travail (m)',
                         property:'implementWorkingWidth',
-                        numeric: true,
-                    },
-
-                    "largeurTravailNumerique":{
-                        title:'Largeur travail (mètres)',
-                        property:'implementWorkingWidth',
-                        numeric: true,
+                        numeric: "decimal-pad"
                     },
 
                     "largeurTravailPouces":{
                         title:'Largeur travail (pouces)',
                         property:'implementWorkingWidth',
-                        numeric: true,
+                        numeric: "number-pad"
                     },
 
                     "liageBotte":{
@@ -2895,97 +2882,97 @@ rotativeHarrow:{
                     "nombreAssiettesTambours":{
                         title:'Nombre assiettes/tambours',
                         property:'platesDrumsNumber',
-                        numeric:true
+                        numeric: "number-pad"
                     },
 
                     "nombreBrasRotors":{
                         title:'Nombre de bras/rotors',
                         property:'armRotorNumber',
-                        numeric:true
+                        numeric: "number-pad"
                     },
 
                     "nombreCourroies":{
                         title:'Nombre de courroies',
                         property:'beltNumber',
-                        numeric:true
+                        numeric: "number-pad"
                     },
 
                     "nombreCouteaux":{
                         title:'Nombre de couteaux',
                         property:'knifeNumber',
-                        numeric:true
+                        numeric: "number-pad"
                     },
 
                     "nombreCouteauxBroyeur":{
                         title:'Nombre couteaux broyeur',
                         property:'rotorKnifeNumber',
-                        numeric:true
+                        numeric: "number-pad"
                     },
 
                     "nombreCouteauxAremplacer":{
                         title:'Couteaux à remplacer',
                         property:'knifeToReplace',
-                        numeric:true
+                        numeric: "number-pad"
                     },
 
                     "nombreDentsARemplacer":{
                         title:'Nombre de dents à remplacer',
                         property:'toothToReplace',
-                        numeric: true,
+                        numeric: "number-pad"
                     },
 
                     "nombreDemeleurs":{
                         title:'Nombre de démêleurs',
                         property:'unravelNumber',
-                        numeric:true
+                        numeric: "number-pad"
                     },
 
                     "nombrePoutres":{
                         title:'Nombre de poutres',
                         property:'beamNumber',
-                        numeric:true
+                        numeric: "number-pad"
                     },
 
                     "nombreRangs":{
                         title:'Nombre de rangs',
                         property:'rowNumber',
-                        numeric:true
+                        numeric: "number-pad"
                     },
 
                     "nombreRotors":{
                         title:'Nombre de rotors',
                         property:'rotorNumber',
-                        numeric:true
+                        numeric: "number-pad"
                     },
 
                     "nombreRouleaux":{
                         title:'Nombre de rouleaux',
                         property:'rollNumber',
-                        numeric:true
+                        numeric: "number-pad"
                     },
 
                     "nombreSocs":{
                         title:'Nombre de socs',
                         property:'ploughShareNumber',
-                        numeric:true
+                        numeric: "number-pad"
                     },
 
                     "nombreSocsDisques":{
                         title:'Nombre de socs/disques',
                         property:'ploughShareDiscNumber',
-                        numeric:true
+                        numeric: "number-pad"
                     },
 
                     "nombreTroncons":{
                         title:'Nombre de troncons',
                         property:'spayingSectionNumber',
-                        numeric:true
+                        numeric: "number-pad"
                     },
 
                     "nombreVitesses":{
                         title:'Nombre de vitesses',
                         property:'gearRange',
-                        numeric:true
+                        numeric: "number-pad"
                         
                     },
 
@@ -3204,6 +3191,17 @@ rotativeHarrow:{
                         ]  
                     },
 
+                    "optionsLame":{
+                        title:'Options',
+                        property : 'dipperOptions',
+                        toggle:[
+                            "FOURCHE FUMIER",
+                            "GRAPPIN",
+                            "JOUES LATERALES",
+                            
+                        ]  
+                    },
+
                     "optionsMoissonneuse":{
                         title:'Options',
                         property : 'combineOptions',
@@ -3220,10 +3218,10 @@ rotativeHarrow:{
                         toggle:[
                             "CAMERA",
                             "EJECTEUR",
+                            "GRAISSAGE CENTRALISE",
                             "HACHEUR",
                             "HUMIDIMETRE",
                             "INCORPORATEUR",
-                            "GRAISSAGE CENTRALISE",
                             "LUBRIFICATION CHAINES",
                             "PESEE",
                             "ROUES DE JAUGE"
@@ -3337,7 +3335,7 @@ rotativeHarrow:{
                     },
 
                     "porteBuse":{
-                        title:'Portes buses',
+                        title:'Porte buses',
                         property:'nozalSupport',
                         data:["DOUBLE JET","MONOJET","PENTAJET","QUADRIJET","TRIJET"]
                     },
@@ -3345,12 +3343,13 @@ rotativeHarrow:{
                     "porteeHorizontale":{
                         title:'Portée horizontale (m)',
                         property:'horizontalScope',
-                        numeric: true
+                        numeric: "decimal-pad"
                     },
 
                     "puissance":{
-                        title:'Puissance',
+                        title:'Puissance (ch)',
                         property:'horsePower',
+                        numeric: "number-pad"
                         
                     },
 
@@ -3505,7 +3504,7 @@ rotativeHarrow:{
                     },
 
                     "typeAmeneur":{
-                        title:'Type',
+                        title:'Type ameneur',
                         property:'baleFeederType',
                         data : ["ALTERNATIF","ROTATIF"]
                     },
@@ -3609,7 +3608,7 @@ rotativeHarrow:{
                     "typeSemoir":{
                         title:'Type de semoir',
                         property:'drillType',
-                        data: ["DIRECT","EN LIGNE", "MONOGRAINE","SIMPLIFIE"]
+                        data: ["CONVENTIONNEL","DIRECT","SIMPLIFIE"]
                     },
 
                     "typeSeparationMoissoneuse":{
@@ -3878,13 +3877,13 @@ rotativeHarrow:{
                     "multifonction": {  // toggle
                         title : 'Multifonction',
                         property: "multifonction",
-                        toggle: formsCatalog.multifonction
+                        toggle: formsCatalog.multiplefonction
                     },
 
                     "porteurOptions": {
                         title: 'Options',
                         property: "porteurOption",
-                        toggle: formsCatalog.porteurOptions
+                        toggle: formsCatalog.carrierOptions
                     },
 
                     "porteurConformity": {
