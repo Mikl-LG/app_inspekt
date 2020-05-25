@@ -142,10 +142,8 @@ export default function ExpertiseDetails(props) {
     const body = await Promise.resolve({
       expId : focusMachine.id,
       cieId : focusMachine.cieId && focusMachine.cieId,
-      quotation: quotation
+      quotation
     })
-
-    console.log('quotationFromCloseQuotation : ',quotation)
 
     //**ADD COTATION REQUEST**\\
     const url = `https://inspekt.herokuapp.com/api?request=CLOSE_QUOTATIONS&token=${logInfo.token}`
@@ -170,6 +168,7 @@ export default function ExpertiseDetails(props) {
       setDrawer({isOpen:false});
       setOpen(false);
       getInspekts();
+      getQots();
     }
   }
 
@@ -240,54 +239,90 @@ export default function ExpertiseDetails(props) {
   }
 
   const saveNewQuotation = async() => {
-
-    inputQuotations.userId = logInfo.user.id;
-    inputQuotations.timestamp = Date.now();
-
-    const quotations = await Promise.resolve([
-      ...(focusMachine.quotations.map((element) => ({
-            estimatedBuyingPrice : element.estimatedBuyingPrice,
-            userId : element.userId,
-            timestamp : element.timestamp
-          })) || []),     // array
-      inputQuotations                         // quotation object*
-    ]);
-
-    const body = await Promise.resolve({
-      expId : focusMachine.id,
-      status: 'inspekt',
-      merge: {            // {object} list des quotations à jour
-        quotations
-      },
-      /**cieId is required if the inspekt is not from the user company but from a linkage */
-      cieId:focusMachine.cieId && focusMachine.cieId
-    })
-
-    //**ADD COTATION REQUEST**\\
-    const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
-    let fetchOptions = await Promise.resolve(
-        {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
+    if(qoterMode === true){
+      if(
+        logInfo.user.licence === 'admin'
+        || logInfo.user.licence === 'manager'
+        || logInfo.user.licence === 'qoter'
+        ){
+          const body = await Promise.resolve({
+            expId : focusMachine.id,
+            status: 'inspekt',
+            merge: {            // {object} list des quotations à jour
+              state:'En-cours'
             },
-            body: JSON.stringify(body)
-        }
-    )
-    let fetching = await fetch(url, fetchOptions)
-    let error = await Promise.resolve(!fetching.ok)
-    let response = !error && await Promise.resolve(fetching.json());
+            /**cieId is required if the qot is not from the user company but from a linkage */
+            cieId:focusMachine.cieId && focusMachine.cieId
+          })
+        
+          //**ADD COTATION REQUEST**\\
+          const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
+          let fetchOptions = await Promise.resolve(
+              {
+                  method: 'POST',
+                  mode: 'cors',
+                  headers: {
+                      Accept: 'application/json',
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(body)
+              }
+          )
+          let fetching = await fetch(url, fetchOptions)
+          let error = await Promise.resolve(!fetching.ok)
 
-    if(error == false){
-      if(qoterMode === true){
-        closeQuotation(inputQuotations)
-      }else{
-        setSnackbar({message : 'Votre cotation est enregistrée.',type:'snackbarSuccess',isOpen:true});
-        getInspekts()
-        setDrawer({isOpen:false});
-        setOpen(false);
+          if(error == false){
+            closeQuotation(inputQuotations)
+          }
+        }
+      
+    }else{
+
+      inputQuotations.userId = logInfo.user.id;
+      inputQuotations.timestamp = Date.now();
+
+      const quotations = await Promise.resolve([
+        ...(focusMachine.quotations.map((element) => ({
+              estimatedBuyingPrice : element.estimatedBuyingPrice,
+              userId : element.userId,
+              timestamp : element.timestamp
+            })) || []),     // array
+        inputQuotations                         // quotation object*
+      ]);
+
+      const body = await Promise.resolve({
+        expId : focusMachine.id,
+        status: 'inspekt',
+        merge: {            // {object} list des quotations à jour
+          quotations
+        },
+        /**cieId is required if the inspekt is not from the user company but from a linkage */
+        cieId:focusMachine.cieId && focusMachine.cieId
+      })
+
+      //**ADD COTATION REQUEST**\\
+      const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
+      let fetchOptions = await Promise.resolve(
+          {
+              method: 'POST',
+              mode: 'cors',
+              headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(body)
+          }
+      )
+      let fetching = await fetch(url, fetchOptions)
+      let error = await Promise.resolve(!fetching.ok)
+      let response = !error && await Promise.resolve(fetching.json());
+
+      if(error == false){
+        
+          setSnackbar({message : 'Votre cotation est enregistrée.',type:'snackbarSuccess',isOpen:true});
+          getInspekts()
+          setDrawer({isOpen:false});
+          setOpen(false);
       } 
     }
   }
@@ -524,7 +559,7 @@ export default function ExpertiseDetails(props) {
                         className={classes.listItemText}
                         style={{fontWeight:'bold'}}
                       >
-                      {element.userDetail.name}
+                      {logInfo.cieMembers[element.userId] && logInfo.cieMembers[element.userId].name}
                     </div>
                     {[
                       {title : 'Prix de vente',key:'customerEstimatedSalePrice'},

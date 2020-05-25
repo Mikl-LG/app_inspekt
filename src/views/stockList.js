@@ -44,27 +44,25 @@ const MenuProps = {
 };
 
 function LoadSelectHeadTable(props){
-  const {logInfo,qotList,sort,setSort,tempSort,setTempSort} = props;
+  const {logInfo,stockList,sort,setSort,tempSort,setTempSort} = props;
 
   const headCells = [
-    { id: 'inStock', select: true, width:'1vi', label: 'Stock' ,selectOptions : ['STOCKS','QOTS']},
-    { id: 'id', select: true, width:'1vi', label: 'id', selectOptions : [ ...new Set(qotList.map((element) => (element.id))) ].sort() },
-    { id: 'date', select: true, width:'8vi', label: 'Date', selectOptions : [ ...new Set(qotList.map((element) => (Moment(element.addedOn).format('MMMM-YYYY')))) ].sort() },
-    { id: 'salesman', select: true, width:'20vi', label: 'Commercial', selectOptions : [ ...new Set(qotList.map((element) => (
+    { id: 'id', select: true, width:'1vi', label: 'id', selectOptions : [ ...new Set(stockList.map((element) => (element.id))) ].sort() },
+    { id: 'date', select: true, width:'8vi', label: 'Date', selectOptions : [ ...new Set(stockList.map((element) => (Moment(element.addedOn).format('MMMM-YYYY')))) ].sort() },
+    { id: 'salesman', select: true, width:'20vi', label: 'Repris par', selectOptions : [ ...new Set(stockList.map((element) => (
       logInfo.cieMembers[element.openedBy].name))) ].sort() },
-    { id: 'customer', select: true, width:'20vi', label: 'Client', selectOptions : [ ...new Set(qotList.map((element) => (
+    { id: 'customer', select: true, width:'20vi', label: 'Client', selectOptions : [ ...new Set(stockList.map((element) => (
       element.customer && element.customer.name && element.customer.name))) ].sort() },
-    { id: 'nature', select: true, width:'12vi', label: 'Nature', selectOptions : [ ...new Set(qotList.map((element) => (
+    { id: 'nature', select: true, width:'12vi', label: 'Nature', selectOptions : [ ...new Set(stockList.map((element) => (
       element.machine.nature.name))) ].sort() },
-    { id: 'brand', select: true, width:'12vi', label: 'Marque',selectOptions : [ ...new Set(qotList.map((element) => (
+    { id: 'brand', select: true, width:'12vi', label: 'Marque',selectOptions : [ ...new Set(stockList.map((element) => (
       element.machine && element.machine.brand && element.machine.brand))) ].sort() },
-    { id: 'model', select: true, width:'18vi', label: 'Modèle', selectOptions : [ ...new Set(qotList.map((element) => (
+    { id: 'model', select: true, width:'18vi', label: 'Modèle', selectOptions : [ ...new Set(stockList.map((element) => (
       element.machine && element.machine.model && element.machine.model))) ].sort() },
     { id: 'details', select: true, width:'30vi', label: 'Détails',selectOptions : [] },
-    { id: 'year', select: true, label: 'Année',selectOptions : [ ...new Set(qotList.map((element) => (
+    { id: 'year', select: true, label: 'Année',selectOptions : [ ...new Set(stockList.map((element) => (
       element.machine && element.machine.year && element.machine.year))) ].sort() },
-    { id: 'estimatedBuyingPrice', width:'7vi', select: true, label: 'Cotation',selectOptions : [ ...new Set(qotList.map((element) => (element.quotations[element.quotations.length - 1].estimatedBuyingPrice))) ].sort() },
-    { id: 'qotState', width:'10vi', select: true, label: 'Affaire',selectOptions : [ ...new Set(qotList.map((element) => (element.state && element.state))) ].sort() }
+    { id: 'estimatedBuyingPrice', width:'7vi', select: true, label: 'Prix',selectOptions : [ ...new Set(stockList.map((element) => (element.quotations[element.quotations.length - 1].estimatedBuyingPrice))) ].sort() }
   ];
 
   let autoList = {}
@@ -74,14 +72,9 @@ function LoadSelectHeadTable(props){
 
   const handleSelectTempSort = (key,value) =>{
     let newSelected = tempSort[key];
-    console.log('newSelected : ',key);
     const selectedIndex = newSelected.indexOf(value);
 
-    //if(selectedIndex == -1){
       newSelected = [...value];
-    //}else{
-      //newSelected.splice(selectedIndex,1)
-    //}
     setTempSort({...tempSort,[key]:newSelected})
   }
 
@@ -198,7 +191,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromChild,getQots,searchText,stateMenuItemsFiltered}) {
+export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFromChild,getQots,searchText,stateMenuItemsFiltered}) {
   const classes = useStyles();
 
   ///////// CATALOGS \\\\\\\\\\
@@ -217,8 +210,8 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
   const [isExpertiseDetailsOpen,setIsExpertiseDetailsOpen] = React.useState(false);
   const [focusMachine,setFocusMachine] = React.useState({});
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
-  const [sort,setSort] = React.useState({inStock:[],id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],qotState:[],estimatedBuyingPrice:[]});
-  const [tempSort,setTempSort] = React.useState({inStock:[],id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],qotState:[],estimatedBuyingPrice:[]});
+  const [sort,setSort] = React.useState({id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],estimatedBuyingPrice:[]});
+  const [tempSort,setTempSort] = React.useState({id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],estimatedBuyingPrice:[]});
 
   const machineFeatureToString = (machineFeatures) => {
 
@@ -234,7 +227,6 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
     let output = [];
     if(machineFeatures){
       for (let [key,value] of Object.entries(machineFeatures)){
-        //console.log('value : ',getFeatureTitle(key) + ' : ' + value);
         output = [...output,getFeatureTitle(key) + ' : ' + value];
       }
     }
@@ -243,11 +235,10 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
 
     let rows = [];
     const keyWords = searchText.split(' ');
-    let qotListFiltered = [];
-    qotList.forEach((element) => {
+    let stockListFiltered = [];
+    stockList.forEach((element) => {
       if(
         JSON.stringify(element).toUpperCase().includes(keyWords[0].toUpperCase())
-        && new RegExp(sort.inStock.join('|')).test(element.inStock) === true
         && new RegExp(sort.id.join('|')).test(element.id) === true
         && new RegExp(sort.date.join('|')).test(Moment(element.addedOn).format('MMMM-YYYY')) === true
         && new RegExp(sort.salesman.join('|')).test(logInfo.cieMembers[element.openedBy].name) === true
@@ -256,15 +247,12 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
         && new RegExp(sort.brand.join('|')).test(element.machine.brand) === true
         && new RegExp(sort.model.join('|')).test(element.machine.model) === true
         && new RegExp(sort.year.join('|')).test(element.machine.year) === true
-        //&& new RegExp(sort.estimatedBuyingPrice.join('|')).test(element.quotation.estimatedBuyingPrice) === true
-        && new RegExp(sort.qotState.join('|')).test(element.state) === true
         )
-        qotListFiltered = [...qotListFiltered,element];
+        stockListFiltered = [...stockListFiltered,element];
     });
     
-    qotListFiltered.forEach((element) => {
+    stockListFiltered.forEach((element) => {
       rows = [...rows, {
-        inStock : element.inStock ? element.inStock : false,
         id : element.id,
         date : Moment(element.addedOn).format('MMMM-YYYY'),
         salesman: logInfo.cieMembers[element.openedBy].name,
@@ -275,7 +263,6 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
         details : element.machineFeatures && machineFeatureToString(element.machineFeatures),
         year : element.machine.year && element.machine.year,
         estimatedBuyingPrice : element.quotations[element.quotations.length -1].estimatedBuyingPrice,
-        state : element.state ? element.state : 'En-cours',
         expertiseObject : element
       }]
     });
@@ -505,7 +492,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
           >
             <LoadSelectHeadTable
               logInfo={logInfo}
-              qotList={qotListFiltered}
+              stockList={stockListFiltered}
               sort={sort}
               setSort={setSort}
               tempSort={tempSort}
@@ -525,15 +512,6 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
                       key={row.id}
                       style={{cursor:'pointer'}}
                     >
-                      
-                      <TableCell className={classes.TableCell} align="center" padding="none">
-                        <Switch
-                          defaultChecked={row.inStock === true ? true : false}
-                          onChange={() => updateQotInStock(row.expertiseObject,row.inStock === true ? false : true)}
-                          name={row.inStock}
-                          color="primary"
-                          />
-                      </TableCell>
                       <TableCell className={classes.TableCell} id={labelId} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>
                         {row.id}
                       </TableCell>
@@ -545,51 +523,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.model}</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.details}</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.year}</TableCell>
-                      <TableCell className={classes.TableCell} align="right" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.estimatedBuyingPrice}</TableCell>
-                      <TableCell className={classes.TableCell} align="left" padding="none">
-                      {
-                        <Select
-                        id={row.state}
-                        value={row.state}
-                        style={{fontSize:'0.9em'}}
-                        IconComponent={() => (
-                          row.state == 'Perdue'
-                          ? <FontAwesomeIcon 
-                              style={{fontSize:'1em',cursor:'pointer',color:Color.warning}}
-                              icon={faFrown}/>
-                          : row.state == 'Gagnée'
-                            ? <FontAwesomeIcon 
-                                style={{fontSize:'1em',cursor:'pointer',color:Color.success}}
-                                icon={faTrophy}/>
-                            : row.state == 'Annulée'
-                              ? <FontAwesomeIcon 
-                                  style={{fontSize:'1em',cursor:'pointer',color:Color.lightgrey}}
-                                  icon={faTrashAlt}/>
-                              : row.state == 'Reportée'
-                                ? <FontAwesomeIcon 
-                                style={{fontSize:'1em',cursor:'pointer',color:Color.secondary}}
-                                icon={faClock}/>
-                                :row.state == 'Dépôt-vente'
-                                ? <FontAwesomeIcon 
-                                style={{fontSize:'1em',cursor:'pointer',color:Color.lightgrey}}
-                                icon={faMoneyCheck}/>
-                                : <FontAwesomeIcon 
-                                  style={{fontSize:'1em',cursor:'pointer',color:Color.inspektBlue}}
-                                  icon={faSpinner}/>
-                        )}
-                        onChange={(event) => updateQotState(row.expertiseObject,event.target.value)}
-                        MenuProps={MenuProps}
-                      >
-                        {
-                        stateMenuItemsFiltered.map((e) => (
-                          <MenuItem value={e} style={{fontSize:'0.8em'}}>
-                            {e}
-                          </MenuItem>
-                        ))
-                        }
-                      </Select>
-                    }
-                      </TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.estimatedBuyingPrice}</TableCell>
                     </TableRow>
                   );
                 })}

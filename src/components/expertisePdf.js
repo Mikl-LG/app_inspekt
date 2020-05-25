@@ -46,7 +46,16 @@ const getPdf = (orderedDetailsToPrint,type) => {
 
     }else if(type === 'bonReprise'){
 
-        documentPdf.text('Bon de reprise : '+orderedDetailsToPrint[5].value.toUpperCase()+' '+orderedDetailsToPrint[6].value+' '+orderedDetailsToPrint[7].value, 15, 60);
+        const title = orderedDetailsToPrint.map((element) => {
+            if(element.property === 'nature'
+            || element.property === 'brand'
+            || element.property === 'model'
+            ){
+                return element.value
+            }
+        }).join(' ');
+
+        documentPdf.text('Bon de reprise : '+title, 15, 60);
         documentPdf.line(15,65,105,65)
         documentPdf.setFontSize(11);
         let Xline = 70;
@@ -70,6 +79,9 @@ const getPdf = (orderedDetailsToPrint,type) => {
         documentPdf.text('Signature client',120,Xline);
         documentPdf.line(15,Xline+2,55,Xline+2)
         documentPdf.line(120,Xline+2,160,Xline+2)
+        documentPdf.setFontSize(8);
+        documentPdf.text('"Je déclare ne pas avoir connaissance',120,Xline += 8);
+        documentPdf.text('de vices cachés sur cette machine."',120,Xline += 3);
 
     /**CONTRACT DETAILS */
     documentPdf.setFontSize(14);
