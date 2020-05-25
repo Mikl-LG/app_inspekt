@@ -44,25 +44,27 @@ const MenuProps = {
 };
 
 function LoadSelectHeadTable(props){
-  const {logInfo,qotList,sort,setSort,tempSort,setTempSort,stateMenuItemsFiltered} = props;
+  const {logInfo,qotList,sort,setSort,tempSort,setTempSort} = props;
 
   const headCells = [
+    { id: 'inStock', select: true, width:'1vi', label: 'Stock' ,selectOptions : ['STOCKS','QOTS']},
     { id: 'id', select: true, width:'1vi', label: 'id', selectOptions : [ ...new Set(qotList.map((element) => (element.id))) ].sort() },
     { id: 'date', select: true, width:'8vi', label: 'Date', selectOptions : [ ...new Set(qotList.map((element) => (Moment(element.addedOn).format('MMMM-YYYY')))) ].sort() },
     { id: 'salesman', select: true, width:'20vi', label: 'Commercial', selectOptions : [ ...new Set(qotList.map((element) => (
       logInfo.cieMembers[element.openedBy].name))) ].sort() },
+    { id: 'customer', select: true, width:'20vi', label: 'Client', selectOptions : [ ...new Set(qotList.map((element) => (
+      element.customer && element.customer.name && element.customer.name))) ].sort() },
     { id: 'nature', select: true, width:'12vi', label: 'Nature', selectOptions : [ ...new Set(qotList.map((element) => (
       element.machine.nature.name))) ].sort() },
     { id: 'brand', select: true, width:'12vi', label: 'Marque',selectOptions : [ ...new Set(qotList.map((element) => (
-      element.machine.brand))) ].sort() },
+      element.machine && element.machine.brand && element.machine.brand))) ].sort() },
     { id: 'model', select: true, width:'18vi', label: 'Modèle', selectOptions : [ ...new Set(qotList.map((element) => (
-      element.machine.model))) ].sort() },
+      element.machine && element.machine.model && element.machine.model))) ].sort() },
     { id: 'details', select: true, width:'30vi', label: 'Détails',selectOptions : [] },
     { id: 'year', select: true, label: 'Année',selectOptions : [ ...new Set(qotList.map((element) => (
-      element.machine.year))) ].sort() },
-    { id: 'estimatedBuyingPrice', width:'7vi', select: true, label: 'Cotation',selectOptions : [ ...new Set(qotList.map((element) => (element.quotation ? element.quotation.estimatedBuyingPrice : undefined))) ].sort() },
-    { id: 'qotState', width:'10vi', select: true, label: 'Affaire',selectOptions : [ ...new Set(qotList.map((element) => (element.state && element.state))) ].sort() },
-    { id: 'machineDetails', width:'2vi', select: false, label: '',selectOptions : [] },
+      element.machine && element.machine.year && element.machine.year))) ].sort() },
+    { id: 'estimatedBuyingPrice', width:'7vi', select: true, label: 'Cotation',selectOptions : [ ...new Set(qotList.map((element) => (element.quotations[element.quotations.length - 1].estimatedBuyingPrice))) ].sort() },
+    { id: 'qotState', width:'10vi', select: true, label: 'Affaire',selectOptions : [ ...new Set(qotList.map((element) => (element.state && element.state))) ].sort() }
   ];
 
   let autoList = {}
@@ -75,11 +77,11 @@ function LoadSelectHeadTable(props){
     console.log('newSelected : ',key);
     const selectedIndex = newSelected.indexOf(value);
 
-    if(selectedIndex == -1){
-      newSelected = [...newSelected,...value];
-    }else{
-      newSelected.splice(selectedIndex,1)
-    }
+    //if(selectedIndex == -1){
+      newSelected = [...value];
+    //}else{
+      //newSelected.splice(selectedIndex,1)
+    //}
     setTempSort({...tempSort,[key]:newSelected})
   }
 
@@ -117,7 +119,7 @@ function LoadSelectHeadTable(props){
                 id="demo-mutiple-chip"
                 style={{minWidth: headCell.minWidth,maxWidth: headCell.maxWidth,fontSize:'1em',textAlign:'center'}}
                 multiple
-                value={sort[headCell.id]}
+                value={tempSort[headCell.id]}
                 onChange={(event) => handleSelectTempSort(headCell.id,event.target.value)}
                 onClose={() => setSort(tempSort)}
                 MenuProps={MenuProps}
@@ -215,8 +217,8 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
   const [isExpertiseDetailsOpen,setIsExpertiseDetailsOpen] = React.useState(false);
   const [focusMachine,setFocusMachine] = React.useState({});
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
-  const [sort,setSort] = React.useState({id:[],date:[],salesman:[],nature:[],brand:[],model:[],details:[],year:[],qotState:[],estimatedBuyingPrice:[]});
-  const [tempSort,setTempSort] = React.useState({id:[],date:[],salesman:[],nature:[],brand:[],model:[],details:[],year:[],qotState:[],estimatedBuyingPrice:[]});
+  const [sort,setSort] = React.useState({inStock:[],id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],qotState:[],estimatedBuyingPrice:[]});
+  const [tempSort,setTempSort] = React.useState({inStock:[],id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],qotState:[],estimatedBuyingPrice:[]});
 
   const machineFeatureToString = (machineFeatures) => {
 
@@ -245,9 +247,11 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
     qotList.forEach((element) => {
       if(
         JSON.stringify(element).toUpperCase().includes(keyWords[0].toUpperCase())
+        && new RegExp(sort.inStock.join('|')).test(element.inStock) === true
         && new RegExp(sort.id.join('|')).test(element.id) === true
         && new RegExp(sort.date.join('|')).test(Moment(element.addedOn).format('MMMM-YYYY')) === true
         && new RegExp(sort.salesman.join('|')).test(logInfo.cieMembers[element.openedBy].name) === true
+        && new RegExp(sort.customer.join('|')).test(element.customer) === true
         && new RegExp(sort.nature.join('|')).test(element.machine.nature.name) === true
         && new RegExp(sort.brand.join('|')).test(element.machine.brand) === true
         && new RegExp(sort.model.join('|')).test(element.machine.model) === true
@@ -260,15 +264,17 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
     
     qotListFiltered.forEach((element) => {
       rows = [...rows, {
+        inStock : element.inStock ? element.inStock : false,
         id : element.id,
         date : Moment(element.addedOn).format('MMMM-YYYY'),
         salesman: logInfo.cieMembers[element.openedBy].name,
+        customer: element.customer && element.customer.name && element.customer.name,
         nature : element.machine.nature.name,
-        brand : element.machine.brand,
-        model : element.machine.model,
-        details : machineFeatureToString(element.machineFeatures),
-        year : element.machine.year,
-        estimatedBuyingPrice : element.quotation ? element.quotation.estimatedBuyingPrice : 'undefined',
+        brand : element.machine.brand && element.machine.brand,
+        model : element.machine.model && element.machine.model,
+        details : element.machineFeatures && machineFeatureToString(element.machineFeatures),
+        year : element.machine.year && element.machine.year,
+        estimatedBuyingPrice : element.quotations[element.quotations.length -1].estimatedBuyingPrice,
         state : element.state ? element.state : 'En-cours',
         expertiseObject : element
       }]
@@ -394,9 +400,58 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
       setIsExpertiseDetailsOpen(true)
     }
 
+    const updateQotInStock = async(qot,inStock) => {
+
+      if(
+        logInfo.user.licence === 'admin'
+        || logInfo.user.licence === 'manager'
+        || logInfo.user.licence === 'qoter'
+        ){
+        const body = await Promise.resolve({
+          expId : qot.id,
+          status: 'qot',
+          merge: {            // {object} list des quotations à jour
+            inStock
+          },
+          /**cieId is required if the qot is not from the user company but from a linkage */
+          cieId:qot.cieId && qot.cieId
+        })
+      
+        //**ADD COTATION REQUEST**\\
+        const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
+        let fetchOptions = await Promise.resolve(
+            {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body)
+            }
+        )
+        let fetching = await fetch(url, fetchOptions)
+        let error = await Promise.resolve(!fetching.ok)
+        let response = !error && await Promise.resolve(fetching.json());
+
+        if(error == false){
+            setSnackbar({message : 'Mise à jour réussie',type:'snackbarSuccess',isOpen:true});
+            getQots()
+        }else{
+          setSnackbar({message : 'Echec de la mise à jour',type:'snackbarWarning',isOpen:true});
+        }
+      }else{
+        setSnackbar({message : 'Oups! Seul ton boss peut modifier un statut',type:'snackbarWarning',isOpen:true});
+      }
+    }
+
     const updateQotState = async(qot,state) => {
 
-      if(logInfo.user.licence === 'admin' || logInfo.user.licence === 'qoter'){
+      if(
+        logInfo.user.licence === 'admin'
+        || logInfo.user.licence === 'manager'
+        || logInfo.user.licence === 'qoter'
+        ){
         const body = await Promise.resolve({
           expId : qot.id,
           status: 'qot',
@@ -436,8 +491,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
     }
 
   useEffect(()=>{
-      console.log('sort : ',sort);
-      console.log('tempSort : ',tempSort)
+
   })
 
   return (
@@ -469,19 +523,29 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
                       role="checkbox"
                       tabIndex={-1}
                       key={row.id}
+                      style={{cursor:'pointer'}}
                     >
                       
-                      <TableCell className={classes.TableCell} component="th" id={labelId} scope="row"  align="center" padding="none">
+                      <TableCell className={classes.TableCell} id={labelId} align="center" padding="none">
+                        <Switch
+                          defaultChecked={row.inStock === true ? true : false}
+                          onChange={() => updateQotInStock(row.expertiseObject,row.inStock === true ? false : true)}
+                          name={row.inStock}
+                          color="primary"
+                          />
+                      </TableCell>
+                      <TableCell className={classes.TableCell} id={labelId} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>
                         {row.id}
                       </TableCell>
-                      <TableCell className={classes.TableCell} align="center" padding="none">{row.date}</TableCell>
-                      <TableCell className={classes.TableCell} align="center" padding="none">{row.salesman}</TableCell>
-                      <TableCell className={classes.TableCell} align="center" padding="none">{row.nature}</TableCell>
-                      <TableCell className={classes.TableCell} align="center" padding="none">{row.brand}</TableCell>
-                      <TableCell className={classes.TableCell} align="center" padding="none">{row.model}</TableCell>
-                      <TableCell className={classes.TableCell} align="center" padding="none">{row.details}</TableCell>
-                      <TableCell className={classes.TableCell} align="center" padding="none">{row.year}</TableCell>
-                      <TableCell className={classes.TableCell} align="right" padding="none">{row.estimatedBuyingPrice}</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.date}</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.salesman}</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.customer}</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.nature}</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.brand}</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.model}</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.details}</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.year}</TableCell>
+                      <TableCell className={classes.TableCell} align="right" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.estimatedBuyingPrice}</TableCell>
                       <TableCell className={classes.TableCell} align="left" padding="none">
                       {
                         <Select
@@ -525,13 +589,6 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
                         }
                       </Select>
                     }
-                      </TableCell>
-                      <TableCell className={classes.TableCell} align="center" padding="none">
-                      <FontAwesomeIcon
-                        icon={faEye}
-                        style={{fontSize:'1em',color:Color.inspektBlue}}
-                        onClick={() => machineClicked(row.expertiseObject)}
-                      />
                       </TableCell>
                     </TableRow>
                   );

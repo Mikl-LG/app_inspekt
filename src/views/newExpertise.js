@@ -136,7 +136,7 @@ function getStepContent(stepIndex) {
   }
 }
 
-export default function NewExpertise({setStateFromChild,logInfo}){
+export default function NewExpertise({setStateFromChild,logInfo,getInspekts}){
 
   /**DATA SUBSCRIBTION : CUSTOMER INPUTS, NATURELIST, MACHINEFORMLIST, MACHINEFEATURELIST, PICTURESREQUIRED*/
   const [customerInputs,setCustomerInputs] = React.useState(Steps[1].fields);
@@ -333,6 +333,7 @@ export default function NewExpertise({setStateFromChild,logInfo}){
       setActiveStep(0);
 
       setSnackbar({message : 'Et une expertise de plus !',type:'snackbarSuccess',isOpen:true});
+      getInspekts();
 
     }else if(activeStep === 2 && !nature){
       

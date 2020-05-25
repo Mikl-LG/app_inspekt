@@ -288,7 +288,7 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
           {
               inspektList
               ?inspektList.sort((a,b) => b.id - a.id).map((expertise) => (
-                  <GridListTile key={expertise.id}>
+                  <GridListTile key={expertise.id} style={{cursor:'pointer'}}  onClick={() => machineClicked(expertise)}>
                       {
                           expertise.pictures
                           ?<img src={Object.values(expertise.pictures)[0]}/>
@@ -299,12 +299,15 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
                       subtitle={JSON.stringify(expertise.customer) != '{}' && expertise.customer && <span>Client: {['title','name','city'].map((element) => (element && expertise.customer[element])).join(' ')}</span>}
                       actionIcon={
                         <div>
-                          <IconButton className={classes.icon} onClick={() => setIsOpenShareMarketersValidation(true)}>
-                            <FontAwesomeIcon icon={faUserShield} style={{fontSize:'1em',color:'white'}}/>
-                          </IconButton>
-                          <IconButton className={classes.icon} onClick={() => machineClicked(expertise)}>
+                          {
+                            /* /// -- MARKETER ACCESS -- \\\
+                            <IconButton className={classes.icon} onClick={() => setIsOpenShareMarketersValidation(true)}>
+                              <FontAwesomeIcon icon={faUserShield} style={{fontSize:'1em',color:'white'}}/>
+                            </IconButton>
+                          */}
+                          <IconButton className={classes.icon}>
                             <Badge badgeContent={expertise && expertise.quotations && expertise.quotations.length} color="secondary">
-                              <FontAwesomeIcon icon={faEye} style={{fontSize:'1em',color:'white'}}/>
+                              <FontAwesomeIcon icon={faCalculator} style={{fontSize:'1em',color:'white'}}/>
                             </Badge>
                           </IconButton>
                         </div>

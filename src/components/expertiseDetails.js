@@ -167,9 +167,9 @@ export default function ExpertiseDetails(props) {
 
     if(error == false){
       setSnackbar({message : 'Cette machine est désormais évaluée, beau boulot.',type:'snackbarSuccess',isOpen:true});
-      setStateFromChild({inspektList:inspekts,qotList:qots});
       setDrawer({isOpen:false});
       setOpen(false);
+      getInspekts();
     }
   }
 
@@ -198,35 +198,45 @@ export default function ExpertiseDetails(props) {
   }
 
   const inspektDelete = async(expertise) => {
-    console.log('cieId : ',logInfo.company.id)
-    const body = await Promise.resolve(
-      { expId : expertise.id, 
-        //cieId : logInfo.company.id,
-        //status : 'inspekt'
-      })
-    const url = `https://inspekt.herokuapp.com/api?request=REMOVE_EXPERTISE&token=${logInfo.token}`
-    let fetchOptions = await Promise.resolve(
-        {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(body)
-        }
-    )
-    let fetching = await fetch(url, fetchOptions)
-    let error = await Promise.resolve(!fetching.ok)
-    let response = !error && await Promise.resolve(fetching.json());
 
-    if(error == false){
-      setSnackbar({message : 'Votre INSPEKT est supprimé.',type:'snackbarSuccess',isOpen:true});
-      setStateFromChild({inspektList:response});
-      setOpen(false);
-      setIsOpenDeleteValidation(false);
-    }
+    if(
+      logInfo.user.licence === 'admin'
+      || logInfo.user.licence === 'manager'
+      || logInfo.user.licence === 'qoter'
+      ){
+        const body = await Promise.resolve(
+          { expId : expertise.id, 
+            //cieId : logInfo.company.id,
+            //status : 'inspekt'
+          })
+        const url = `https://inspekt.herokuapp.com/api?request=REMOVE_EXPERTISE&token=${logInfo.token}`
+        let fetchOptions = await Promise.resolve(
+            {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body)
+            }
+        )
+        let fetching = await fetch(url, fetchOptions)
+        let error = await Promise.resolve(!fetching.ok)
+        let response = !error && await Promise.resolve(fetching.json());
     
+        if(error == false){
+          setSnackbar({message : 'INSPEKT supprimé',type:'snackbarSuccess',isOpen:true});
+          setOpen(false);
+          setIsOpenDeleteValidation(false);
+          getInspekts();
+        }else{
+          setSnackbar({message : 'Essayes à nouveau en vérifiant ta connexion Internet',type:'snackbarWarning',isOpen:true});
+        }
+      }else{
+        setSnackbar({message : 'Là tu essayes de supprimer l\'Inspekt de quelqu\'un d\’autre non?',type:'snackbarWarning',isOpen:true});
+      }
+
   }
 
   const saveNewQuotation = async() => {
@@ -289,7 +299,7 @@ export default function ExpertiseDetails(props) {
   }
 
   useEffect(()=>{
-    
+    console.log('inputQuotations : ',inputQuotations);
   })
 
   return (

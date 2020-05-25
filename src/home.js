@@ -4,18 +4,22 @@ import axios from 'axios';
 
 import AppBar from './components/appBar.js';
 import BottomTabNavigator from './components/bottomTabNavigator.js';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Container from '@material-ui/core/Container';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/core/styles';
 
+import Color from './constants/color.js';
 import Header from './components/header';
 import InspektList from './views/inspektList';
+import logo from './logo_inspekt.png';
 import QotList from './views/qotList';
 import Login from './views/login';
 import NewExpertise from './views/newExpertise';
 import token from './constants/token';
 
 import 'moment/locale/fr';
+import { Typography } from '@material-ui/core';
 
 class Home extends Component{
 
@@ -23,7 +27,8 @@ class Home extends Component{
         super(props);
         this.state={
             navigation:1,
-            searchText:''
+            searchText:'',
+            loading : false
         };
     }
 
@@ -63,7 +68,7 @@ class Home extends Component{
                 method:'get',
                 url:'https://inspekt.herokuapp.com/api?request=QOTS&token='+token,
             });
-            this.setState({qotList : axiosResponse.data});
+            this.setState({qotList : axiosResponse.data,loading:false});
 
         }catch(error){
             console.log('error getQots : ',error);
@@ -72,7 +77,9 @@ class Home extends Component{
     };
 
     setNavigation = (targetNav) => {
-        this.setState({navigation : targetNav});
+        if(this.state.qotList && this.state.inspektList){
+            this.setState({navigation : targetNav});
+        }
     };
 
     setStateFromChild = (param) => {
@@ -96,12 +103,18 @@ class Home extends Component{
         const cieMembers = this.state.logInfo && this.state.logInfo.cieMembers;
         const logInfo = this.state.logInfo;
         const stateMenuItems = ['Annulée','Dépôt-vente','En-cours','Gagnée','Perdue','Reportée'];
-        const stateMenuItemsFiltered = ['Annulée','Dépôt-vente','En-cours','Gagnée','Perdue','Reportée'].map((element) => (
+        let stateMenuItemsFiltered = [];
+        (this.state.logInfo && !this.state.logInfo.user.config.hiddenStateItems)
+        ? stateMenuItemsFiltered = stateMenuItems
+        : stateMenuItems.forEach((element) => (
             this.state.logInfo 
             && this.state.logInfo.user.config 
             && this.state.logInfo.user.config.hiddenStateItems
-            && this.state.logInfo.user.config.hiddenStateItems.indexOf(element) == -1 ? element : null
-          ));
+            && this.state.logInfo.user.config.hiddenStateItems.indexOf(element) == -1
+            && stateMenuItemsFiltered.push(element)
+          ))
+
+        console.log('stateMenuItemsFiltered : ',stateMenuItemsFiltered);
 
         return(
             <ThemeProvider theme={this.theme}>
@@ -124,6 +137,7 @@ class Home extends Component{
                                 ?   <NewExpertise
                                         setStateFromChild={this.setStateFromChild}
                                         logInfo={logInfo}
+                                        getInspekts={this.getInspekts}
                                     />
                                 :
                                 (
@@ -154,10 +168,29 @@ class Home extends Component{
                             deleteSearchText = {() => this.setState({searchText:''})}/>
                     </div>
                 :
-                <Login
-                    setStateFromChild={this.setStateFromChild}
-                    getInspekts = {this.getInspekts}
-                    getQots = {this.getQots}/>
+                    this.state.loading == true
+                    ?   <div style={{
+                                height:window.innerHeight,
+                                display:'flex',
+                                flexDirection:'column',
+                                alignItems:'center',
+                                justifyContent:'space-around',
+                                //marginTop : '20vh'
+                        }}>
+                            <div>
+                                <img src={logo} height='100vh'></img>
+                            </div>
+                            <div style={{height:'15vi',display:'flex',flexDirection:'column',alignItems:'center'}}>
+                                <Typography variant='subtitle1' style={{color:Color.lightgrey}}>Chargement</Typography>
+                                <CircularProgress />
+                            </div>
+                            
+                        </div>
+                    :
+                    <Login
+                        setStateFromChild={this.setStateFromChild}
+                        getInspekts = {this.getInspekts}
+                        getQots = {this.getQots}/>
                 }
                 
             </ThemeProvider>
