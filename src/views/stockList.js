@@ -47,6 +47,7 @@ function LoadSelectHeadTable(props){
   const {logInfo,stockList,sort,setSort,tempSort,setTempSort} = props;
 
   const headCells = [
+    { id: 'picture', select: false, label: ''},
     { id: 'id', select: true, width:'1vi', label: 'id', selectOptions : [ ...new Set(stockList.map((element) => (element.id))) ].sort() },
     { id: 'date', select: true, width:'8vi', label: 'Date', selectOptions : [ ...new Set(stockList.map((element) => (Moment(element.addedOn).format('MMMM-YYYY')))) ].sort() },
     { id: 'salesman', select: true, width:'20vi', label: 'Repris par', selectOptions : [ ...new Set(stockList.map((element) => (
@@ -62,7 +63,7 @@ function LoadSelectHeadTable(props){
     { id: 'details', select: true, width:'30vi', label: 'Détails',selectOptions : [] },
     { id: 'year', select: true, label: 'Année',selectOptions : [ ...new Set(stockList.map((element) => (
       element.machine && element.machine.year && element.machine.year))) ].sort() },
-    { id: 'estimatedBuyingPrice', width:'7vi', select: true, label: 'Prix',selectOptions : [ ...new Set(stockList.map((element) => (element.quotations[element.quotations.length - 1].estimatedBuyingPrice))) ].sort() }
+    { id: 'price', width:'7vi', select: true, label: 'Prix',selectOptions : [ ...new Set(stockList.map((element) => (element.stockInfo.customerSalePrice))) ].sort() }
   ];
 
   let autoList = {}
@@ -210,8 +211,8 @@ export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFrom
   const [isExpertiseDetailsOpen,setIsExpertiseDetailsOpen] = React.useState(false);
   const [focusMachine,setFocusMachine] = React.useState({});
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
-  const [sort,setSort] = React.useState({id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],estimatedBuyingPrice:[]});
-  const [tempSort,setTempSort] = React.useState({id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],estimatedBuyingPrice:[]});
+  const [sort,setSort] = React.useState({id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],price:[]});
+  const [tempSort,setTempSort] = React.useState({id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],price:[]});
 
   const machineFeatureToString = (machineFeatures) => {
 
@@ -253,6 +254,7 @@ export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFrom
     
     stockListFiltered.forEach((element) => {
       rows = [...rows, {
+        picture : Object.values(element.pictures)[0],
         id : element.id,
         date : Moment(element.addedOn).format('MMMM-YYYY'),
         salesman: logInfo.cieMembers[element.openedBy].name,
@@ -262,7 +264,7 @@ export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFrom
         model : element.machine.model && element.machine.model,
         details : element.machineFeatures && machineFeatureToString(element.machineFeatures),
         year : element.machine.year && element.machine.year,
-        estimatedBuyingPrice : element.quotations[element.quotations.length -1].estimatedBuyingPrice,
+        price : element.stockInfo.customerSalePrice,  //use the price documented in the user settings
         expertiseObject : element
       }]
     });
@@ -512,6 +514,10 @@ export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFrom
                       key={row.id}
                       style={{cursor:'pointer'}}
                     >
+                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>
+                        {row.picture 
+                        && <img height='100px' src={row.picture}/>}
+                      </TableCell>
                       <TableCell className={classes.TableCell} id={labelId} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>
                         {row.id}
                       </TableCell>
@@ -523,7 +529,7 @@ export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFrom
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.model}</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.details}</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.year}</TableCell>
-                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.estimatedBuyingPrice}</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.price}€</TableCell>
                     </TableRow>
                   );
                 })}

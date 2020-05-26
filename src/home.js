@@ -87,6 +87,16 @@ class Home extends Component{
         this.setState(param);
     }
 
+    synchroniser = () => {
+        try{
+            this.getInspekts();
+            this.getQots();
+        }
+        catch(error){
+            console.log('synchroniser_error : ',error);
+        }
+    }
+
     componentDidUpdate(){
         console.log('homeState updated : ',this.state);
     }
@@ -129,6 +139,8 @@ class Home extends Component{
                             search = {this.state.searchText}
                             setSearch = {(searchText) => this.setState({searchText:searchText})}
                             stateMenuItems={stateMenuItems}
+                            getInspekts={this.getInspekts}
+                            synchroniser={this.synchroniser}
                         />
                         <Container>
                             <Header navigation = {navigation}/>

@@ -196,6 +196,7 @@ export default function ExpertiseDetails(props) {
     }
   }
 
+
   const inspektDelete = async(expertise) => {
 
     if(
@@ -238,7 +239,32 @@ export default function ExpertiseDetails(props) {
 
   }
 
+  const picturesDownload = href => {
+    fetch(href, {
+      method: "GET",
+      headers: {}
+    })
+      .then(response => {
+        console.log('responseBuffer : ',response);
+        response.arrayBuffer().then(function(buffer) {
+          const url = window.URL.createObjectURL(new Blob([buffer]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "image.png"); //or any other extension
+          document.body.appendChild(link);
+          link.click();
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   const saveNewQuotation = async() => {
+
+    inputQuotations.userId = logInfo.user.id;
+    inputQuotations.timestamp = Date.now();
+    
     if(qoterMode === true){
       if(
         logInfo.user.licence === 'admin'
@@ -277,9 +303,6 @@ export default function ExpertiseDetails(props) {
         }
       
     }else{
-
-      inputQuotations.userId = logInfo.user.id;
-      inputQuotations.timestamp = Date.now();
 
       const quotations = await Promise.resolve([
         ...(focusMachine.quotations.map((element) => ({
@@ -334,7 +357,7 @@ export default function ExpertiseDetails(props) {
   }
 
   useEffect(()=>{
-    console.log('inputQuotations : ',inputQuotations);
+    
   })
 
   return (
@@ -380,7 +403,7 @@ export default function ExpertiseDetails(props) {
 
             <Tooltip title="Télécharger les photos">
               <Button autoFocus color="inherit"
-                onClick={() => setSnackbar({message : 'Be patient : someone is developing this...',type:'snackbarWarning',isOpen:true})}>
+                onClick={e => picturesDownload("https://upload.wikimedia.org/wikipedia/en/6/6b/Hello_Web_Series_%28Wordmark%29_Logo.png")}>
                 <FontAwesomeIcon icon={faImages} style={{fontSize:'1.5em'}}/>
               </Button>
             </Tooltip>
@@ -479,7 +502,7 @@ export default function ExpertiseDetails(props) {
           className={clsx(classes.list, {[classes.fullList]: false})}
           role="presentation"
           style={
-            qoterMode === true
+            (qoterMode === true && focusMachine.status === 'inspekt')
             ? {border : '5px solid', borderColor:Color.inspektBlue}
             :{border : 'none'}
           }
@@ -487,6 +510,12 @@ export default function ExpertiseDetails(props) {
           {
             focusMachine.status === 'inspekt'
             ?<List>
+              <Typography
+                variant='h6'
+                style={{textAlign:'center',color:Color.secondary}}>
+                  Nouvelle cotation
+              </Typography>
+              <Divider />
               {[
                 {title : 'Prix de vente',key:'customerEstimatedSalePrice'},
                 {title : 'Prix marchand',key:'marketerEstimatedSalePrice'},
@@ -540,7 +569,8 @@ export default function ExpertiseDetails(props) {
                 </Button>
               </div>
             </List>
-            :null
+            :
+              null
           }
           <div className={classes.detailMachineContainer}>
             <Typography

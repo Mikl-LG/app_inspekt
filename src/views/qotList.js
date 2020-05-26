@@ -1,12 +1,18 @@
 import React, { useEffect } from 'react';
 import Moment from 'moment';
 
+import Button from '@material-ui/core/Button';
 import CancelIcon from '@material-ui/icons/Cancel';
 import { lighten, makeStyles } from '@material-ui/core/styles';
 import Chip from '@material-ui/core/Chip';
+import clsx from 'clsx';
+import Divider from '@material-ui/core/Divider';
+import Drawer from '@material-ui/core/Drawer';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 import MenuItem from '@material-ui/core/MenuItem';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -16,9 +22,9 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
+import SaveIcon from '@material-ui/icons/Save';
 import Select from '@material-ui/core/Select';
-import IconButton from '@material-ui/core/IconButton';
+import TextField from '@material-ui/core/TextField';
 import Tooltip from '@material-ui/core/Tooltip';
 import SearchIcon from '@material-ui/icons/Search';
 import Switch from '@material-ui/core/Switch';
@@ -213,12 +219,18 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
       setMachineCatalog(value);
     })
   });
+  const [stockDrawer,setStockDrawer] = React.useState({isOpen:false});
   const [natureList,setNatureList] = React.useState(Natures.Natures);
+  const [inputInStock, setInputInStock] = React.useState({});
   const [isExpertiseDetailsOpen,setIsExpertiseDetailsOpen] = React.useState(false);
   const [focusMachine,setFocusMachine] = React.useState({});
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
   const [sort,setSort] = React.useState({inStock:[],id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],qotState:[],estimatedBuyingPrice:[]});
   const [tempSort,setTempSort] = React.useState({inStock:[],id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],qotState:[],estimatedBuyingPrice:[]});
+
+  const handleChangeInStock = (event,key) => {
+    setInputInStock({...inputInStock,[key]:event.target.value});
+  };
 
   const machineFeatureToString = (machineFeatures) => {
 
@@ -400,13 +412,53 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
       setIsExpertiseDetailsOpen(true)
     }
 
-    const updateQotInStock = async(qot,inStock) => {
-
+    const saveNewStock = async() => {
       if(
         logInfo.user.licence === 'admin'
         || logInfo.user.licence === 'manager'
         || logInfo.user.licence === 'qoter'
         ){
+        
+        inputInStock.userId = logInfo.user.id;
+        inputInStock.timestamp = Date.now();
+  
+        const body = await Promise.resolve({
+          expId : stockDrawer.qot.id,
+          status: 'qot',
+          merge: {            // {object} list des quotations à jour
+            stockInfo : inputInStock
+          },
+          /**cieId is required if the inspekt is not from the user company but from a linkage */
+          cieId:focusMachine.cieId && focusMachine.cieId
+        })
+  
+        //**ADD COTATION REQUEST**\\
+        const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
+        let fetchOptions = await Promise.resolve(
+            {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body)
+            }
+        )
+        let fetching = await fetch(url, fetchOptions)
+        let error = await Promise.resolve(!fetching.ok)
+        let response = !error && await Promise.resolve(fetching.json());
+  
+        if(error == false){
+          updateQotInStock(stockDrawer.qot,true)
+        } 
+      }else{
+        setSnackbar({message : 'Seuls les Qoter, Manager et Administrateurs peuvent créer les stocks',type:'snackbarWarning',isOpen:true});
+      }
+    }
+  
+    const updateQotInStock = async(qot,inStock) => {
+  
         const body = await Promise.resolve({
           expId : qot.id,
           status: 'qot',
@@ -433,16 +485,14 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
         let fetching = await fetch(url, fetchOptions)
         let error = await Promise.resolve(!fetching.ok)
         let response = !error && await Promise.resolve(fetching.json());
-
+  
         if(error == false){
             setSnackbar({message : 'Mise à jour réussie',type:'snackbarSuccess',isOpen:true});
             getQots()
+            setStockDrawer({isOpen:false});
         }else{
           setSnackbar({message : 'Echec de la mise à jour',type:'snackbarWarning',isOpen:true});
         }
-      }else{
-        setSnackbar({message : 'Oups! Seul ton boss peut modifier un statut',type:'snackbarWarning',isOpen:true});
-      }
     }
 
     const updateQotState = async(qot,state) => {
@@ -491,7 +541,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
     }
 
   useEffect(()=>{
-
+    console.log('inputStock : ',inputInStock);
   })
 
   return (
@@ -528,8 +578,13 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
                       
                       <TableCell className={classes.TableCell} align="center" padding="none">
                         <Switch
+                          size="small"
                           defaultChecked={row.inStock === true ? true : false}
-                          onChange={() => updateQotInStock(row.expertiseObject,row.inStock === true ? false : true)}
+                          onChange={() => 
+                            row.inStock === false 
+                            ? setStockDrawer({qot : row.expertiseObject,inStock : row.inStock, isOpen:true})
+                            : updateQotInStock(row.expertiseObject,false)
+                          }
                           name={row.inStock}
                           color="primary"
                           />
@@ -545,8 +600,8 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.model}</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.details}</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.year}</TableCell>
-                      <TableCell className={classes.TableCell} align="right" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.estimatedBuyingPrice}</TableCell>
-                      <TableCell className={classes.TableCell} align="left" padding="none">
+                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.estimatedBuyingPrice}€</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none">
                       {
                         <Select
                         id={row.state}
@@ -606,6 +661,73 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
           setStateFromChild={setStateFromChild}
           getQots={getQots}
         />
+        <Drawer anchor='left' open={stockDrawer.isOpen} onClose={() => setStockDrawer({isOpen:false})}>
+          <div
+            className={clsx(classes.list, {[classes.fullList]: false})}
+            role="presentation"
+          >
+            <List>
+              <Typography
+                variant='h6'
+                style={{textAlign:'center',color:Color.secondary}}>
+                Mettre en stock
+              </Typography>
+              <Divider />
+              {[
+                {title : 'Prix de vente',key:'customerSalePrice'},
+                {title : 'Prix marchand',key:'marketerSalePrice'},
+                {title : 'Préparation estimée',key:'repairCost'},
+                {title : 'Préparation estimée (marchand)',key:'marketerRepairCost'},
+                {title : 'N° de parc',key:'erpId'},
+                {title : 'Prix d\'achat',key:'buyingPrice'},
+              ].map((value, index) => (
+                (logInfo.user.config.hiddenInput || []).indexOf(value.key) == -1
+                &&
+                <ListItem key={value.key}>
+                  <TextField
+                    label={value.title}
+                    style={{width:'100%'}}
+                    variant="outlined"
+                    onChange={(event) => handleChangeInStock(event,value.key)}
+                  />
+                </ListItem>
+              ))}
+              <ListItem key={'publicComment'}>
+                <TextField
+                  multiline
+                  rowsMin={4}
+                  label={'Commentaire public'}
+                  style={{width:'100%'}}
+                  variant="outlined"
+                  onChange={(event) => handleChangeInStock(event,'publicComment')}
+                />
+              </ListItem>
+              <ListItem key={'privateComment'}>
+                <TextField
+                  multiline
+                  rowsMin={4}
+                  label={'Commentaire privé'}
+                  style={{width:'100%'}}
+                  variant="outlined"
+                  onChange={(event) => handleChangeInStock(event,'privateComment')}
+                />
+              </ListItem>
+              <div
+                style={{width:'100%',display:'flex',flexDirection:'column',alignItems:'center',marginTop:'20px',marginBottom:'20px'}}>
+                <Button
+                  disabled={inputInStock.buyingPrice ? false : true}
+                  variant="contained"
+                  color="primary"
+                  startIcon={<SaveIcon />}
+                  style={{width:'auto'}}
+                  onClick={() => (saveNewStock())}
+                >
+                   Mettre en stock
+                </Button>
+              </div>
+            </List>
+          </div>
+        </Drawer>
         <SnackBar
           handleClose={() => setSnackbar({isopen : false})}
           message={snackbar.message}

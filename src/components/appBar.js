@@ -30,6 +30,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import Paper from '@material-ui/core/Paper';
 import SearchIcon from '@material-ui/icons/Search';
 import Slide from '@material-ui/core/Slide';
+import SyncIcon from '@material-ui/icons/Sync';
 import Switch from '@material-ui/core/Switch';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -144,7 +145,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 function PrimarySearchAppBar(props) {
 
-  const {cieMembers,logInfo,setStateFromChild,search,setSearch,stateMenuItems} = props;
+  const {cieMembers,logInfo,setStateFromChild,search,setSearch,stateMenuItems,synchroniser} = props;
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [createCompany,setCreateCompany] = React.useState({});
@@ -385,6 +386,9 @@ function PrimarySearchAppBar(props) {
           </div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
+            <IconButton aria-label="show 17 new notifications" color="inherit">
+                <SyncIcon onClick={() => synchroniser()} />
+            </IconButton>
             <IconButton aria-label="show 17 new notifications" color="inherit">
               <Badge badgeContent={6} color="secondary">
                 <NotificationsIcon />
