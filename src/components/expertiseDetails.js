@@ -38,7 +38,7 @@ import ImageSlider from '../components/imageslider';
 import SnackBar from '../components/snackBar';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalculator,faEye,faUserShield,faTimesCircle,faMoneyBillAlt,faCheck,faComments } from '@fortawesome/free-solid-svg-icons';
+import { faCalculator,faEye,faUserShield,faTimesCircle,faMoneyBillAlt,faCheck,faComments, faEuroSign } from '@fortawesome/free-solid-svg-icons';
 import { faImages } from '@fortawesome/free-solid-svg-icons';
 
 const useStyles = makeStyles((theme) => ({
@@ -117,6 +117,7 @@ export default function ExpertiseDetails(props) {
   const [drawer,setDrawer] = React.useState({isOpen:false});
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [inputQuotations, setInputQuotations] = React.useState({});
+  const [priceDialog,setPriceDialog] = React.useState({isOpen : false});
   const [qoterMode,setQoterMode] = React.useState()
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
   const [isOpenDeleteValidation,setIsOpenDeleteValidation] = React.useState(false);
@@ -239,32 +240,11 @@ export default function ExpertiseDetails(props) {
 
   }
 
-  const picturesDownload = href => {
-    fetch(href, {
-      method: "GET",
-      headers: {}
-    })
-      .then(response => {
-        console.log('responseBuffer : ',response);
-        response.arrayBuffer().then(function(buffer) {
-          const url = window.URL.createObjectURL(new Blob([buffer]));
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute("download", "image.png"); //or any other extension
-          document.body.appendChild(link);
-          link.click();
-        });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
-
   const saveNewQuotation = async() => {
 
     inputQuotations.userId = logInfo.user.id;
     inputQuotations.timestamp = Date.now();
-    
+
     if(qoterMode === true){
       if(
         logInfo.user.licence === 'admin'
@@ -357,7 +337,7 @@ export default function ExpertiseDetails(props) {
   }
 
   useEffect(()=>{
-    
+    console.log('focusMachine : ',focusMachine.inStock);
   })
 
   return (
@@ -393,17 +373,31 @@ export default function ExpertiseDetails(props) {
               </Button>
             </Tooltip>
             }
-            <Tooltip title="Ajouter une cotation">
+            {
+              focusMachine.inStock && focusMachine.inStock === true
+              &&
+              <Tooltip title="Prix">
+                <Button 
+                  aria-controls='price-edit'
+                  autoFocus
+                  color="inherit" 
+                  onClick={() => {setPriceDialog({isOpen:true})}}
+                >
+                  <FontAwesomeIcon icon={faEuroSign} style={{fontSize:'1.5em'}}/>
+                </Button>
+              </Tooltip>
+            }
+            <Tooltip title="Cotations">
               <Button autoFocus color="inherit" onClick={() => startCotation()}>
                 <Badge badgeContent={focusMachine.quotations && focusMachine.quotations.length} color="secondary">
                   <FontAwesomeIcon icon={faCalculator} style={{fontSize:'1.5em'}}/>
                 </Badge>
               </Button>
-            </Tooltip>
-
+            </Tooltip>            
             <Tooltip title="Télécharger les photos">
               <Button autoFocus color="inherit"
-                onClick={e => picturesDownload("https://upload.wikimedia.org/wikipedia/en/6/6b/Hello_Web_Series_%28Wordmark%29_Logo.png")}>
+                onClick={e => alert('in-progress')}
+              >
                 <FontAwesomeIcon icon={faImages} style={{fontSize:'1.5em'}}/>
               </Button>
             </Tooltip>
@@ -495,7 +489,40 @@ export default function ExpertiseDetails(props) {
             Supprimer
           </Button>
         </DialogActions>
-
+      </Dialog>
+      <Dialog
+        open={priceDialog.isOpen}
+        onClose={() => setPriceDialog({isOpen : false})}
+        aria-labelledby="alert-deleteInspekt-title"
+        aria-describedby="alert-deleteInspekt-description"
+      >
+        <DialogTitle id="alert-deleteInspekt-title">Prix</DialogTitle>
+        <Divider/>
+        <DialogContent>
+          <List>
+            
+              
+                {
+                  [
+                    {key : 'customerSalePrice',title : 'Prix de vente',sigle:'€'},
+                    {key : 'marketerSalePrice',title : 'Prix marchand',sigle:'€'},
+                    {key : 'repairCost',title : 'Préparation',sigle:'€'},
+                    {key : 'marketerRepairCost',title : 'Préparation (marchand)',sigle:'€'},
+                    {key : 'buyingPrice',title : 'Prix achat',sigle:'€'},
+                    {key : 'publicComment',title : 'Commentaire public',sigle:''},
+                    {key : 'privateComment',title : 'Commentaire privé',sigle:''},
+                  ].map((element) => 
+                    focusMachine.stockInfo
+                    && focusMachine.stockInfo[element.key]
+                      && <ListItem>
+                        <span style={{fontWeight:'bold'}}>{element.title}</span>{' : ' + focusMachine.stockInfo[element.key] + element.sigle}
+                        </ListItem>
+                  )
+                }
+              
+            
+          </List>
+        </DialogContent>
       </Dialog>
       <Drawer anchor='right' open={drawer.isOpen} onClose={() => setDrawer({isOpen:false})}>
         <div
