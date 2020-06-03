@@ -63,7 +63,7 @@ function LoadSelectHeadTable(props){
     { id: 'details', select: true, width:'30vi', label: 'Détails',selectOptions : [] },
     { id: 'year', select: true, label: 'Année',selectOptions : [ ...new Set(stockList.map((element) => (
       element.machine && element.machine.year && element.machine.year))) ].sort() },
-    { id: 'price', width:'7vi', select: true, label: 'Prix',selectOptions : [ ...new Set(stockList.map((element) => (element.stockInfo.customerSalePrice))) ].sort() }
+    { id: 'customerSalePrice', width:'7vi', select: true, label: 'Prix',selectOptions : [ ...new Set(stockList.map((element) => (element.stockInfo.customerSalePrice && element.stockInfo.customerSalePrice))) ].sort() }
   ];
 
   let autoList = {}
@@ -211,8 +211,8 @@ export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFrom
   const [isExpertiseDetailsOpen,setIsExpertiseDetailsOpen] = React.useState(false);
   const [focusMachine,setFocusMachine] = React.useState({});
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
-  const [sort,setSort] = React.useState({id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],price:[]});
-  const [tempSort,setTempSort] = React.useState({id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],price:[]});
+  const [sort,setSort] = React.useState({id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],customerSalePrice:[]});
+  const [tempSort,setTempSort] = React.useState({id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],customerSalePrice:[]});
 
   const machineFeatureToString = (machineFeatures) => {
 
@@ -264,7 +264,8 @@ export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFrom
         model : element.machine.model && element.machine.model,
         details : element.machineFeatures && machineFeatureToString(element.machineFeatures),
         year : element.machine.year && element.machine.year,
-        price : element.stockInfo.customerSalePrice,  //use the price documented in the user settings
+        customerSalePrice : element.stockInfo.customerSalePrice,
+        buyingPrice : element.stockInfo.buyingPrice,  //use the price documented in the user settings
         expertiseObject : element
       }]
     });
@@ -529,7 +530,7 @@ export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFrom
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.model}</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.details}</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.year}</TableCell>
-                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.price}€</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.buyingPrice}€</TableCell>
                     </TableRow>
                   );
                 })}

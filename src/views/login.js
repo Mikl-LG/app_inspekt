@@ -120,7 +120,7 @@ export default function Login({setStateFromChild,getInspekts,getQots}){
                 </form>
                 <Typography style={{fontSize:'0.7em'}}>
                     Vous n'êtes pas encore membre? 
-                    <a href='https://inspekt.fr/' target='_blank'>Inscrivez-vous maintenant</a>
+                    <a href='https://inspekt.fr/user.php' target='_blank'>Inscrivez-vous maintenant</a>
                 </Typography>
             </div>
             <SnackBar

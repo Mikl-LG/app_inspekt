@@ -3,7 +3,6 @@ import Axios from 'axios';
 
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
 import AppBar from '@material-ui/core/AppBar';
 import Badge from '@material-ui/core/Badge';
 import Button from '@material-ui/core/Button';
@@ -19,12 +18,8 @@ import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import InputBase from '@material-ui/core/InputBase';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import MailIcon from '@material-ui/icons/Mail';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import MenuIcon from '@material-ui/icons/Menu';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Paper from '@material-ui/core/Paper';
@@ -47,7 +42,7 @@ import Typography from '@material-ui/core/Typography';
 import Color from '../constants/color.js';
 import logo from '../inspektLogo_white.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCogs,faSave,faUser,faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faCogs,faSave,faUser,faUsers, faUserMinus, faUserPlus, faFolderPlus } from '@fortawesome/free-solid-svg-icons';
 import SnackBar from '../components/snackBar';
 import { FormControl } from '@material-ui/core';
 
@@ -151,6 +146,7 @@ function PrimarySearchAppBar(props) {
   const [createCompany,setCreateCompany] = React.useState({});
   const [createUser,setCreateUser] = React.useState({});
   const [expanded,setExpanded] = React.useState();
+  const [input,setInput] = React.useState();
   const [hiddenInput,setHiddenInput] = React.useState(
     logInfo.user.config && logInfo.user.config.hiddenInput || []);
   const [hiddenStateItems,setHiddenStateItems] = React.useState(
@@ -204,6 +200,37 @@ function PrimarySearchAppBar(props) {
     }catch(error){
       console.log('erreur Axios : ',error.response)
     }
+  }
+
+  const deleteUser = async() => {
+
+    const body = await Promise.resolve({
+      id : input.userToDelete,
+    })
+
+    //**ADD COTATION REQUEST**\\
+    const url = `https://inspekt.herokuapp.com/api?request=REMOVE_USER&token=${logInfo.token}`
+    let fetchOptions = await Promise.resolve(
+        {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body)
+        }
+    )
+    let fetching = await fetch(url, fetchOptions)
+    let error = await Promise.resolve(!fetching.ok)
+    let response = !error && await Promise.resolve(fetching.json());
+
+    console.log('response : ',response);
+
+    if(error == false){
+      setSnackbar({message : 'Utilisateur supprimé',type:'snackbarSuccess',isOpen:true});
+    } 
+    
   }
 
   const handleChangeCreateCompany = (event,key) => {
@@ -360,7 +387,7 @@ function PrimarySearchAppBar(props) {
   );
 
   useEffect(() => {
-    
+    console.log('modifiableUserInformations : ',modifiableUserInformations);
   })
 
   return (
@@ -388,11 +415,6 @@ function PrimarySearchAppBar(props) {
           <div className={classes.sectionDesktop}>
             <IconButton aria-label="show 17 new notifications" color="inherit">
                 <SyncIcon onClick={() => synchroniser()} />
-            </IconButton>
-            <IconButton aria-label="show 17 new notifications" color="inherit">
-              <Badge badgeContent={6} color="secondary">
-                <NotificationsIcon />
-              </Badge>
             </IconButton>
             <IconButton
               edge="end"
@@ -449,7 +471,7 @@ function PrimarySearchAppBar(props) {
               <Tab label="Profil" />
               <Tab label="Concession" />
               <Tab label="Paramètres" />
-              <Tab label="Statistiques" />
+              {logInfo.user.licence === 'admin' && <Tab label="Statistiques" />}
               {logInfo.user.licence === 'admin' && <Tab label="Supervision" />}
             </Tabs>
           </Paper>
@@ -519,7 +541,7 @@ function PrimarySearchAppBar(props) {
                 <Grid item xs={12} lg={4} style={{marginTop:'25px',width:'100%'}}>
                   <div style={{display:'flex',justifyContent:'center'}}>
                     <div>
-                      <img src={logInfo.company && logInfo.company.header} width='200px'/>
+                      <img src={logInfo.company && logInfo.company.logo} width='200px'/>
                     </div>
                   </div>
                   <div style={{display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column'}}>
@@ -669,36 +691,39 @@ function PrimarySearchAppBar(props) {
                       </FormControl>
                     </ExpansionPanelDetails>
                   </ExpansionPanel>
-                  <ExpansionPanel 
-                    square
-                    style={{width:'100%'}}
-                    expanded={expanded === 'qoterMode'}
-                    onChange={(event) => expanded === 'qoterMode' ? setExpanded(''):setExpanded('qoterMode')}
-                  >
-                    <ExpansionPanelSummary style={{display:'flex',alignItems:'center'}}>
-                      <Typography className={classes.sectionTitle} variant='subtitle1'>Mode QOTER par défaut</Typography>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails className={classes.centeredList}>
-                      <FormControl style={{width:'100%',alignSelf:'center'}}>
-                        <FormControlLabel
-                          control={
-                            <Switch
-                              checked={modifiableUserInformations.isDefaultQoter}
-                              onChange={() =>
-                                modifiableUserInformations.isDefaultQoter == true 
-                                ? setModifiableUserInformations(
-                                  {...modifiableUserInformations,isDefaultQoter : false}) 
-                                : setModifiableUserInformations(
-                                    {...modifiableUserInformations,isDefaultQoter : true})
-                              }
-                              name='isDefaultQoter'
-                              color="primary"
-                            />}
-                          label="Activer"
-                        />
-                      </FormControl>
-                    </ExpansionPanelDetails>
-                  </ExpansionPanel>
+                  {
+                    logInfo.user.licence === 'admin' &&
+                      <ExpansionPanel 
+                      square
+                      style={{width:'100%'}}
+                      expanded={expanded === 'qoterMode'}
+                      onChange={(event) => expanded === 'qoterMode' ? setExpanded(''):setExpanded('qoterMode')}
+                    >
+                      <ExpansionPanelSummary style={{display:'flex',alignItems:'center'}}>
+                        <Typography className={classes.sectionTitle} variant='subtitle1'>Mode QOTER par défaut</Typography>
+                      </ExpansionPanelSummary>
+                      <ExpansionPanelDetails className={classes.centeredList}>
+                        <FormControl style={{width:'100%',alignSelf:'center'}}>
+                          <FormControlLabel
+                            control={
+                              <Switch
+                                checked={modifiableUserInformations.isDefaultQoter}
+                                onChange={() =>
+                                  modifiableUserInformations.isDefaultQoter == true 
+                                  ? setModifiableUserInformations(
+                                    {...modifiableUserInformations,isDefaultQoter : false}) 
+                                  : setModifiableUserInformations(
+                                      {...modifiableUserInformations,isDefaultQoter : true})
+                                }
+                                name='isDefaultQoter'
+                                color="primary"
+                              />}
+                            label="Activer"
+                          />
+                        </FormControl>
+                      </ExpansionPanelDetails>
+                    </ExpansionPanel>
+                  }
                   <Button 
                     disabled={JSON.stringify(logInfo.user.config) == JSON.stringify(modifiableUserInformations)}
                     className={classes.button} 
@@ -720,8 +745,8 @@ function PrimarySearchAppBar(props) {
                 <Grid item xs={6} lg={6} style={{marginTop:'25px'}}>
                   <ExpansionPanel>
                     <ExpansionPanelSummary style={{display:'flex',alignItems:'center'}}>
-                      <AddCircleIcon color="primary"/>
-                      <Typography className={classes.sectionTitle} variant='h6' style={{marginLeft:'5px'}}>Nouvelle concession</Typography>
+                      <FontAwesomeIcon icon={faFolderPlus} style={{color:Color.secondary}}/>
+                      <Typography className={classes.sectionTitle} variant='h6' style={{marginLeft:'5px'}}>Ajouter une concession</Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
                       <FormControl style={{width:'100%'}} className={classes.centeredList}>
@@ -749,8 +774,8 @@ function PrimarySearchAppBar(props) {
                   </ExpansionPanel>
                   <ExpansionPanel>
                     <ExpansionPanelSummary>
-                      <AddCircleIcon color="primary"/>
-                      <Typography variant='h6' className={classes.sectionTitle} style={{marginLeft:'5px'}}>Nouvel utilisateur</Typography>
+                    <FontAwesomeIcon icon={faUserPlus} style={{color:Color.secondary}}/>
+                      <Typography variant='h6' className={classes.sectionTitle} style={{marginLeft:'5px'}}>Ajouter un utilisateur</Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
                       <FormControl style={{width:'100%'}} className={classes.centeredList}>
@@ -776,7 +801,30 @@ function PrimarySearchAppBar(props) {
                       </FormControl>
                     </ExpansionPanelDetails>
                   </ExpansionPanel>
-                  
+                  <ExpansionPanel>
+                    <ExpansionPanelSummary>
+                      <FontAwesomeIcon icon={faUserMinus} style={{color:Color.secondary}}/>
+                      <Typography variant='h6' className={classes.sectionTitle} style={{marginLeft:'5px'}}>Supprimer un utilisateur</Typography>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails>
+                      <FormControl style={{width:'100%'}} className={classes.centeredList}>
+                        {
+                          [
+                            {title:'Identifiant utilisateur',key:'userid'},
+                          ].map((element) => (
+                            <TextField
+                              className={classes.textfield}
+                              variant='outlined'
+                              label={element.title}
+                              onChange={(event) => setInput({userToDelete : event.target.value})}/>
+                          ))
+                        }
+                        <Button className={classes.button} onClick={() => deleteUser()}>
+                          <FontAwesomeIcon icon={faSave}/>
+                        </Button>
+                      </FormControl>
+                    </ExpansionPanelDetails>
+                  </ExpansionPanel>
                 </Grid>
               </Grid>
             </div>

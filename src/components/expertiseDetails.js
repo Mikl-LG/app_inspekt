@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 
 import AppBar from '@material-ui/core/AppBar';
+import AWS from 'aws-sdk';
 import Badge from '@material-ui/core/Badge';
 import { borders } from '@material-ui/system';
 import Button from '@material-ui/core/Button';
@@ -40,6 +41,13 @@ import SnackBar from '../components/snackBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalculator,faEye,faUserShield,faTimesCircle,faMoneyBillAlt,faCheck,faComments, faEuroSign } from '@fortawesome/free-solid-svg-icons';
 import { faImages } from '@fortawesome/free-solid-svg-icons';
+
+// configuring the AWS environment
+AWS.config.update({
+  accessKeyId: 'AKIA5JIBCZYIY4IZPEFL',
+  secretAccessKey: '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',
+  region: 'eu-west-3',
+});
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -162,9 +170,16 @@ export default function ExpertiseDetails(props) {
     let fetching = await fetch(url, fetchOptions)
     let error = await Promise.resolve(!fetching.ok)
     let response = !error && await Promise.resolve(fetching.json());
-    const {inspekts,qots} = response;
 
     if(error == false){
+
+      const subject = [focusMachine.machine.nature.name,focusMachine.machine.brand,focusMachine.machine.model,focusMachine.customer && focusMachine.customer.name].map((element) => element && element).join(' ');
+
+      sendEmailConfirmToUser( //toEmail,subject,quotationObject
+        logInfo.cieMembers[focusMachine.openedBy].email,
+        subject,
+        quotation);
+
       setSnackbar({message : 'Cette machine est désormais évaluée, beau boulot.',type:'snackbarSuccess',isOpen:true});
       setDrawer({isOpen:false});
       setOpen(false);
@@ -173,10 +188,40 @@ export default function ExpertiseDetails(props) {
     }
   }
 
+  const downloadPictures = async(pictures) => {
+    for (let [title,value] of Object.entries(pictures)){
+      const array2F = value.split('%2F');
+      const url = value;
+      console.log('value : ',value);
+      console.log('array2F : ',array2F);
+      let bucket = '';
+      let key = '';
+      if(array2F.length > 1){
+        bucket = 'inspekt-prod';
+        key = `MEDIASLANDER/${array2F[array2F.length-1]}`
+      }else{
+        let urlArray = url.split("/")
+        bucket = urlArray[3]
+        key = `${urlArray[4]}`
+      }
+      
+      let s3 = new AWS.S3();
+      let params = {Bucket: bucket, Key: key}
+
+      s3.getObject(params, async(err, data) => {
+        let blob=new Blob([data.Body], {type: data.ContentType});
+        let link=document.createElement('a');
+        link.href=window.URL.createObjectURL(blob);
+        link.download=title;
+        link.click();
+      })
+    }
+  }
+
   const editPdf = (type) => {
     //type = ficheExpertise || bonReprise || contreExpertise
     setAnchorEl(null);
-    getPdf(focusMachine.orderedDetailsToPrint,type)
+    getPdf(focusMachine.orderedDetailsToPrint,type,logInfo)
   }
 
   /**
@@ -207,8 +252,9 @@ export default function ExpertiseDetails(props) {
       ){
         const body = await Promise.resolve(
           { expId : expertise.id, 
-            //cieId : logInfo.company.id,
-            //status : 'inspekt'
+            /**cieId is required if the qot is not from the user company but from a linkage */
+            cieId:focusMachine.cieId && focusMachine.cieId,
+            status : 'inspekt'
           })
         const url = `https://inspekt.herokuapp.com/api?request=REMOVE_EXPERTISE&token=${logInfo.token}`
         let fetchOptions = await Promise.resolve(
@@ -235,9 +281,39 @@ export default function ExpertiseDetails(props) {
           setSnackbar({message : 'Essayes à nouveau en vérifiant ta connexion Internet',type:'snackbarWarning',isOpen:true});
         }
       }else{
-        setSnackbar({message : 'Là tu essayes de supprimer l\'Inspekt de quelqu\'un d\’autre non?',type:'snackbarWarning',isOpen:true});
+        setSnackbar({message : 'Seul un QOTER peut supprimer une expertise.',type:'snackbarWarning',isOpen:true});
       }
 
+  }
+
+  const sendEmailConfirmToUser = async(to,subject,quotation) => {
+
+    const comment = (quotation.comment && quotation.comment != undefined) ? 'Commentaire : ' + quotation.comment : 'Pas de commentaires pour cette évaluation'
+    const body = await Promise.resolve({
+      from : 'expertise@inspekt.fr',
+      to: to,
+      subject: subject,
+      core:'<p><b>Ton expertise vient d\'être évaluée :</b></p><p><ul style="list-style: none;"><li>Prix de gestion : ' + quotation.estimatedBuyingPrice + '€</li><li>' + comment + '</li></ul></p>',
+      auth : 'default'
+    })
+  
+    //**ADD COTATION REQUEST**\\
+    const url = `https://inspekt.herokuapp.com/api?request=SEND_EMAIL&token=${logInfo.token}`
+    let fetchOptions = await Promise.resolve(
+        {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body)
+        }
+    )
+    let fetching = await fetch(url, fetchOptions)
+    let error = await Promise.resolve(!fetching.ok)
+
+    console.log(fetching);
   }
 
   const saveNewQuotation = async() => {
@@ -331,7 +407,7 @@ export default function ExpertiseDetails(props) {
   }
 
   const startCotation = () => {
-    setQoterMode(logInfo.user.config.isDefaultQoter === true ? true : false);
+    setQoterMode(logInfo.user.config && logInfo.user.config.isDefaultQoter === true ? true : false);
     setDrawer({isOpen:true});
 
   }
@@ -396,7 +472,7 @@ export default function ExpertiseDetails(props) {
             </Tooltip>            
             <Tooltip title="Télécharger les photos">
               <Button autoFocus color="inherit"
-                onClick={e => alert('in-progress')}
+                onClick={() => downloadPictures(focusMachine.pictures)}
               >
                 <FontAwesomeIcon icon={faImages} style={{fontSize:'1.5em'}}/>
               </Button>
@@ -551,7 +627,7 @@ export default function ExpertiseDetails(props) {
                 {title : 'Cote SIMO',key:'simoQuotation'},
                 {title : 'Prix d\'achat',key:'estimatedBuyingPrice'},
               ].map((value, index) => (
-                (logInfo.user.config.hiddenInput || []).indexOf(value.key) == -1
+                ((logInfo.user.config && logInfo.user.config.hiddenInput) || []).indexOf(value.key) == -1
                 &&
                 <ListItem key={value.key}>
                   <TextField

@@ -98,7 +98,8 @@ function LoadSelectHeadTable(props){
 
   return(
     <TableHead>
-      <TableRow>
+      <p style={{marginLeft:'15px',fontSize:'0.8em',fontStyle:'italic',color:Color.secondary}}>{qotList.length} résultat(s)</p>
+      <TableRow style={{borderTop:'solid grey 1px'}}>
         {headCells.map((headCell) => (
           headCell.select === false
           ?
@@ -552,6 +553,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
             className={classes.table}
             aria-labelledby="tableTitle"
             aria-label="enhanced table"
+            stickyHeader
           >
             <LoadSelectHeadTable
               logInfo={logInfo}
@@ -681,7 +683,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
                 {title : 'N° de parc',key:'erpId'},
                 {title : 'Prix d\'achat',key:'buyingPrice'},
               ].map((value, index) => (
-                (logInfo.user.config.hiddenInput || []).indexOf(value.key) == -1
+                ((logInfo.user.config && logInfo.user.config.hiddenInput) ? logInfo.user.config.hiddenInput : []).indexOf(value.key) == -1
                 &&
                 <ListItem key={value.key}>
                   <TextField
@@ -715,7 +717,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
               <div
                 style={{width:'100%',display:'flex',flexDirection:'column',alignItems:'center',marginTop:'20px',marginBottom:'20px'}}>
                 <Button
-                  disabled={inputInStock.buyingPrice ? false : true}
+                  disabled={(inputInStock.buyingPrice && inputInStock.customerSalePrice) ? false : true} //TO SET A STOCK, BUYING PRICE AND SALE PRICE ARE REQUIRED
                   variant="contained"
                   color="primary"
                   startIcon={<SaveIcon />}

@@ -67,7 +67,7 @@ class Home extends Component{
         try{
             const axiosResponse = await axios({
                 method:'get',
-                url:'https://inspekt.herokuapp.com/api?request=QOTS&token='+token,
+                url:'https://inspekt.herokuapp.com/api?request=QOTS&token='+this.state.logInfo.token,
             });
             this.setState({qotList : axiosResponse.data,loading:false});
 
@@ -116,7 +116,7 @@ class Home extends Component{
         const logInfo = this.state.logInfo;
         const stateMenuItems = ['Annulée','Dépôt-vente','En-cours','Gagnée','Perdue','Reportée'];
         let stateMenuItemsFiltered = [];
-        (this.state.logInfo && !this.state.logInfo.user.config.hiddenStateItems)
+        (this.state.logInfo && !(this.state.logInfo.user.config && this.state.logInfo.user.config.hiddenStateItems))
         ? stateMenuItemsFiltered = stateMenuItems
         : stateMenuItems.forEach((element) => (
             this.state.logInfo 
