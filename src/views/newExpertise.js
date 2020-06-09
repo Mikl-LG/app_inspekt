@@ -277,7 +277,7 @@ export default function NewExpertise({setStateFromChild,logInfo,getInspekts}){
         ///////// ADD PICTURES TO S3 \\\\\\\\\\
         const axiosParams = await Promise.resolve({
           method: "post",
-          url: `http://inspekt.herokuapp.com/webapi/create_inspekt?token=${token}`,
+          url: `https://inspekt.herokuapp.com/webapi/create_inspekt?token=${token}`,
           // FormData object containing all images in 'filedata'
           data:data,
           config: { headers: { "Content-Type": "multipart/form-data" } }

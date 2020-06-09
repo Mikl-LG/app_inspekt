@@ -175,19 +175,20 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
             title:'Id',
             property:'id',
             value:expertise.id,
-            visibleOnPdf:true
+            visibleOnPdf:true,
           },
-          customer,{
+          customer,
+          {
             title:'Commercial',
             property:'salesman',
             value:logInfo.cieMembers[expertise.openedBy].name,
-            visibleOnPdf:true
+            visibleOnPdf:true,
           },
           {
             title:'Date de création',
             property:'date',
             value:Moment(expertise.openedOn).format('DD MMMM YYYY'),
-            visibleOnPdf:true
+            visibleOnPdf:true,
           },
         'divider',
         {
@@ -204,6 +205,7 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
             if(key === element.property){
               element.value = value;
               element.visibleOnPdf = true;
+              element.step = 'machine';
               machineToArray.push(element);
             }
           }
@@ -220,6 +222,7 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
           if(key === element.property){
             element.value = value;
             element.visibleOnPdf = true;
+            element.step = 'machine';
             machineToArray.push(element);
           }
         }
@@ -237,14 +240,31 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
         if(expertise.machineFeatures){
           for (let [key,value] of Object.entries(expertise.machineFeatures)){
             if(element.property && key === element.property){
-
               element.value = value;
               element.visibleOnPdf = true;
+              element.step = 'machineFeatures';
               machineToArray.push(element);
             }
           }
         }
       })
+
+      machineToArray.push(
+        {
+          title:'Disponible le',
+          property:'availableDate',
+          value:(expertise.particularities && expertise.particularities.availableDate) ? Moment(expertise.particularities.availableDate).format('DD-MMMM-YYYY') : 'non renseigné',
+          visibleOnPdf:true
+        },
+        {
+          title:'Commentaires',
+          property:'comments',
+          value:(expertise.particularities && expertise.particularities.comments) ? expertise.particularities.comments : 'pas de commentaires',
+          visibleOnPdf:true,
+          step:'particularities'
+        }
+      )
+
 
       ////////// QUOTATIONS ARRAY BUILD \\\\\\\\\\
 
@@ -286,7 +306,7 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
       <div className={classes.root}>
         <GridList cellHeight={200} className={classes.listGrid}>
           {
-              inspektList
+              (inspektList && JSON.stringify(inspektList) != '[]')
               ?inspektList.sort((a,b) => b.id - a.id).map((expertise) => (
                   <GridListTile key={expertise.id} style={{cursor:'pointer'}}  onClick={() => machineClicked(expertise)}>
                       {
@@ -295,7 +315,8 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
                           :null
                       }
                       <GridListTileBar
-                      title={['brand','model'].map((element) => (element && expertise.machine[element])).join(' ')}
+                      title={['brand','model'].map((element) => 
+                      (element && expertise.machine[element])).join(' ') + ' - ' + logInfo.cieMembers[expertise.openedBy].name}
                       subtitle={JSON.stringify(expertise.customer) != '{}' && expertise.customer && <span>Client: {['title','name','city'].map((element) => (element && expertise.customer[element])).join(' ')}</span>}
                       actionIcon={
                         <div>

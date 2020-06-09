@@ -39,7 +39,7 @@ import ImageSlider from '../components/imageslider';
 import SnackBar from '../components/snackBar';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalculator,faEye,faUserShield,faTimesCircle,faMoneyBillAlt,faCheck,faComments, faEuroSign } from '@fortawesome/free-solid-svg-icons';
+import { faCalculator,faPen,faTimesCircle,faMoneyBillAlt,faCheck,faComments, faEuroSign } from '@fortawesome/free-solid-svg-icons';
 import { faImages } from '@fortawesome/free-solid-svg-icons';
 
 // configuring the AWS environment
@@ -48,6 +48,8 @@ AWS.config.update({
   secretAccessKey: 'lPWTTxcgAhz2c9E+4DcFjELRvp/gFctena8OMQxQ',
   region: 'eu-west-3',
 });
+
+let s3 = new AWS.S3();
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -81,6 +83,15 @@ const useStyles = makeStyles((theme) => ({
   },
   listItemText:{
     fontSize:'0.8em',//Insert your required size
+  },
+  penEdit:{
+      color:Color.softGrey,
+      marginLeft:'10px',
+      fontSize : '0.8em',
+      cursor:'pointer',
+      '&:hover': {
+        color: Color.secondary,
+     },
   },
   root: {
     display: 'flex',
@@ -121,7 +132,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function ExpertiseDetails(props) {
   const classes = useStyles();
-  const {open,setOpen,focusMachine,setFocusMachine,logInfo,setStateFromChild,getQots,getInspekts} = props;
+  const {open,setOpen,focusMachine,setFocusMachine,logInfo,getQots,getInspekts} = props;
   const [drawer,setDrawer] = React.useState({isOpen:false});
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [inputQuotations, setInputQuotations] = React.useState({});
@@ -129,6 +140,7 @@ export default function ExpertiseDetails(props) {
   const [qoterMode,setQoterMode] = React.useState()
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
   const [isOpenDeleteValidation,setIsOpenDeleteValidation] = React.useState(false);
+  const [updateMachineFeatures,setUpdateMachineFeatures] = React.useState({open:false});
 
   const checkDetailsToPrint = (detail) => {
 
@@ -189,20 +201,46 @@ export default function ExpertiseDetails(props) {
   }
 
   const downloadPictures = async(pictures) => {
+
+    const keys = await Promise.resolve(Object.keys(pictures)); //[leftFront,rightBack]
+    let promises = await Promise.resolve(keys.map(async(k) => {
+      return new Promise(async(resolve) => {
+        let picture = await Promise.resolve(pictures[k].replace('%2F','/'));
+
+        let splitted = await Promise.resolve(picture.split('/'));
+        let key = await Promise.resolve(splitted[splitted.length-1]);
+        let params = await Promise.resolve({Bucket : 'inspekt-prod',Key:`MEDIASLANDER/${key}`})
+
+        s3.getObject(params, async(err, data) => {
+          let blob = await Promise.resolve(new Blob([data.Body], {type: data.ContentType}));
+          let link = await Promise.resolve(document.createElement('a'));
+          link.href = await Promise.resolve(window.URL.createObjectURL(blob));
+          link.download = await Promise.resolve(k);
+          let clicked = await new Promise((_clicked) => {
+            link.click();
+            _clicked(true);
+          })
+          resolve(true)
+        })
+      })
+      
+    }))
+    const result = await Promise.all(promises);
+  }
+
+  const _DEPRECATEDdownloadPictures = async(pictures) => {
     for (let [title,value] of Object.entries(pictures)){
       const array2F = value.split('%2F');
-      const url = value;
-      console.log('value : ',value);
-      console.log('array2F : ',array2F);
-      let bucket = '';
-      let key = '';
+      const urlArray = value.split("/");
+
+      let bucket;
+      let key;
       if(array2F.length > 1){
         bucket = 'inspekt-prod';
         key = `MEDIASLANDER/${array2F[array2F.length-1]}`
       }else{
-        let urlArray = url.split("/")
-        bucket = urlArray[3]
-        key = `${urlArray[4]}`
+        bucket = 'inspekt-prod';
+        key = `MEDIASLANDER/${urlArray[urlArray.length-1]}`
       }
       
       let s3 = new AWS.S3();
@@ -312,8 +350,6 @@ export default function ExpertiseDetails(props) {
     )
     let fetching = await fetch(url, fetchOptions)
     let error = await Promise.resolve(!fetching.ok)
-
-    console.log(fetching);
   }
 
   const saveNewQuotation = async() => {
@@ -412,8 +448,43 @@ export default function ExpertiseDetails(props) {
 
   }
 
+  const updateMachineFeaturesRequest = async() => {
+
+    const body = await Promise.resolve({
+      expId : focusMachine.id,
+      status: 'inspekt',
+      merge: {            // {object} list des quotations à jour
+        [updateMachineFeatures.step] : {...focusMachine[updateMachineFeatures.step],[updateMachineFeatures.property] : updateMachineFeatures.updatedValue}
+      },
+      /**cieId is required if the qot is not from the user company but from a linkage */
+      cieId:focusMachine.cieId && focusMachine.cieId
+    })
+  
+    //**ADD COTATION REQUEST**\\
+    const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
+    let fetchOptions = await Promise.resolve(
+        {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body)
+        }
+    )
+    let fetching = await fetch(url, fetchOptions)
+    let error = await Promise.resolve(!fetching.ok)
+    if(error === false){
+      getInspekts();
+      setUpdateMachineFeatures({open:false});
+      setOpen(false);
+    }
+    
+  }
+
   useEffect(()=>{
-    console.log('focusMachine : ',focusMachine.inStock);
+    console.log('updateMachineFeatures : ',updateMachineFeatures);
   })
 
   return (
@@ -537,6 +608,16 @@ export default function ExpertiseDetails(props) {
                               </div>
                             </div>
                         }
+                        {
+                          element.step && logInfo.user.licence != 'inspekter'
+                          && <FontAwesomeIcon
+                                className={classes.penEdit}
+                                icon={faPen}
+                                onClick={() => setUpdateMachineFeatures({open:true,title:element.title,value:element.value,property:element.property,step:element.step})}
+                              />
+                        }
+                        
+                        
                       </div>
                     </ListItemText> 
                 ))
@@ -739,6 +820,25 @@ export default function ExpertiseDetails(props) {
           </div>
         </div>
       </Drawer>
+      <Dialog open={updateMachineFeatures.open} onClose={() => setUpdateMachineFeatures({open:false})}>
+      <DialogContent>
+        <TextField 
+          label = {updateMachineFeatures.title ? updateMachineFeatures.title : 'Titre'}
+          defaultValue={updateMachineFeatures.value ? updateMachineFeatures.value : 'value'}
+          onChange={(event) => setUpdateMachineFeatures(
+            {...updateMachineFeatures,updatedValue:event.target.value})
+            }>    
+        </TextField>
+      </DialogContent>
+      <Button
+        variant="contained"
+        color="primary" 
+        style={{margin:'20px'}}
+        onClick={() => updateMachineFeaturesRequest()}
+        >
+          VALIDER
+      </Button>
+      </Dialog>
       <SnackBar
         handleClose={() => setSnackbar({isopen : false})}
         message={snackbar.message}

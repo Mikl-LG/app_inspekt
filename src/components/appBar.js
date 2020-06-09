@@ -157,6 +157,9 @@ function PrimarySearchAppBar(props) {
   const [modifiableUserInformations,setModifiableUserInformations] = React.useState(
      logInfo.user.config || false
   );
+  const [userConfig,setUserConfig] = React.useState(
+    logInfo.user.config || false
+ );
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
 
   const createNewCompany = async() => {
@@ -315,8 +318,8 @@ function PrimarySearchAppBar(props) {
     setTabValue(newValue);
   };
 
-  const updateUser = async() => {
-
+  const updateUser = async(type) => {
+    
     let updatedData = {...logInfo.user.config};
     for (let[key,value] of Object.entries(modifiableUserInformations)){
       updatedData = {...updatedData,[key] : value}
@@ -327,7 +330,8 @@ function PrimarySearchAppBar(props) {
       method: "post",
       url: `https://inspekt.herokuapp.com/api?request=MERGE_USER&token=${token}`,
       // FormData object containing all images in 'filedata'
-      data:{config:updatedData},
+      data: type === 'informations' ? updatedData : {config:updatedData}, 
+      //users informations are roots paramters instead of config which are stored in user.config
       config: {Accept: 'application/json','Content-Type': 'application/json',}
     })
 
@@ -516,7 +520,7 @@ function PrimarySearchAppBar(props) {
                     className={classes.button} 
                     variant="contained"
                     color="primary" 
-                    onClick={() => updateUser()}
+                    onClick={() => updateUser('informations')}
                     startIcon={<FontAwesomeIcon icon={faSave}/>}>
                     SAUVEGARDER
                   </Button>
@@ -729,7 +733,7 @@ function PrimarySearchAppBar(props) {
                     className={classes.button} 
                     variant="contained"
                     color="primary" 
-                    onClick={() => updateUser()}
+                    onClick={() => updateUser('config')}
                     startIcon={<FontAwesomeIcon icon={faSave}/>}>
                     SAUVEGARDER
                   </Button>
