@@ -2407,6 +2407,10 @@ rotativeHarrow:{
                         property: 'batteurHours',
                         numeric: true
                     },
+                    "version": {
+                        title: 'Version',
+                        property: 'version'
+                    },
                 },
 
                 regular : [             // type 'regular' stored by nature.formStepsTypes (Natures.js)
@@ -2987,9 +2991,7 @@ rotativeHarrow:{
 
                     "nombreVitesses":{
                         title:'Nombre de vitesses',
-                        property:'gearRange',
-                        numeric: true
-                        
+                        property:'gearRange'
                     },
 
                     "optionsAndaineur":{
@@ -3121,6 +3123,22 @@ rotativeHarrow:{
                             "BRAS DE DEPOSE A PLAT",
                             "COMPTEUR DE TOURS",
                             "EJECTEUR"
+                        ]  
+                    },
+
+                    "optionsEnsileuse":{
+                        title:'Options',
+                        property : 'silageHarvesterOptions',
+                        toggle:[
+                            "CANAL HERBE",
+                            "CAPTEUR MAT. SECHE",
+                            "CAPTEUR RENDEMENT",
+                            "CROCHET ARRIERE",
+                            "DETECTEUR PIERRES",
+                            "INOCULANT",
+                            "MASSES ARRIERES",
+                            "PONT ARRIERE MOTEUR",
+                            "PORTE MASSES",
                         ]  
                     },
 
@@ -3496,10 +3514,20 @@ rotativeHarrow:{
                         data: formsCatalog.automotiveTransmission
                     },
 
+                    "transmissionAutomoteurModele":{
+                        title:'Modèle transmission',
+                        property:'automotiveTransmissionModel'
+                    },
+
                     "transmissionTracteur":{
-                        title:'Transmission',
+                        title:'Type de transmission',
                         property:'tractorTransmission',
                         data: formsCatalog.tractorTransmission
+                    },
+
+                    "transmissionTracteurModele":{
+                        title:'Modèle transmission',
+                        property:'tractorTransmissionModel'
                     },
 
                     "typeAligneusePierres":{

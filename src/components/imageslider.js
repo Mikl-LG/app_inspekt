@@ -45,20 +45,6 @@ function SwipeableTextMobileStepper({imageList}) {
 
   return (
     <div className={classes.root}>
-      <SwipeableViews
-        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-        index={activeStep}
-        onChangeIndex={handleStepChange}
-        enableMouseEvents
-      >
-        {imageList.map((step, index) => (
-          <div key={step}>
-            {Math.abs(activeStep - index) <= 2 ? (
-              <img className={classes.img} src={step} />
-            ) : null}
-          </div>
-        ))}
-      </SwipeableViews>
       <MobileStepper
         steps={maxSteps}
         position="static"
@@ -77,6 +63,20 @@ function SwipeableTextMobileStepper({imageList}) {
           </Button>
         }
       />
+      <SwipeableViews
+        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+        index={activeStep}
+        onChangeIndex={handleStepChange}
+        enableMouseEvents
+      >
+        {imageList.map((step, index) => (
+          <div key={step} style={{width:'100%',display:'flex',justifyContent:'center'}}>
+            {Math.abs(activeStep - index) <= 2 ? (
+              <img className={classes.img} src={step} style={{maxHeight:window.innerHeight,width:'auto',maxWidth:'100%',height:'auto'}}/>
+            ) : null}
+          </div>
+        ))}
+      </SwipeableViews>
     </div>
   );
 }

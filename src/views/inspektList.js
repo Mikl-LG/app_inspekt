@@ -237,8 +237,13 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
 
       /**SETTING MACHINEFEATURE_HOOK WITH THE COMPLETE ADDONS : TITLE - PROPERTY - VALUE */
       machineFeatureAddonsAvailable.forEach((element) => {
-        if(expertise.machineFeatures){
-          console.log(element)
+        for (let [key,value] of Object.entries(expertise.machineFeatures)){
+          if(key === element.property){
+            element.value = value;
+            element.visibleOnPdf = true;
+            element.step = 'machine';
+            machineToArray.push(element);
+          }
         }
       })
 
@@ -287,6 +292,7 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
       expertise.orderedDetailsToPrint = machineToArray;
       setFocusMachine(expertise);
       setIsExpertiseDetailsOpen(true)
+      console.log('expertise : ',expertise);
     }
 
     useEffect(() => {

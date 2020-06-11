@@ -265,7 +265,7 @@ const Natures = [
                 addOns: ["hrsMoteur", "hrsRotor"]
             },
             3:{
-                addOns:["usureGenerale","puissance","transmissionAutomoteur","largeurCanal","rouleauxAlimentation","eclateur","reglageContreCouteau","cabineAutomoteur","usureTolesRotor","usureTolesGoulotte","usureCouteaux","usureContreCouteau","marqueRecolteur","modeleRecolteur","vitesseMaximaleAutomoteur","autoguidageEmbarque","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","conformite","documents"]
+                addOns:["usureGenerale","puissance","transmissionAutomoteur","transmissionAutomoteurModele","largeurCanal","rouleauxAlimentation","eclateur","reglageContreCouteau","cabineAutomoteur","usureTolesRotor","usureTolesGoulotte","usureCouteaux","usureContreCouteau","marqueRecolteur","modeleRecolteur","vitesseMaximaleAutomoteur","autoguidageEmbarque","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","optionsEnsileuse","conformite","documents"]
             },
             4:{
                 type:'regular',
@@ -638,10 +638,10 @@ const Natures = [
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: ["hrsMoteur","hrsPrev"]
+                addOns: ["version","hrsMoteur","hrsPrev"]
             },
             3: {
-                addOns:["usureGenerale","puissance","transmissionTracteur","nombreVitesses","vitesseMaximaleTracteur","inverseur","freinage","cabine","climatisation","siege","radio","priseDeForceAR","distributeursArriere","chandelles","stabilisateurs","pontAvant","relevageAvant","distributeursAvant","priseDeForceAV","autoguidageEmbarque","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","attelageTracteur","documents"]
+                addOns:["usureGenerale","puissance","transmissionTracteur","transmissionTracteurModele","nombreVitesses","vitesseMaximaleTracteur","inverseur","freinage","cabine","climatisation","siege","radio","priseDeForceAR","distributeursArriere","chandelles","stabilisateurs","pontAvant","relevageAvant","distributeursAvant","priseDeForceAV","autoguidageEmbarque","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","attelageTracteur","documents"]
             },
             4:{
                 type:'regular',
