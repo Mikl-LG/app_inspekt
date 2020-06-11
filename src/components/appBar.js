@@ -696,7 +696,7 @@ function PrimarySearchAppBar(props) {
                     </ExpansionPanelDetails>
                   </ExpansionPanel>
                   {
-                    logInfo.user.licence === 'admin' &&
+                    (logInfo.user.licence === 'admin' || logInfo.user.licence === 'manager' || logInfo.user.licence === 'qoter') &&
                       <ExpansionPanel 
                       square
                       style={{width:'100%'}}

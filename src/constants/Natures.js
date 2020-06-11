@@ -505,7 +505,7 @@ const Natures = [
                 addOns: ["cptrBottes"]
             },
             3:{
-                addOns:["usureGenerale","diametreBotte","typeChambrePresse","typeAmeneur","liageBotte","largeurPickUp","nombreDentsARemplacer","nombreCouteaux","usureChaines","usureCourroies","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsPresseBallesRondes","conformite","documents"]
+                addOns:["usureGenerale","diametreMaxBotte","typeChambrePresse","typeAmeneur","liageBotte","largeurPickUp","nombreDentsARemplacer","nombreCouteaux","usureChaines","usureCourroies","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsPresseBallesRondes","conformite","documents"]
             },
             4:{
                 type:'trailed',

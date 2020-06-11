@@ -2744,8 +2744,8 @@ rotativeHarrow:{
                         data: formsCatalog.assistantFunction
                     },
 
-                    "hauteurDegagement (cm)":{
-                        title : 'Hauteur de dégagement',
+                    "hauteurDegagement":{
+                        title : 'Hauteur de dégagement (cm)',
                         property:'tillageHeight',
                         numeric: true
                     },

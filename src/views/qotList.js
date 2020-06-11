@@ -537,7 +537,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
           setSnackbar({message : 'Echec de la mise à jour',type:'snackbarWarning',isOpen:true});
         }
       }else{
-        setSnackbar({message : 'Oups! Seul ton boss peut modifier un statut',type:'snackbarWarning',isOpen:true});
+        setSnackbar({message : 'Seul un QOTER peut modifier un statut.',type:'snackbarWarning',isOpen:true});
       }
     }
 

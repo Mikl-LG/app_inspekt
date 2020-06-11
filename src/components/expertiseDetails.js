@@ -354,14 +354,14 @@ export default function ExpertiseDetails(props) {
 
   const saveNewQuotation = async() => {
 
+    const allowedLicenses = {admin : true, manager:true, qoter:true};
+
     inputQuotations.userId = logInfo.user.id;
     inputQuotations.timestamp = Date.now();
 
     if(qoterMode === true){
       if(
-        logInfo.user.licence === 'admin'
-        || logInfo.user.licence === 'manager'
-        || logInfo.user.licence === 'qoter'
+        allowedLicenses[logInfo.user.licence]
         ){
           const body = await Promise.resolve({
             expId : focusMachine.id,
@@ -396,27 +396,16 @@ export default function ExpertiseDetails(props) {
       
     }else{
 
-      const quotations = await Promise.resolve([
-        ...(focusMachine.quotations.map((element) => ({
-              estimatedBuyingPrice : element.estimatedBuyingPrice,
-              userId : element.userId,
-              timestamp : element.timestamp
-            })) || []),     // array
-        inputQuotations                         // quotation object*
-      ]);
-
       const body = await Promise.resolve({
         expId : focusMachine.id,
-        status: 'inspekt',
-        merge: {            // {object} list des quotations à jour
-          quotations
-        },
+          // {object} list des quotations à jour
+        quotation : inputQuotations,
         /**cieId is required if the inspekt is not from the user company but from a linkage */
         cieId:focusMachine.cieId && focusMachine.cieId
       })
 
       //**ADD COTATION REQUEST**\\
-      const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
+      const url = `https://inspekt.herokuapp.com/api?request=ADD_QUOTATION&token=${logInfo.token}`
       let fetchOptions = await Promise.resolve(
           {
               method: 'POST',
@@ -435,12 +424,104 @@ export default function ExpertiseDetails(props) {
       if(error == false){
         
           setSnackbar({message : 'Votre cotation est enregistrée.',type:'snackbarSuccess',isOpen:true});
-          getInspekts()
+          getInspekts();
           setDrawer({isOpen:false});
           setOpen(false);
       } 
     }
   }
+
+
+
+  // const deprecated_saveNewQuotation = async() => {
+
+  //   const allowedLicenses = {admin : true, manager:true, qoter:true};
+
+  //   inputQuotations.userId = logInfo.user.id;
+  //   inputQuotations.timestamp = Date.now();
+
+  //   if(qoterMode === true){
+  //     if(
+  //       allowedLicenses[logInfo.user.licence]
+  //       ){
+  //         const body = await Promise.resolve({
+  //           expId : focusMachine.id,
+  //           status: 'inspekt',
+  //           merge: {            // {object} list des quotations à jour
+  //             state:'En-cours'
+  //           },
+  //           /**cieId is required if the qot is not from the user company but from a linkage */
+  //           cieId:focusMachine.cieId && focusMachine.cieId
+  //         })
+        
+  //         //**ADD COTATION REQUEST**\\
+  //         const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
+  //         let fetchOptions = await Promise.resolve(
+  //             {
+  //                 method: 'POST',
+  //                 mode: 'cors',
+  //                 headers: {
+  //                     Accept: 'application/json',
+  //                     'Content-Type': 'application/json',
+  //                 },
+  //                 body: JSON.stringify(body)
+  //             }
+  //         )
+  //         let fetching = await fetch(url, fetchOptions)
+  //         let error = await Promise.resolve(!fetching.ok)
+
+  //         if(error == false){
+  //           closeQuotation(inputQuotations)
+  //         }
+  //       }
+      
+  //   }else{
+
+  //     const quotations = await Promise.resolve([
+  //       ...(focusMachine.quotations.map((element) => ({
+  //             estimatedBuyingPrice : element.estimatedBuyingPrice,
+  //             userId : element.userId,
+  //             timestamp : element.timestamp
+  //           })) || []),     // array
+  //       inputQuotations                         // quotation object*
+  //     ]);
+
+  //     const body = await Promise.resolve({
+  //       expId : focusMachine.id,
+  //       status: 'inspekt',
+  //       merge: {            // {object} list des quotations à jour
+  //         quotations
+  //       },
+  //       /**cieId is required if the inspekt is not from the user company but from a linkage */
+  //       cieId:focusMachine.cieId && focusMachine.cieId
+  //     })
+
+  //     //**ADD COTATION REQUEST**\\
+  //     const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
+  //     let fetchOptions = await Promise.resolve(
+  //         {
+  //             method: 'POST',
+  //             mode: 'cors',
+  //             headers: {
+  //                 Accept: 'application/json',
+  //                 'Content-Type': 'application/json',
+  //             },
+  //             body: JSON.stringify(body)
+  //         }
+  //     )
+  //     let fetching = await fetch(url, fetchOptions)
+  //     let error = await Promise.resolve(!fetching.ok)
+  //     let response = !error && await Promise.resolve(fetching.json());
+
+  //     if(error == false){
+        
+  //         setSnackbar({message : 'Votre cotation est enregistrée.',type:'snackbarSuccess',isOpen:true});
+  //         getInspekts()
+  //         setDrawer({isOpen:false});
+  //         setOpen(false);
+  //     } 
+  //   }
+  // }
 
   const startCotation = () => {
     setQoterMode(logInfo.user.config && logInfo.user.config.isDefaultQoter === true ? true : false);
@@ -450,15 +531,21 @@ export default function ExpertiseDetails(props) {
 
   const updateMachineFeaturesRequest = async() => {
 
+    console.log('updateMachineFeatures : ',updateMachineFeatures);
+
     const body = await Promise.resolve({
+      cieId : focusMachine.cieId,
       expId : focusMachine.id,
       status: 'inspekt',
       merge: {            // {object} list des quotations à jour
+        //[machineFeatures] : {...expertise.machineFeatures, tyreSize : 420-75-28}
         [updateMachineFeatures.step] : {...focusMachine[updateMachineFeatures.step],[updateMachineFeatures.property] : updateMachineFeatures.updatedValue}
       },
       /**cieId is required if the qot is not from the user company but from a linkage */
       cieId:focusMachine.cieId && focusMachine.cieId
     })
+
+    console.log('body : ',body);
   
     //**ADD COTATION REQUEST**\\
     const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
@@ -484,7 +571,7 @@ export default function ExpertiseDetails(props) {
   }
 
   useEffect(()=>{
-    console.log('updateMachineFeatures : ',updateMachineFeatures);
+    console.log('inputQuotation : ',inputQuotations);
   })
 
   return (
@@ -613,7 +700,11 @@ export default function ExpertiseDetails(props) {
                           && <FontAwesomeIcon
                                 className={classes.penEdit}
                                 icon={faPen}
-                                onClick={() => setUpdateMachineFeatures({open:true,title:element.title,value:element.value,property:element.property,step:element.step})}
+                                onClick={() => setUpdateMachineFeatures({
+                                  open:true,
+                                  title:element.title,value:element.value,
+                                  property:element.property,step:element.step
+                                })}
                               />
                         }
                         

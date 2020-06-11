@@ -238,14 +238,7 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
       /**SETTING MACHINEFEATURE_HOOK WITH THE COMPLETE ADDONS : TITLE - PROPERTY - VALUE */
       machineFeatureAddonsAvailable.forEach((element) => {
         if(expertise.machineFeatures){
-          for (let [key,value] of Object.entries(expertise.machineFeatures)){
-            if(element.property && key === element.property){
-              element.value = value;
-              element.visibleOnPdf = true;
-              element.step = 'machineFeatures';
-              machineToArray.push(element);
-            }
-          }
+          console.log(element)
         }
       })
 
