@@ -573,9 +573,10 @@ function PrimarySearchAppBar(props) {
                           <TableHead>
                             <TableRow>
                               <TableCell>Utilisateur</TableCell>
-                              <TableCell align="right">Licence</TableCell>
-                              <TableCell align="right">Email</TableCell>
-                              <TableCell align="right">Téléphone</TableCell>
+                              <TableCell align="center">Licence</TableCell>
+                              <TableCell align="center">Email</TableCell>
+                              <TableCell align="center">Téléphone</TableCell>
+                              <TableCell align="center">Mode</TableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
@@ -589,6 +590,7 @@ function PrimarySearchAppBar(props) {
                                 <TableCell align="center">{logInfo.cieMembers[user].licence}</TableCell>
                                 <TableCell align="center">{logInfo.cieMembers[user].email}</TableCell>
                                 <TableCell align="center">{logInfo.cieMembers[user].phoneNumber}</TableCell>
+                                <TableCell align="center">{logInfo.cieMembers[user].team === false ? 'SOLO' : 'TEAM'}</TableCell>
                               </TableRow>
                             ))}
                           </TableBody>

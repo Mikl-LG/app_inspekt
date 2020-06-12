@@ -53,7 +53,20 @@ class Home extends Component{
                     method:'get',
                     url:'https://inspekt.herokuapp.com/api?request=INSPEKTS&token='+this.state.logInfo.token,
                 });
-                this.setState({inspektList : axiosResponse.data});
+
+                const isTeamRestricted = await Promise.resolve(typeof this.state.logInfo.user === 'object' && this.state.logInfo.user.team === false);
+                const sortedList = (
+                    isTeamRestricted 
+                    ? await Promise.resolve(
+                        axiosResponse.data.filter((e) => (
+                            (e.openedBy === this.state.logInfo.user.id)
+                            || e.inStock
+                        ))
+                    )
+                    : axiosResponse.data
+                )
+
+                this.setState({inspektList : sortedList});
     
             }catch(error){
                 console.log('error getInspekts : ',error);
@@ -69,7 +82,20 @@ class Home extends Component{
                 method:'get',
                 url:'https://inspekt.herokuapp.com/api?request=QOTS&token='+this.state.logInfo.token,
             });
-            this.setState({qotList : axiosResponse.data,loading:false});
+
+            const isTeamRestricted = await Promise.resolve(typeof this.state.logInfo.user === 'object' && this.state.logInfo.user.team === false);
+                const sortedList = (
+                    isTeamRestricted 
+                    ? await Promise.resolve(
+                        axiosResponse.data.filter((e) => (
+                            (e.openedBy === this.state.logInfo.user.id)
+                            || e.inStock
+                        ))
+                    )
+                    : axiosResponse.data
+                )
+
+            this.setState({qotList : sortedList,loading:false});
 
         }catch(error){
             console.log('error getQots : ',error);

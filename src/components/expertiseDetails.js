@@ -142,6 +142,8 @@ export default function ExpertiseDetails(props) {
   const [isOpenDeleteValidation,setIsOpenDeleteValidation] = React.useState(false);
   const [updateMachineFeatures,setUpdateMachineFeatures] = React.useState({open:false});
 
+  console.log('focusMachine : ',focusMachine);
+
   const checkDetailsToPrint = (detail) => {
 
       const detailToSet = focusMachine.orderedDetailsToPrint.find((element) => element === detail);

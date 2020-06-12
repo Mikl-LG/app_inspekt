@@ -403,8 +403,17 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
       let pictureArrayList = [];
       if(expertise.pictures){
         for (let [key,value] of Object.entries(expertise.pictures)){
-          pictureArrayList.push(value);
+          pictureArrayList.push({title : "",value:value});
         }
+      }
+
+      if(expertise.particularities && expertise.particularities.points){
+        expertise.particularities.points.forEach(element => {
+          if(element.pictures && element.pictures.length){
+            pictureArrayList = [...pictureArrayList,{title : element.text,value:element.pictures[0]}];
+          }
+        })
+
       }
       
       expertise.imageList = pictureArrayList;

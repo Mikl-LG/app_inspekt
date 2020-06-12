@@ -237,12 +237,14 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
 
       /**SETTING MACHINEFEATURE_HOOK WITH THE COMPLETE ADDONS : TITLE - PROPERTY - VALUE */
       machineFeatureAddonsAvailable.forEach((element) => {
-        for (let [key,value] of Object.entries(expertise.machineFeatures)){
-          if(key === element.property){
-            element.value = value;
-            element.visibleOnPdf = true;
-            element.step = 'machine';
-            machineToArray.push(element);
+        if(expertise.machineFeatures){
+          for (let [key,value] of Object.entries(expertise.machineFeatures)){
+            if(key === element.property){
+              element.value = value;
+              element.visibleOnPdf = true;
+              element.step = 'machine';
+              machineToArray.push(element);
+            }
           }
         }
       })
@@ -284,8 +286,17 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
       let pictureArrayList = [];
       if(expertise.pictures){
         for (let [key,value] of Object.entries(expertise.pictures)){
-          pictureArrayList.push(value);
+          pictureArrayList.push({title : "",value:value});
         }
+      }
+
+      if(expertise.particularities && expertise.particularities.points){
+        expertise.particularities.points.forEach(element => {
+          if(element.pictures && element.pictures.length){
+            pictureArrayList = [...pictureArrayList,{title : element.text,value:element.pictures[0]}];
+          }
+        })
+
       }
       
       expertise.imageList = pictureArrayList;

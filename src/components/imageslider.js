@@ -70,13 +70,15 @@ function SwipeableTextMobileStepper({imageList}) {
         enableMouseEvents
       >
         {imageList.map((step, index) => (
-          <div key={step} style={{width:'100%',display:'flex',justifyContent:'center'}}>
+          //step => {leftFront: "https://s3.eu-west-3.amazonaws.com/inspekt-prod/MEDIASLANDER%2F1591879323680"}
+          <div key={step.value} style={{width:'100%',display:'flex',justifyContent:'center'}}>
             {Math.abs(activeStep - index) <= 2 ? (
-              <img className={classes.img} src={step} style={{maxHeight:window.innerHeight,width:'auto',maxWidth:'100%',height:'auto'}}/>
+              <img className={classes.img} src={step.value} style={{maxHeight:window.innerHeight,width:'auto',maxWidth:'100%',height:'auto'}}/>
             ) : null}
           </div>
         ))}
       </SwipeableViews>
+      <Typography style={{width:'100%',textAlign:'center',fontStyle:'italic'}}>{imageList.length && imageList[activeStep].title}</Typography>
     </div>
   );
 }

@@ -64,7 +64,7 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo) => {
                         documentPdf.setFontStyle('bold');
                         documentPdf.text(element.title, 15, Xline)
                         documentPdf.setFontStyle('normal');
-                        documentPdf.text('  : '+element.value, dX + 15, Xline)
+                        documentPdf.text('  : '+element.value, dX + 15, Xline,{maxWidth:'150'})
                     }
             })
         
@@ -100,7 +100,7 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo) => {
                         documentPdf.setFontStyle('bold');
                         documentPdf.text(element.title, 15, Xline)
                         documentPdf.setFontStyle('normal');
-                        documentPdf.text('  : '+element.value, dX + 15, Xline)
+                        documentPdf.text('  : '+element.value, dX + 15, Xline,{maxWidth:'150'})
                     }
             })
             Xline += 10;
