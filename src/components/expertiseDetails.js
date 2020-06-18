@@ -142,8 +142,6 @@ export default function ExpertiseDetails(props) {
   const [isOpenDeleteValidation,setIsOpenDeleteValidation] = React.useState(false);
   const [updateMachineFeatures,setUpdateMachineFeatures] = React.useState({open:false});
 
-  console.log('focusMachine : ',focusMachine);
-
   const checkDetailsToPrint = (detail) => {
 
       const detailToSet = focusMachine.orderedDetailsToPrint.find((element) => element === detail);
@@ -365,35 +363,7 @@ export default function ExpertiseDetails(props) {
       if(
         allowedLicenses[logInfo.user.licence]
         ){
-          const body = await Promise.resolve({
-            expId : focusMachine.id,
-            status: 'inspekt',
-            merge: {            // {object} list des quotations à jour
-              state:'En-cours'
-            },
-            /**cieId is required if the qot is not from the user company but from a linkage */
-            cieId:focusMachine.cieId && focusMachine.cieId
-          })
-        
-          //**ADD COTATION REQUEST**\\
-          const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
-          let fetchOptions = await Promise.resolve(
-              {
-                  method: 'POST',
-                  mode: 'cors',
-                  headers: {
-                      Accept: 'application/json',
-                      'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify(body)
-              }
-          )
-          let fetching = await fetch(url, fetchOptions)
-          let error = await Promise.resolve(!fetching.ok)
-
-          if(error == false){
             closeQuotation(inputQuotations)
-          }
         }
       
     }else{
@@ -433,98 +403,6 @@ export default function ExpertiseDetails(props) {
     }
   }
 
-
-
-  // const deprecated_saveNewQuotation = async() => {
-
-  //   const allowedLicenses = {admin : true, manager:true, qoter:true};
-
-  //   inputQuotations.userId = logInfo.user.id;
-  //   inputQuotations.timestamp = Date.now();
-
-  //   if(qoterMode === true){
-  //     if(
-  //       allowedLicenses[logInfo.user.licence]
-  //       ){
-  //         const body = await Promise.resolve({
-  //           expId : focusMachine.id,
-  //           status: 'inspekt',
-  //           merge: {            // {object} list des quotations à jour
-  //             state:'En-cours'
-  //           },
-  //           /**cieId is required if the qot is not from the user company but from a linkage */
-  //           cieId:focusMachine.cieId && focusMachine.cieId
-  //         })
-        
-  //         //**ADD COTATION REQUEST**\\
-  //         const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
-  //         let fetchOptions = await Promise.resolve(
-  //             {
-  //                 method: 'POST',
-  //                 mode: 'cors',
-  //                 headers: {
-  //                     Accept: 'application/json',
-  //                     'Content-Type': 'application/json',
-  //                 },
-  //                 body: JSON.stringify(body)
-  //             }
-  //         )
-  //         let fetching = await fetch(url, fetchOptions)
-  //         let error = await Promise.resolve(!fetching.ok)
-
-  //         if(error == false){
-  //           closeQuotation(inputQuotations)
-  //         }
-  //       }
-      
-  //   }else{
-
-  //     const quotations = await Promise.resolve([
-  //       ...(focusMachine.quotations.map((element) => ({
-  //             estimatedBuyingPrice : element.estimatedBuyingPrice,
-  //             userId : element.userId,
-  //             timestamp : element.timestamp
-  //           })) || []),     // array
-  //       inputQuotations                         // quotation object*
-  //     ]);
-
-  //     const body = await Promise.resolve({
-  //       expId : focusMachine.id,
-  //       status: 'inspekt',
-  //       merge: {            // {object} list des quotations à jour
-  //         quotations
-  //       },
-  //       /**cieId is required if the inspekt is not from the user company but from a linkage */
-  //       cieId:focusMachine.cieId && focusMachine.cieId
-  //     })
-
-  //     //**ADD COTATION REQUEST**\\
-  //     const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
-  //     let fetchOptions = await Promise.resolve(
-  //         {
-  //             method: 'POST',
-  //             mode: 'cors',
-  //             headers: {
-  //                 Accept: 'application/json',
-  //                 'Content-Type': 'application/json',
-  //             },
-  //             body: JSON.stringify(body)
-  //         }
-  //     )
-  //     let fetching = await fetch(url, fetchOptions)
-  //     let error = await Promise.resolve(!fetching.ok)
-  //     let response = !error && await Promise.resolve(fetching.json());
-
-  //     if(error == false){
-        
-  //         setSnackbar({message : 'Votre cotation est enregistrée.',type:'snackbarSuccess',isOpen:true});
-  //         getInspekts()
-  //         setDrawer({isOpen:false});
-  //         setOpen(false);
-  //     } 
-  //   }
-  // }
-
   const startCotation = () => {
     setQoterMode(logInfo.user.config && logInfo.user.config.isDefaultQoter === true ? true : false);
     setDrawer({isOpen:true});
@@ -532,8 +410,6 @@ export default function ExpertiseDetails(props) {
   }
 
   const updateMachineFeaturesRequest = async() => {
-
-    console.log('updateMachineFeatures : ',updateMachineFeatures);
 
     const body = await Promise.resolve({
       cieId : focusMachine.cieId,
@@ -546,8 +422,6 @@ export default function ExpertiseDetails(props) {
       /**cieId is required if the qot is not from the user company but from a linkage */
       cieId:focusMachine.cieId && focusMachine.cieId
     })
-
-    console.log('body : ',body);
   
     //**ADD COTATION REQUEST**\\
     const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
@@ -698,7 +572,7 @@ export default function ExpertiseDetails(props) {
                             </div>
                         }
                         {
-                          element.step && logInfo.user.licence != 'inspekter'
+                          element.step
                           && <FontAwesomeIcon
                                 className={classes.penEdit}
                                 icon={faPen}
@@ -842,7 +716,11 @@ export default function ExpertiseDetails(props) {
                   style={{width:'auto'}}
                   onClick={() => (saveNewQuotation())}
                 >
-                  Coter
+                  {
+                    qoterMode === true
+                    ? 'QOTER'
+                    :'INSPEKTER'
+                  }
                 </Button>
               </div>
             </List>

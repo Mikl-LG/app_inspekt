@@ -56,15 +56,21 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo) => {
             orderedDetailsToPrint && orderedDetailsToPrint.map((element) => {
                 
                     if(element === 'divider' && Xline > 70){
-                        Xline += 5;
                         documentPdf.line(20,Xline,190,Xline)
-                    }else if(element.visibleOnPdf === true){
                         Xline += 5;
+                    }else if(element.visibleOnPdf === true){
                         let dX = documentPdf.getTextWidth(element.title);
                         documentPdf.setFontStyle('bold');
                         documentPdf.text(element.title, 15, Xline)
                         documentPdf.setFontStyle('normal');
                         documentPdf.text('  : '+element.value, dX + 15, Xline,{maxWidth:'150'})
+                        let informationLength = documentPdf.getTextWidth(element.title + element.value) + 15;
+                        
+                        //on passe une ligne si la le texte génère un retour à la ligne (= longueur > 150)
+                        informationLength > 150 
+                        ? Xline += 10
+                        : Xline += 5
+
                     }
             })
         

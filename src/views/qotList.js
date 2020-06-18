@@ -383,6 +383,22 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
         }
       })
 
+      machineToArray.push(
+        {
+          title:'Disponible le',
+          property:'availableDate',
+          value:(expertise.particularities && expertise.particularities.availableDate) ? Moment(expertise.particularities.availableDate).format('DD-MMMM-YYYY') : 'non renseigné',
+          visibleOnPdf:true
+        },
+        {
+          title:'Commentaires',
+          property:'comments',
+          value:(expertise.particularities && expertise.particularities.comments) ? expertise.particularities.comments : 'pas de commentaires',
+          visibleOnPdf:true,
+          step:'particularities'
+        }
+      )
+
       ////////// QUOTATIONS ARRAY BUILD \\\\\\\\\\
 
       const setUserToQuotations = (quotationList) => {

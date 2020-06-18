@@ -7,7 +7,10 @@ import Button from '@material-ui/core/Button';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
-import { autoPlay } from 'react-swipeable-views-utils';
+import RotateLeftIcon from '@material-ui/icons/RotateLeft';
+import RotateRightIcon from '@material-ui/icons/RotateRight';
+
+import Color from '../constants/color.js';
 
 //const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -17,11 +20,10 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   img: {
-    height: '100%',
-    display: 'block',
-    //maxWidth: 400,
-    overflow: 'hidden',
-    width: '100%',
+    maxHeight:window.innerHeight,
+    width:'auto',
+    maxWidth:'100%',
+    height:'auto'
   },
 }));
 
@@ -29,6 +31,7 @@ function SwipeableTextMobileStepper({imageList}) {
   const classes = useStyles();
   const theme = useTheme();
   const [activeStep, setActiveStep] = React.useState(0);
+  const [rotation, setRotation] = React.useState(0);
   const maxSteps = imageList.length;
 
   const handleNext = () => {
@@ -43,8 +46,15 @@ function SwipeableTextMobileStepper({imageList}) {
     setActiveStep(step);
   };
 
+  // const mainPicture = new Image();
+  // mainPicture.src = step.value;
+
   return (
     <div className={classes.root}>
+      <div style={{display:'flex',justifyContent:'flex-end',color:Color.secondary}}>
+        <RotateLeftIcon style={{ fontSize: 20,marginLeft:'5px' }} onClick={() => setRotation(rotation-90)}/>
+        <RotateRightIcon style={{ fontSize: 20,marginLeft:'5px' }} onClick={() => setRotation(rotation+90)}/>
+      </div>
       <MobileStepper
         steps={maxSteps}
         position="static"
@@ -73,7 +83,7 @@ function SwipeableTextMobileStepper({imageList}) {
           //step => {leftFront: "https://s3.eu-west-3.amazonaws.com/inspekt-prod/MEDIASLANDER%2F1591879323680"}
           <div key={step.value} style={{width:'100%',display:'flex',justifyContent:'center'}}>
             {Math.abs(activeStep - index) <= 2 ? (
-              <img className={classes.img} src={step.value} style={{maxHeight:window.innerHeight,width:'auto',maxWidth:'100%',height:'auto'}}/>
+              <img className={classes.img} src={step.value} style={{transform: `rotate(${rotation}deg)`}}/>
             ) : null}
           </div>
         ))}

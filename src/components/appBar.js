@@ -24,6 +24,7 @@ import MoreIcon from '@material-ui/icons/MoreVert';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Paper from '@material-ui/core/Paper';
 import SearchIcon from '@material-ui/icons/Search';
+import Select from '@material-ui/core/Select';
 import Slide from '@material-ui/core/Slide';
 import SyncIcon from '@material-ui/icons/Sync';
 import Switch from '@material-ui/core/Switch';
@@ -42,7 +43,7 @@ import Typography from '@material-ui/core/Typography';
 import Color from '../constants/color.js';
 import logo from '../inspektLogo_white.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCogs,faSave,faUser,faUsers, faUserMinus, faUserPlus, faFolderPlus } from '@fortawesome/free-solid-svg-icons';
+import { faCogs,faSave,faUser,faUsers, faUserMinus, faUserPlus, faFolderPlus, faStar, faGavel } from '@fortawesome/free-solid-svg-icons';
 import SnackBar from '../components/snackBar';
 import { FormControl } from '@material-ui/core';
 
@@ -157,6 +158,7 @@ function PrimarySearchAppBar(props) {
   const [modifiableUserInformations,setModifiableUserInformations] = React.useState(
      logInfo.user.config || false
   );
+  const [modifiableUserInformationsFromManager,setModifiableUserInformationsFromManager] = React.useState({});
   const [userConfig,setUserConfig] = React.useState(
     logInfo.user.config || false
  );
@@ -236,6 +238,28 @@ function PrimarySearchAppBar(props) {
     
   }
 
+  const licences = {
+    admin : {
+      disabled : false,
+      icon : faStar,
+      color : Color.inspektBlue
+    },
+    manager : {
+      disabled : false,
+      icon : faStar,
+      color : Color.inspektBlue
+    },
+    qoter : {
+      disabled : true,
+      icon : faGavel,
+      color : Color.secondary
+    },
+    inspekter : {
+      disabled : true,
+      icon : faUser,
+      color : Color.lightgrey
+    }}; //unauthorized user.license for company user modification
+
   const handleChangeCreateCompany = (event,key) => {
     event.target.value && setCreateCompany({...createCompany,[key]:event.target.value})
   }
@@ -290,6 +314,10 @@ function PrimarySearchAppBar(props) {
 
   }
 
+  const handleChangeUserInformation = (value,key) => {
+    setModifiableUserInformations({...modifiableUserInformations,[key]:value})
+  }
+
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
@@ -309,10 +337,6 @@ function PrimarySearchAppBar(props) {
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
-
-  const handleChangeUserInformation = (event,key) => {
-    setModifiableUserInformations({...modifiableUserInformations,[key]:event.target.value})
-  }
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -340,6 +364,45 @@ function PrimarySearchAppBar(props) {
       setStateFromChild({logInfo : {...logInfo,user : data}})
       setSnackbar({message : 'Mise à jour réussie',type:'snackbarSuccess',isOpen:true});
     }
+    
+  }
+
+  const updateUserFromManager = async(value,key,user) => {
+    
+    const body = await Promise.resolve({
+      userId : user,
+      merge : {
+        [key] : value
+      }
+    })
+
+    try{
+      const url = `https://inspekt.herokuapp.com/api?request=MERGE_ANY_USER&token=${logInfo.token}`;
+      let fetchOptions = await Promise.resolve(
+        {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body)
+        }
+      )
+      let fetching = await fetch(url, fetchOptions)
+      let error = await Promise.resolve(!fetching.ok)
+      let response = !error && await Promise.resolve(fetching.json());
+  
+      if(error === false){
+        let _logInfo = {...logInfo};
+        _logInfo.cieMembers[user][key] = value;
+        setStateFromChild({logInfo : _logInfo});
+        setSnackbar({message : 'Mise à jour réussie',type:'snackbarSuccess',isOpen:true});
+      }
+    }catch(error){
+      setSnackbar({message : 'La mise à jour a échoué.',type:'snackbarWarning',isOpen:true});
+    }
+    
     
   }
 
@@ -505,7 +568,7 @@ function PrimarySearchAppBar(props) {
                             label={logInfo.user && element.title}
                             style={{width:'100%',margin:'15px'}}
                             variant="outlined"
-                            onChange={(event) => handleChangeUserInformation(event,element.key)}
+                            onChange={(event) => handleChangeUserInformation(event.target.value,element.key)}
                           >
                             {
                               logInfo.user && logInfo.user[element.key]
@@ -577,6 +640,7 @@ function PrimarySearchAppBar(props) {
                               <TableCell align="center">Email</TableCell>
                               <TableCell align="center">Téléphone</TableCell>
                               <TableCell align="center">Mode</TableCell>
+                              <TableCell align="center">Actif</TableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
@@ -587,39 +651,80 @@ function PrimarySearchAppBar(props) {
                                 <TableCell component="th" scope="row">
                                   {logInfo.cieMembers[user].name}
                                 </TableCell>
-                                <TableCell align="center">{logInfo.cieMembers[user].licence}</TableCell>
+                                <TableCell align="center">
+                                {
+                                    <Select
+                                      id="userLicenceSelect"
+                                      value={logInfo.cieMembers[user].licence}
+                                      disabled={licences[logInfo.user.licence].disabled}
+                                      style={{fontSize:'0.9em'}}
+                                      IconComponent={() => (
+                                        <FontAwesomeIcon 
+                                          style={{
+                                            fontSize:'1em',
+                                            cursor:'pointer',
+                                            color:licences[logInfo.cieMembers[user].licence].color
+                                          }}
+                                          icon={licences[logInfo.cieMembers[user].licence].icon}
+                                        />
+                                      )}
+                                      onChange={(event) => updateUserFromManager(event.target.value,"licence",user)}
+                                    >
+                                      {
+                                      ["manager","qoter","inspekter"].map((e) => (
+                                        <MenuItem key={e} value={e} style={{fontSize:'0.8em'}}>
+                                          {e.toUpperCase()}
+                                        </MenuItem>
+                                      ))
+                                      }
+                                    </Select>
+                                }
+                                </TableCell>
                                 <TableCell align="center">{logInfo.cieMembers[user].email}</TableCell>
                                 <TableCell align="center">{logInfo.cieMembers[user].phoneNumber}</TableCell>
-                                <TableCell align="center">{logInfo.cieMembers[user].team === false ? 'SOLO' : 'TEAM'}</TableCell>
+                                <TableCell className={classes.TableCell} align="center" padding="none">
+                                  {
+                                    <Select
+                                      id="isUserTeamSelect"
+                                      value={logInfo.cieMembers[user].team === false ? 'SOLO' : 'TEAM'}
+                                      disabled={licences[logInfo.user.licence].disabled}
+                                      style={{fontSize:'0.9em'}}
+                                      IconComponent={() => (
+                                        logInfo.cieMembers[user].team === false
+                                        ? <FontAwesomeIcon 
+                                            style={{fontSize:'1em',cursor:'pointer',color:Color.warning}}
+                                            icon={faUser}/>
+                                        : <FontAwesomeIcon 
+                                        style={{fontSize:'1em',cursor:'pointer',color:Color.success}}
+                                        icon={faUsers}/>
+                                      )}
+                                      onChange={(event) => updateUserFromManager(event.target.value === 'SOLO' ? false : true,"team",user)}
+                                    >
+                                      {
+                                      ["SOLO","TEAM"].map((e) => (
+                                        <MenuItem key={e} value={e} style={{fontSize:'0.8em'}}>
+                                          {e}
+                                        </MenuItem>
+                                      ))
+                                      }
+                                    </Select>
+                                }
+                                </TableCell>
+                                <TableCell>
+                                  {
+                                    <Switch 
+                                    checked={logInfo.cieMembers[user].active}
+                                    disabled={licences[logInfo.user.licence].disabled}
+                                    color="primary"
+                                    onChange={()=>updateUserFromManager(logInfo.cieMembers[user].active === true ? false : true,"active",user)}
+                                  />
+                                  }
+                                </TableCell>
                               </TableRow>
                             ))}
                           </TableBody>
                         </Table>
                       </TableContainer>   
-                    </ExpansionPanelDetails>
-                  </ExpansionPanel>
-                  <ExpansionPanel 
-                    square
-                    style={{width:'100%'}}
-                    expanded={expanded === 'customerUploader'}
-                    onChange={(event) => expanded === 'customerUploader' ? setExpanded(''):setExpanded('customerUploader')}>
-                    <ExpansionPanelSummary style={{display:'flex',alignItems:'center'}}>
-                      <Typography className={classes.sectionTitle} variant='subtitle1'>Charger ton fichier client</Typography>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails className={classes.centeredList}>
-                      <Typography variant='subtitle2'>Il te faut un fichier JSON ici.</Typography>
-                    </ExpansionPanelDetails>
-                  </ExpansionPanel>
-                  <ExpansionPanel 
-                    square
-                    style={{width:'100%'}}
-                    expanded={expanded === 'cameraDefinition'}
-                    onChange={(event) => expanded === 'cameraDefinition' ? setExpanded(''):setExpanded('cameraDefinition')}>
-                    <ExpansionPanelSummary style={{display:'flex',alignItems:'center'}}>
-                      <Typography className={classes.sectionTitle} variant='subtitle1' style={{marginLeft:'5px'}}>Résolution des images prises sur l'application mobile</Typography>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails className={classes.centeredList}>
-                      <Typography variant='subtitle2'>Tu peux gérer ce paramètre directement dans l'appli mobile.</Typography>
                     </ExpansionPanelDetails>
                   </ExpansionPanel>
                 </Grid>

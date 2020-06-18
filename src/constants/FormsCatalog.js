@@ -1817,6 +1817,12 @@ rotativeHarrow:{
         "170",
     ],
 
+    axleSuspension:[
+        "MECANIQUE",
+        "PNEUMATIQUE",
+        "PLOT ELASTOMERE"
+    ],
+
     brakingSystem:[
         "HYDRAULIQUE",
         "HYDRAULIQUE + PNEUMATIQUE",
@@ -2110,8 +2116,8 @@ rotativeHarrow:{
         "540E - 1000",
         "540 - 1000E",
         "540 - 1000 - 1000E",
-        "540 - 540E - 1000",
-        "540 - 1000 - 1000E",
+        "540E - 1000 - 1000E",
+        "540 - 540E - 1000",      
         "540 - 540E - 1000 - 1000E"
     ],
 
@@ -3271,6 +3277,7 @@ rotativeHarrow:{
                         toggle:[
                             "BUSES BORDURE",
                             "COUPURE SECTION",
+                            "ESSIEU SUIVEUR",
                             "ISOBUS"
                         ]  
                     },
@@ -3488,6 +3495,12 @@ rotativeHarrow:{
                         title:'Suivi du sol',
                         property:'groundAdaptation',
                         data: formsCatalog.groundAdaptation
+                    },
+
+                    "suspensionEssieu":{
+                        title:'Suspension essieu',
+                        property:'axleSuspension',
+                        data : formsCatalog.axleSuspension
                     },
 
                     "suspensionFleche":{

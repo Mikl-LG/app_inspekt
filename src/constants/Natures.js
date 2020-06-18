@@ -333,7 +333,7 @@ const Natures = [
                 addOns: []
             },
             3: {
-                addOns: ["usureGenerale","largeurTravailMetres","attelageOutil","nombreRotors","armRotorNumber","nombreDentsARemplacer","commandesHydrauliques","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsFaneuse","conformite","documents"]
+                addOns: ["usureGenerale","largeurTravailMetres","attelageOutil","nombreRotors","nombreBrasRotors","nombreDentsARemplacer","commandesHydrauliques","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsFaneuse","conformite","documents"]
             },
             4:{
                 type:'trailed',
@@ -350,7 +350,7 @@ const Natures = [
                 addOns: ["nbrHectares"]
             },
             3: {
-                addOns: ["usureGenerale","faucheuseType","largeurTravailMetres","attelageOutil","repliageChassis","nombreAssiettesTambours","fixationCouteaux","vitessePDF","conditionneur","usureDisques","usureLamier","commandesHydrauliques","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsFaucheuse","conformite","documents"]
+                addOns: ["usureGenerale","typeFaucheuse","largeurTravailMetres","attelageOutil","repliageChassis","nombreAssiettesTambours","fixationCouteaux","vitessePDF","conditionneur","usureDisques","usureLamier","commandesHydrauliques","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsFaucheuse","conformite","documents"]
             },
             4:{
                 type:'trailed',
@@ -539,7 +539,7 @@ const Natures = [
                 addOns: ["nbrHectares"]
             },
             3:{
-                addOns:["usureGenerale","largeurTravailMetres","materiauxRampe","capaciteEnLitres","attelageOutil","entrainementOutil","commandesHydrauliques","typePompe","debitPompe","regulation","repliageRampe","nombreTroncons","porteBuse","correcteurDeversPulverisateur","geometrieVariable","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsPulverisateur","conformite","documents"]
+                addOns:["usureGenerale","largeurTravailMetres","materiauxRampe","capaciteEnLitres","attelageOutil","entrainementOutil","commandesHydrauliques","typePompe","debitPompe","regulation","repliageRampe","nombreTroncons","porteBuse","correcteurDeversPulverisateur","geometrieVariable","suspensionEssieu","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsPulverisateur","conformite","documents"]
             },
             4:{
                 type:'trailed',
