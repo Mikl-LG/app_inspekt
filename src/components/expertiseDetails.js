@@ -187,10 +187,10 @@ export default function ExpertiseDetails(props) {
 
       const subject = [focusMachine.machine.nature.name,focusMachine.machine.brand,focusMachine.machine.model,focusMachine.customer && focusMachine.customer.name].map((element) => element && element).join(' ');
 
-      sendEmailConfirmToUser( //toEmail,subject,quotationObject
-        logInfo.cieMembers[focusMachine.openedBy].email,
-        subject,
-        quotation);
+      // sendEmailConfirmToUser( //toEmail,subject,quotationObject
+      //   logInfo.cieMembers[focusMachine.openedBy].email,
+      //   subject,
+      //   quotation);
 
       setSnackbar({message : 'Cette machine est désormais évaluée, beau boulot.',type:'snackbarSuccess',isOpen:true});
       setDrawer({isOpen:false});
@@ -324,33 +324,33 @@ export default function ExpertiseDetails(props) {
 
   }
 
-  const sendEmailConfirmToUser = async(to,subject,quotation) => {
+  // const sendEmailConfirmToUser = async(to,subject,quotation) => {
 
-    const comment = (quotation.comment && quotation.comment != undefined) ? 'Commentaire : ' + quotation.comment : 'Pas de commentaires pour cette évaluation'
-    const body = await Promise.resolve({
-      from : 'expertise@inspekt.fr',
-      to: to,
-      subject: subject,
-      core:'<p><b>Ton expertise vient d\'être évaluée :</b></p><p><ul style="list-style: none;"><li>Prix de gestion : ' + quotation.estimatedBuyingPrice + '€</li><li>' + comment + '</li></ul></p>',
-      auth : 'default'
-    })
+  //   const comment = (quotation.comment && quotation.comment != undefined) ? 'Commentaire : ' + quotation.comment : 'Pas de commentaires pour cette évaluation'
+  //   const body = await Promise.resolve({
+  //     from : 'expertise@inspekt.fr',
+  //     to: to,
+  //     subject: subject,
+  //     core:'<p><b>Ton expertise vient d\'être évaluée :</b></p><p><ul style="list-style: none;"><li>Prix de gestion : ' + quotation.estimatedBuyingPrice + '€</li><li>' + comment + '</li></ul></p>',
+  //     auth : 'default'
+  //   })
   
-    //**ADD COTATION REQUEST**\\
-    const url = `https://inspekt.herokuapp.com/api?request=SEND_EMAIL&token=${logInfo.token}`
-    let fetchOptions = await Promise.resolve(
-        {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(body)
-        }
-    )
-    let fetching = await fetch(url, fetchOptions)
-    let error = await Promise.resolve(!fetching.ok)
-  }
+  //   //**ADD COTATION REQUEST**\\
+  //   const url = `https://inspekt.herokuapp.com/api?request=SEND_EMAIL&token=${logInfo.token}`
+  //   let fetchOptions = await Promise.resolve(
+  //       {
+  //           method: 'POST',
+  //           mode: 'cors',
+  //           headers: {
+  //               Accept: 'application/json',
+  //               'Content-Type': 'application/json',
+  //           },
+  //           body: JSON.stringify(body)
+  //       }
+  //   )
+  //   let fetching = await fetch(url, fetchOptions)
+  //   let error = await Promise.resolve(!fetching.ok)
+  // }
 
   const saveNewQuotation = async() => {
 

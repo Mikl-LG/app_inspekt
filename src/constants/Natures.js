@@ -240,6 +240,23 @@ const Natures = [
         }
     },
     {
+        name: "Divers",
+        key: "nondefined",
+        formStepsTypes : {
+            2: {
+                type: 'regular',
+                addOns: ["version","hrsMoteur","hrsPrev","nbrHectares","nbrBottes"]
+            },
+            3:{
+                addOns:["usureGenerale","attelageOutil","capaciteEnM3","repliageChassis","sectionPoutre","nombreSocsDisques","typeSocsDisques","usureSocsDisques","securiteTravailSol","typeReglageAngle","hauteurDegagement","typeRouleau","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","documents"]
+            },
+            4:{
+                type:'trailed',
+                addOns:[]
+            }
+        }
+    },
+    {
         name: "Enrubanneuse",
         key: "wrapper",
         formStepsTypes : {
@@ -478,6 +495,23 @@ const Natures = [
         }
     },
     {
+        name: "Pick-up",
+        key: "pickUp",
+        formStepsTypes : {
+            2: {
+                type: 'regular',
+                addOns: ["nbrHectares"]
+            },
+            3:{
+                addOns:["usureGenerale","largeurTravailMetres","repliageChassis","nombreDentsARemplacer","usureChaines","usureRouleaux","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","documents"]
+            },
+            4:{
+                type:'trailed',
+                addOns:["pickUp","entrainementGauche","entrainementDroit","rouleau"]
+            }
+        }
+    },
+    {
         name: "Porteur Multifonction",
         key: "porteur_multifonction",
         formStepsTypes : {
@@ -544,6 +578,40 @@ const Natures = [
             4:{
                 type:'trailed',
                 addOns:["boitier","rampeDroite","rampeGauche","cadreCentral","cuve"]
+            }
+        }
+    },
+    {
+        name: "Pulverisateur automoteur",
+        key: "sprayerAutomotive",
+        formStepsTypes : {
+            2: {
+                type: 'regular',
+                addOns: ["version","hrsMoteur","hrsPrev","nbrHectares"]
+            },
+            3:{
+                addOns:["usureGenerale","puissance","transmissionTracteur","transmissionTracteurModele","nombreVitesses","vitesseMaximaleTracteur","inverseur","freinage","cabine","climatisation","siege","radio","autoguidageEmbarque","largeurTravailMetres","materiauxRampe","capaciteEnLitres","typePompe","debitPompe","regulation","repliageRampe","nombreTroncons","porteBuse","correcteurDeversPulverisateur","geometrieVariable","suspensionEssieu","freinage","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","optionsPulverisateurAutomoteur","conformite","documents"]
+            },
+            4:{
+                type:'regular',
+                addOns:["compteur","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","interieurCabine_1","interieurCabine_2","carteGrise","attelage","boitier","rampeDroite","rampeGauche","cadreCentral","cuve"]
+            }
+        }
+    },
+    {
+        name: "Quad",
+        key: "quad",
+        formStepsTypes : {
+            2: {
+                type: 'regular',
+                addOns: ["version","hrsMoteur","hrsPrev","compteurKm"]
+            },
+            3:{
+                addOns:["usureGenerale","puissance","motorisationQuad","cylindree","capaciteReservoir","hauteur","largeur","longueur","transmissionQuad","nombreVitesses","vitesseMaximaleQuad","cabine","climatisation","siege","radio","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","optionsQuad","conformite","documents"]
+            },
+            4:{
+                type:'regular',
+                addOns:["compteur","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","carteGrise","attelage"]
             }
         }
     },
@@ -646,6 +714,23 @@ const Natures = [
             4:{
                 type:'regular',
                 addOns:["compteur","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","interieurCabine_1","interieurCabine_2","carteGrise","attelage"]
+            }
+        }
+    },
+    {
+        name: "Tracteur chargeur",
+        key: "tractorLoader",
+        formStepsTypes : {
+            2: {
+                type: 'regular',
+                addOns: ["version","hrsMoteur","hrsPrev"]
+            },
+            3: {
+                addOns:["usureGenerale","puissance","transmissionTracteur","transmissionTracteurModele","nombreVitesses","vitesseMaximaleTracteur","inverseur","freinage","cabine","climatisation","siege","radio","priseDeForceAR","distributeursArriere","chandelles","stabilisateurs","pontAvant","relevageAvant","distributeursAvant","priseDeForceAV","autoguidageEmbarque","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","attelageTracteur","marqueChargeur","modeleChargeur","serieChargeur","usureGenerale","fonctionsChargeur","parallelogrammeChargeur","monolevier","tablierAttelage","documents"]
+            },
+            4:{
+                type:'regular',
+                addOns:["compteur","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","interieurCabine_1","interieurCabine_2","carteGrise","attelage","monolevier","multicoupleur","outil_1","outil_2","outil_3","outil_4","outil_5"]
             }
         }
     }

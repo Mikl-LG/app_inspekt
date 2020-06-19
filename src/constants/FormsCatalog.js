@@ -1,4 +1,6 @@
 
+
+
 /* FORMS COMPONENTS*/
 
 const numberOneToTwenty = Array.from(new Array(20)).map((e, i) => String(i + 1));           // 1 to 20
@@ -960,6 +962,12 @@ const formsCatalog = {
 
     },
 
+    pickUp : {
+        brands:[
+            "AMV",
+        ]
+    },
+
     precisionSeeder:{
         brands:[
             "ACCORD",
@@ -995,6 +1003,33 @@ const formsCatalog = {
             "RAU",
             "TULIP",
             "VOGEL & NOOT"
+        ]
+    },
+
+    quad:{
+        brands:[
+            "APACHE",
+            "ARTIC CAT",
+            "BASHAN",
+            "BRITECH",
+            "CF MOTO",
+            "CAN-AM",
+            "GOES",
+            "HONDA",
+            "HYTRAC",
+            "JOHN DEERE",
+            "KAWASAKI",
+            "KYMCO",
+            "LIGIER",
+            "LINHAI",
+            "LONCIN",
+            "MASAI",
+            "POLARIS",
+            "QUADZILLA",
+            "SUZUKI",
+            "SYM",
+            "TGB",
+            "YAMAHA"
         ]
     },
 
@@ -1373,6 +1408,68 @@ rotativeHarrow:{
 
     },
 
+    sprayerAutomotive: {                      // formsCatalog properties (here "tractor") MUST be equal to Natures[index].key
+        brands : [ 
+            "AMAZONE",
+            "BERTHOUD",
+            "CARUELLE",
+            "CHALLENGER",
+            "EVRARD",
+            "HARDI",
+            "HORSCH", 
+            "JOHN DEERE",
+            "KUHN",
+            "KVERNELAND",
+            "LEMKEN",
+            "MATROT",
+            "NODET",
+            "RAU",
+            "SEGUIP",
+            "SPRA-COUPE",
+            "TECNOMA",
+            "TERRA-GATOR",
+            //DIVIDER
+            "AG-CHEM",
+            "AGRIFAC",
+            "ALLAYES",
+            "APACHE", 
+            "BARIGELLI",
+            "BARGAM",
+            "BOBARD", 
+            "BRAUTINGAM",
+            "CASE IH",
+            "CHAFER", 
+            "CLAYTON",
+            "COMAN",
+            "DAMMANN",
+            "DE CLOET",
+            "DELVANO",
+            "DOUVEN",
+            "DUBEX",
+            "FINOTTO",
+            "FRAZIER",
+            "GRIM", 
+            "HAGIE",
+            "HOUSEHAM",
+            "INUMA",
+            "JCB",
+            "KELLANDS",
+            "KNIGHT",
+            "MAZOTTI",
+            "MERCEDES",
+            "MILLER",
+            "MULTIDRIVE",
+            "NEW HOLLAND", 
+            "NODET",
+            "PRECICULTURE",
+            "RIMECO",
+            "ROGATOR",
+            "SAM",
+            "WILLMAR"
+        ],// end sprayer brands
+
+    },
+
     sweeper:{
         brands:[
             "ACTISWEEP",
@@ -1629,6 +1726,39 @@ rotativeHarrow:{
         },
 
     tractor: {                      // formsCatalog properties (here "tractor") MUST be equal to Natures[index].key
+        brands : [
+            "CASE", 
+            "CLAAS",
+            "DEUTZ FAHR",
+            "FENDT",
+            "JOHN DEERE",
+            "KUBOTA",
+            "MASSEY FERGUSON",
+            "NEW HOLLAND",
+            "VALTRA",
+            // divider
+            "CARRARO",
+            "FIAT", 
+            "FORD",
+            "HURLIMANN",
+            "JCB",
+            "KIOTI",
+            "LAMBORGHINI",
+            "LANDINI",
+            "LINDNER",
+            "MC CORMICK",
+            "RENAULT",
+            "SAME",
+            "SOLIS",
+            "STEYR",
+            "TYM",
+            "YTO",
+            "ZETOR"
+        ],// end tractor brands
+
+    },
+
+    tractorLoader: {                      // formsCatalog properties (here "tractor") MUST be equal to Natures[index].key
         brands : [
             "CASE", 
             "CLAAS",
@@ -2213,12 +2343,6 @@ rotativeHarrow:{
         "CENTRAL ET LATERAL"
     ],
 
-    tankCapacity:[
-        "BOULON",
-        "NON STOP MECA",
-        "NON STOP HYDR."
-    ],
-
     tillageSecurity:[
         "BOULON",
         "NON STOP MECA",
@@ -2255,6 +2379,7 @@ rotativeHarrow:{
 
     tractorTransmission:[
         "DOUBLEUR SOUS CHARGE",
+        "HYDRAULIQUE",
         "HYDROSTATIQUE",
         "MECANIQUE",
         "FULL-POWERSHIFT",
@@ -2413,6 +2538,11 @@ rotativeHarrow:{
                         property: 'batteurHours',
                         numeric: true
                     },
+                    "compteurKm": {
+                        title: 'Kilomètres',
+                        property: 'kilometers',
+                        numeric: true
+                    },
                     "version": {
                         title: 'Version',
                         property: 'version'
@@ -2543,6 +2673,12 @@ rotativeHarrow:{
                         numeric: true
                     },
 
+                    "capaciteReservoir":{
+                        title:'Capacité réservoir (litres)',
+                        property:'tankCapacity',
+                        numeric: true
+                    },
+
                     "chandelles":{
                         title:'Chandelles',
                         property:'pullBars',
@@ -2602,6 +2738,12 @@ rotativeHarrow:{
                         title:'Correcteur de dévers',
                         property:'tiltCorrectionForSprayer',
                         data: formsCatalog.assistantFunction
+                    },
+
+                    "cylindree":{
+                        title:'Cylindrée (cm3)',
+                        property:'cylinderVolume',
+                        numeric: true
                     },
 
                     "debitPompe":{
@@ -2719,7 +2861,7 @@ rotativeHarrow:{
                     },
 
                     "fixationCouteaux":{
-                        title:'Fixattion couteaux',
+                        title:'Fixation couteaux',
                         property:'knifeFit',
                         data: formsCatalog.tineFit
                     },
@@ -2754,6 +2896,12 @@ rotativeHarrow:{
                         data: formsCatalog.assistantFunction
                     },
 
+                    "hauteur":{
+                        title : 'Hauteur (cm)',
+                        property:'height',
+                        numeric: true
+                    },
+
                     "hauteurDegagement":{
                         title : 'Hauteur de dégagement (cm)',
                         property:'tillageHeight',
@@ -2770,6 +2918,12 @@ rotativeHarrow:{
                         title : 'Inverseur',
                         property:'reverse',
                         data: formsCatalog.reverse
+                    },
+
+                    "largeur":{
+                        title : 'Largeur (cm)',
+                        property:'width',
+                        numeric: true
                     },
 
                     "largeurCanal":{
@@ -2820,11 +2974,23 @@ rotativeHarrow:{
                         data: ["DOUBLE NOEUD","SIMPLE NOEUD"]
                     },
 
+                    "longueur":{
+                        title : 'Longueur (cm)',
+                        property:'length',
+                        numeric: true
+                    },
+
                     "longueurFleche":{
                         title:"Longueur flèche",
                         property:"telehandlerLength",
                         type:"select",
                         data:formsCatalog.metersFrom1To10
+                    },
+
+                    "marqueChargeur":{
+                        title:'Marque chargeur',
+                        property:'frontLoaderBrand',
+                        data: formsCatalog.frontLoader.brands
                     },
 
                     "marqueChariot":{
@@ -2887,6 +3053,11 @@ rotativeHarrow:{
                         data: formsCatalog.swathMode
                     },
 
+                    "modeleChargeur":{
+                        title:'Modèle chargeur',
+                        property:'frontLoaderType'
+                    },
+
                     "modeleRecolteur":{
                         title:'Modèle récolteur',
                         property:'harvestingPlatformModel',
@@ -2897,6 +3068,12 @@ rotativeHarrow:{
                         title:'Monolevier',
                         property:'implementHandCommand',
                         data: formsCatalog.implementHandCommand
+                    },
+
+                    "motorisationQuad":{
+                        title:'Motorisation',
+                        property:'quadMotorType',
+                        data: ["ELECTRIQUE","DIESEL","ESSENCE"]
                     },
 
                     "nettoyageNoueurs":{
@@ -3276,9 +3453,43 @@ rotativeHarrow:{
                         property : 'sprayerOptions',
                         toggle:[
                             "BUSES BORDURE",
+                            "CIRCULATION CONTINUE",
                             "COUPURE SECTION",
+                            "INCORPORATEUR",
                             "ESSIEU SUIVEUR",
                             "ISOBUS"
+                        ]  
+                    },
+
+                    "optionsPulverisateurAutomoteur":{
+                        title:'Options',
+                        property : 'sprayerOptions',
+                        toggle:[
+                            "BUSES BORDURE",
+                            "CIRCULATION CONTINUE",
+                            "COUPURE SECTION",
+                            "INCORPORATEUR",
+                            "ESSIEU SUIVEUR",
+                            "ISOBUS",
+                            "4 ROUES MOTRICES",
+                            "VOIE VARIABLE MANUELLE",
+                            "VOIE VARIABLE HYDRAULIQUE"
+                        ]  
+                    },
+
+                    "optionsQuad":{
+                        title:'Options',
+                        property : 'quadOptions',
+                        toggle:[
+                            "ARCEAUX",
+                            "ATTELAGE ARRIERE",
+                            "DIRECTION ASSISTEE",
+                            "HOMOLOGATION",
+                            "FREINS A DISQUES",
+                            "PRISE 7 PLOTS",
+                            "PROTEGES MAINS",
+                            "TREUIL",
+                            "4 X 4",
                         ]  
                     },
 
@@ -3479,6 +3690,11 @@ rotativeHarrow:{
                         data: formsCatalog.tillageSecurity
                     },
 
+                    "serieChargeur":{
+                        title:'Numéro de série chargeur',
+                        property:'frontLoaderSerial'
+                    },
+
                     "siege":{
                         title:'Siège',
                         property:'seat',
@@ -3530,6 +3746,12 @@ rotativeHarrow:{
                     "transmissionAutomoteurModele":{
                         title:'Modèle transmission',
                         property:'automotiveTransmissionModel'
+                    },
+
+                    "transmissionQuad":{
+                        title:'Type de transmission',
+                        property:'quadTransmission',
+                        data: ["AUTOMATIQUE","BOITE DE VITESSE","VARIATEUR"]
                     },
 
                     "transmissionTracteur":{
@@ -3895,6 +4117,12 @@ rotativeHarrow:{
                         title:'Vitesse maximale',
                         property:'automotiveMaxSpeed',
                         data: formsCatalog.automotiveMaxSpeed
+                    },
+
+                    "vitesseMaximaleQuad":{
+                        title:'Vitesse maximale',
+                        property:'quadeMaxSpeed',
+                        numeric: true
                     },
 
                     "vitesseMaximaleTracteur":{
