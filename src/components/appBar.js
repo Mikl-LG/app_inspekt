@@ -6,6 +6,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import AppBar from '@material-ui/core/AppBar';
 import Badge from '@material-ui/core/Badge';
 import Button from '@material-ui/core/Button';
+import Chip from '@material-ui/core/Chip';
 import CloseIcon from '@material-ui/icons/Close';
 import Container from '@material-ui/core/Container';
 import Dialog from '@material-ui/core/Dialog';
@@ -63,6 +64,10 @@ const useStyles = makeStyles((theme) => ({
     flexDirection:'column',
     alignItems:'center',
     width:'100vi'
+  },
+  chip: {
+    margin: theme.spacing(0.5),
+    fontSize:'0.8em'
   },
   grow: {
     flexGrow: 1,
@@ -122,6 +127,9 @@ const useStyles = makeStyles((theme) => ({
   sectionTitle : {
     color:Color.lightgrey
   },
+  smallFontSizeCells:{
+    fontSize:'0.9em'
+  },
   textfield : {
     fontSize:'0.8em',
     marginBottom:'5px',
@@ -146,7 +154,7 @@ function PrimarySearchAppBar(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [createCompany,setCreateCompany] = React.useState({});
   const [createUser,setCreateUser] = React.useState({});
-  const [expanded,setExpanded] = React.useState();
+  const [expanded,setExpanded] = React.useState("dealerUsers");
   const [input,setInput] = React.useState();
   const [hiddenInput,setHiddenInput] = React.useState(
     logInfo.user.config && logInfo.user.config.hiddenInput || []);
@@ -605,23 +613,7 @@ function PrimarySearchAppBar(props) {
               </Typography>
               <Divider/>
               <Grid container xs={12} lg={12} className={classes.container}>
-                <Grid item xs={12} lg={4} style={{marginTop:'25px',width:'100%'}}>
-                  <div style={{display:'flex',justifyContent:'center'}}>
-                    <div>
-                      <img src={logInfo.company && logInfo.company.logo} width='200px'/>
-                    </div>
-                  </div>
-                  <div style={{display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column'}}>
-                    <div style={{fontWeight:'bold'}}>{logInfo.company.name.toUpperCase()}</div>
-                    <div style={{fontSize:'0.8em'}}>{logInfo.company.address.toUpperCase()}</div>
-                    <div style={{fontSize:'0.8em'}}>
-                      {logInfo.company.postCode.toUpperCase() + ' ' + logInfo.company.city.toUpperCase()}
-                    </div>
-                    <div style={{fontSize:'0.8em'}}>{'SIRET : ' + logInfo.company.legalNumber.toUpperCase()}</div>
-                  </div>
-                  
-                </Grid>
-                <Grid item xs={12} lg={8} style={{marginTop:'25px',width:'100%'}}>
+                <Grid item xs={12} lg={12} style={{marginTop:'25px',width:'100%'}}>
                 <ExpansionPanel 
                     square
                     style={{width:'100%'}}
@@ -635,12 +627,14 @@ function PrimarySearchAppBar(props) {
                         <Table className={classes.table} size="small" aria-label="a dense table">
                           <TableHead>
                             <TableRow>
-                              <TableCell>Utilisateur</TableCell>
-                              <TableCell align="center">Licence</TableCell>
-                              <TableCell align="center">Email</TableCell>
-                              <TableCell align="center">Téléphone</TableCell>
-                              <TableCell align="center">Mode</TableCell>
-                              <TableCell align="center">Actif</TableCell>
+                              <TableCell className={classes.smallFontSizeCells}>Utilisateur</TableCell>
+                              <TableCell className={classes.smallFontSizeCells} align="center">Licence</TableCell>
+                              <TableCell className={classes.smallFontSizeCells} align="center">Email</TableCell>
+                              <TableCell className={classes.smallFontSizeCells} align="center">Notifications expertise</TableCell>
+                              <TableCell className={classes.smallFontSizeCells} align="center">Notifications cotation</TableCell>
+                              <TableCell className={classes.smallFontSizeCells} align="center">Téléphone</TableCell>
+                              <TableCell className={classes.smallFontSizeCells} align="center">Mode</TableCell>
+                              <TableCell className={classes.smallFontSizeCells} align="center">Actif</TableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
@@ -648,10 +642,10 @@ function PrimarySearchAppBar(props) {
                               logInfo.cieMembers[user]
                               &&
                               <TableRow key={logInfo.cieMembers[user].email}>
-                                <TableCell component="th" scope="row">
+                                <TableCell className={classes.smallFontSizeCells} component="th" scope="row">
                                   {logInfo.cieMembers[user].name}
                                 </TableCell>
-                                <TableCell align="center">
+                                <TableCell align="center" className={classes.smallFontSizeCells}>
                                 {
                                     <Select
                                       id="userLicenceSelect"
@@ -680,9 +674,47 @@ function PrimarySearchAppBar(props) {
                                     </Select>
                                 }
                                 </TableCell>
-                                <TableCell align="center">{logInfo.cieMembers[user].email}</TableCell>
-                                <TableCell align="center">{logInfo.cieMembers[user].phoneNumber}</TableCell>
-                                <TableCell className={classes.TableCell} align="center" padding="none">
+                                <TableCell className={classes.smallFontSizeCells} align="center">{logInfo.cieMembers[user].email}</TableCell>
+                                <TableCell className={classes.smallFontSizeCells}>
+                                  {
+                                    logInfo.cieMembers[user].config
+                                    && logInfo.cieMembers[user].config.notifEmails
+                                    && logInfo.cieMembers[user].config.notifEmails.newExp
+                                    && logInfo.cieMembers[user].config.notifEmails.newExp.length
+                                    && logInfo.cieMembers[user].config.notifEmails.newExp.map((recipient) => (
+                                  <Chip
+                                    //icon={icon}
+                                    size="small"
+                                    variant='outlined'
+                                    label={recipient}
+                                    onDelete={() => console.log(recipient)}
+                                    className={classes.chip}
+                                  />
+                                    ))
+                                  }
+                                  
+                                </TableCell>
+                                <TableCell className={classes.smallFontSizeCells}>
+                                {
+                                    logInfo.cieMembers[user].config
+                                    && logInfo.cieMembers[user].config.notifEmails
+                                    && logInfo.cieMembers[user].config.notifEmails.quotations
+                                    && logInfo.cieMembers[user].config.notifEmails.quotations.qot
+                                    && logInfo.cieMembers[user].config.notifEmails.quotations.qot.length
+                                    && logInfo.cieMembers[user].config.notifEmails.quotations.qot.map((recipient) => (
+                                  <Chip
+                                    //icon={icon}
+                                    size="small"
+                                    variant='outlined'
+                                    label={recipient}
+                                    onDelete={() => console.log(recipient)}
+                                    className={classes.chip}
+                                  />
+                                    ))
+                                  }
+                                </TableCell>
+                                <TableCell className={classes.smallFontSizeCells} align="center">{logInfo.cieMembers[user].phoneNumber}</TableCell>
+                                <TableCell className={classes.smallFontSizeCells} className={classes.TableCell} align="center" padding="none">
                                   {
                                     <Select
                                       id="isUserTeamSelect"
@@ -710,7 +742,7 @@ function PrimarySearchAppBar(props) {
                                     </Select>
                                 }
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className={classes.smallFontSizeCells}>
                                   {
                                     <Switch 
                                     checked={logInfo.cieMembers[user].active}
@@ -727,6 +759,22 @@ function PrimarySearchAppBar(props) {
                       </TableContainer>   
                     </ExpansionPanelDetails>
                   </ExpansionPanel>
+                </Grid>
+                <Grid item xs={12} lg={12} style={{marginTop:'25px',width:'100%'}}>
+                  <div style={{display:'flex',justifyContent:'center'}}>
+                    <div>
+                      <img src={logInfo.company && logInfo.company.logo} width='200px'/>
+                    </div>
+                  </div>
+                  <div style={{display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column'}}>
+                    <div style={{fontWeight:'bold'}}>{logInfo.company.name.toUpperCase()}</div>
+                    <div style={{fontSize:'0.8em'}}>{logInfo.company.address.toUpperCase()}</div>
+                    <div style={{fontSize:'0.8em'}}>
+                      {logInfo.company.postCode.toUpperCase() + ' ' + logInfo.company.city.toUpperCase()}
+                    </div>
+                    <div style={{fontSize:'0.8em'}}>{'SIRET : ' + logInfo.company.legalNumber.toUpperCase()}</div>
+                  </div>
+                  
                 </Grid>
               </Grid>
             </div>
