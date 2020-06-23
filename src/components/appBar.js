@@ -3,6 +3,7 @@ import Axios from 'axios';
 
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 import AppBar from '@material-ui/core/AppBar';
 import Badge from '@material-ui/core/Badge';
 import Button from '@material-ui/core/Button';
@@ -10,6 +11,7 @@ import Chip from '@material-ui/core/Chip';
 import CloseIcon from '@material-ui/icons/Close';
 import Container from '@material-ui/core/Container';
 import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
 import Divider from '@material-ui/core/Divider';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -17,13 +19,16 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
+import InfoIcon from '@material-ui/icons/Info';
 import InputBase from '@material-ui/core/InputBase';
 import List from '@material-ui/core/List';
+import MailIcon from '@material-ui/icons/Mail';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Paper from '@material-ui/core/Paper';
+import PhoneIphoneIcon from '@material-ui/icons/PhoneIphone';
 import SearchIcon from '@material-ui/icons/Search';
 import Select from '@material-ui/core/Select';
 import Slide from '@material-ui/core/Slide';
@@ -39,6 +44,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
+import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 
 import Color from '../constants/color.js';
@@ -71,6 +77,10 @@ const useStyles = makeStyles((theme) => ({
   },
   grow: {
     flexGrow: 1,
+  },
+  icon : {
+    fontSize : '1.5em',
+    color : Color.secondary
   },
   inputRoot: {
     color: 'inherit',
@@ -128,7 +138,7 @@ const useStyles = makeStyles((theme) => ({
     color:Color.lightgrey
   },
   smallFontSizeCells:{
-    fontSize:'0.9em'
+    fontSize:'0.8em'
   },
   textfield : {
     fontSize:'0.8em',
@@ -151,6 +161,7 @@ function PrimarySearchAppBar(props) {
 
   const {cieMembers,logInfo,setStateFromChild,search,setSearch,stateMenuItems,synchroniser} = props;
   const classes = useStyles();
+  const [addNotifEmail,setAddNotifEmail] = React.useState({open:false});
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [createCompany,setCreateCompany] = React.useState({});
   const [createUser,setCreateUser] = React.useState({});
@@ -171,6 +182,63 @@ function PrimarySearchAppBar(props) {
     logInfo.user.config || false
  );
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
+
+  const addNotifEmailRequest = async() => {
+    console.log('addNotifEmail : ',addNotifEmail);
+
+    let recipientList;
+    let userConfig = logInfo.cieMembers[addNotifEmail.user].config || {};
+    let _cieMembers = logInfo.cieMembers;
+
+    addNotifEmail.type === 'newExp'
+    ? recipientList = userConfig && userConfig.notifEmails && userConfig.notifEmails.newExp || []
+    : recipientList = userConfig && userConfig.notifEmails && userConfig.notifEmails.quotations.qot || []
+
+    console.log('recipientList : ',recipientList);
+
+    addNotifEmail.emailToAdd && addNotifEmail.emailToAdd != '' && 
+      recipientList.push(addNotifEmail.emailToAdd)
+
+      addNotifEmail.type === 'newExp'
+    ? userConfig = {...userConfig,notifEmails : {newExp : recipientList}}
+    : userConfig = {...userConfig,notifEmails : {quotations : {qot : recipientList}}}
+
+    const body = await Promise.resolve({
+      userId : addNotifEmail.user,
+      merge : {
+        config : userConfig
+      }
+    })
+
+    _cieMembers[addNotifEmail.user].config = userConfig;
+
+    try{
+      const url = `https://inspekt.herokuapp.com/api?request=MERGE_ANY_USER&token=${logInfo.token}`;
+      let fetchOptions = await Promise.resolve(
+        {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body)
+        }
+      )
+      let fetching = await fetch(url, fetchOptions)
+      let error = await Promise.resolve(!fetching.ok)
+      let response = !error && await Promise.resolve(fetching.json());
+  
+      if(error === false){
+        setAddNotifEmail({open:false});
+        setStateFromChild({logInfo : {...logInfo,cieMembers : _cieMembers}});
+        setSnackbar({message : 'Mise à jour réussie',type:'snackbarSuccess',isOpen:true});
+      }
+    }catch(error){
+      setSnackbar({message : 'La mise à jour a échoué.',type:'snackbarWarning',isOpen:true});
+    }
+    
+  }
 
   const createNewCompany = async() => {
 
@@ -213,6 +281,59 @@ function PrimarySearchAppBar(props) {
     }catch(error){
       console.log('erreur Axios : ',error.response)
     }
+  }
+
+  const deleteNotifEmails = async(user,recipient,type) => {
+
+    let recipientList;
+    let userConfig = logInfo.cieMembers[user].config;
+    let _cieMembers = logInfo.cieMembers;
+
+    type === 'newExp'
+    ? recipientList = userConfig.notifEmails.newExp
+    : recipientList = userConfig.notifEmails.quotations.qot
+
+    const index = recipientList.indexOf(recipient);
+    recipientList.splice(index,1);
+
+    index > -1 && type === 'newExp'
+    ? userConfig.notifEmails.newExp = recipientList
+    : userConfig.notifEmails.quotations.qot = recipientList
+
+    const body = await Promise.resolve({
+      userId : user,
+      merge : {
+        config : userConfig
+      }
+    })
+
+    _cieMembers[user].config = userConfig;
+
+    try{
+      const url = `https://inspekt.herokuapp.com/api?request=MERGE_ANY_USER&token=${logInfo.token}`;
+      let fetchOptions = await Promise.resolve(
+        {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body)
+        }
+      )
+      let fetching = await fetch(url, fetchOptions)
+      let error = await Promise.resolve(!fetching.ok)
+      let response = !error && await Promise.resolve(fetching.json());
+  
+      if(error === false){
+        setStateFromChild({logInfo : {...logInfo,cieMembers : _cieMembers}});
+        setSnackbar({message : 'Mise à jour réussie',type:'snackbarSuccess',isOpen:true});
+      }
+    }catch(error){
+      setSnackbar({message : 'La mise à jour a échoué.',type:'snackbarWarning',isOpen:true});
+    }
+
   }
 
   const deleteUser = async() => {
@@ -609,7 +730,7 @@ function PrimarySearchAppBar(props) {
                 style={{color:Color.secondary,marginTop:'25px'}}
               >
                 <FontAwesomeIcon icon={faUsers} style={{color:Color.secondary,marginRight:'15px'}}/>
-                Ta concession
+                {logInfo.company.name.toUpperCase()}
               </Typography>
               <Divider/>
               <Grid container xs={12} lg={12} className={classes.container}>
@@ -620,19 +741,17 @@ function PrimarySearchAppBar(props) {
                     expanded={expanded === 'dealerUsers'}
                     onChange={(event) => expanded === 'dealerUsers' ? setExpanded(''):setExpanded('dealerUsers')}>
                     <ExpansionPanelSummary>
-                      <Typography className={classes.sectionTitle} variant='subtitle1'>Membres de ton équipe</Typography>
+                      <Typography className={classes.sectionTitle} variant='subtitle1'>Gestion d'équipe</Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails className={classes.centeredList}>
                       <TableContainer component={Paper}>
                         <Table className={classes.table} size="small" aria-label="a dense table">
                           <TableHead>
                             <TableRow>
-                              <TableCell className={classes.smallFontSizeCells}>Utilisateur</TableCell>
+                              <TableCell className={classes.smallFontSizeCells} align="center">Utilisateur</TableCell>
                               <TableCell className={classes.smallFontSizeCells} align="center">Licence</TableCell>
-                              <TableCell className={classes.smallFontSizeCells} align="center">Email</TableCell>
                               <TableCell className={classes.smallFontSizeCells} align="center">Notifications expertise</TableCell>
                               <TableCell className={classes.smallFontSizeCells} align="center">Notifications cotation</TableCell>
-                              <TableCell className={classes.smallFontSizeCells} align="center">Téléphone</TableCell>
                               <TableCell className={classes.smallFontSizeCells} align="center">Mode</TableCell>
                               <TableCell className={classes.smallFontSizeCells} align="center">Actif</TableCell>
                             </TableRow>
@@ -643,7 +762,15 @@ function PrimarySearchAppBar(props) {
                               &&
                               <TableRow key={logInfo.cieMembers[user].email}>
                                 <TableCell className={classes.smallFontSizeCells} component="th" scope="row">
-                                  {logInfo.cieMembers[user].name}
+                                  <div style={{display:'flex',justifyContent:'flex-start',alignItems : 'center'}}>
+                                    <Tooltip title={logInfo.cieMembers[user].email}>
+                                      <MailIcon className={classes.icon} onClick={()=> window.open('mailto:' + logInfo.cieMembers[user].email)}/>
+                                    </Tooltip>
+                                    <Tooltip title={logInfo.cieMembers[user].phoneNumber}>
+                                      <PhoneIphoneIcon className={classes.icon} onClick={() => window.open('tel:' + logInfo.cieMembers[user].phoneNumber)}/>
+                                    </Tooltip>
+                                    <div style={{marginLeft:'10px'}}>{logInfo.cieMembers[user].name}</div>
+                                  </div>
                                 </TableCell>
                                 <TableCell align="center" className={classes.smallFontSizeCells}>
                                 {
@@ -674,46 +801,65 @@ function PrimarySearchAppBar(props) {
                                     </Select>
                                 }
                                 </TableCell>
-                                <TableCell className={classes.smallFontSizeCells} align="center">{logInfo.cieMembers[user].email}</TableCell>
-                                <TableCell className={classes.smallFontSizeCells}>
+                                <TableCell align="center" className={classes.smallFontSizeCells}>
                                   {
                                     logInfo.cieMembers[user].config
                                     && logInfo.cieMembers[user].config.notifEmails
                                     && logInfo.cieMembers[user].config.notifEmails.newExp
                                     && logInfo.cieMembers[user].config.notifEmails.newExp.length
-                                    && logInfo.cieMembers[user].config.notifEmails.newExp.map((recipient) => (
-                                  <Chip
-                                    //icon={icon}
-                                    size="small"
-                                    variant='outlined'
-                                    label={recipient}
-                                    onDelete={() => console.log(recipient)}
-                                    className={classes.chip}
-                                  />
+                                    ? logInfo.cieMembers[user].config.notifEmails.newExp.map((recipient) => (
+                                      <div>
+                                        <Chip
+                                          //icon={icon}
+                                          disabled={logInfo.user.licence === 'inspekter'}
+                                          size="small"
+                                          variant='outlined'
+                                          label={recipient}
+                                          onDelete={() => deleteNotifEmails(user,recipient,'newExp')}
+                                          className={classes.chip}
+                                        />
+                                      </div>
                                     ))
+                                    : <div style={{color : Color.lightgrey,fontSize : '0.7em'}}>Aucun destinataire</div>
+                                  }
+                                  {
+                                    <div><AddCircleIcon
+                                    style={{cursor:'pointer'}}
+                                    className={classes.icon}
+                                    onClick={() => setAddNotifEmail({open:true,type:'newExp',user:user})}
+                                    /></div>
                                   }
                                   
                                 </TableCell>
-                                <TableCell className={classes.smallFontSizeCells}>
+                                <TableCell align="center" className={classes.smallFontSizeCells}>
                                 {
                                     logInfo.cieMembers[user].config
                                     && logInfo.cieMembers[user].config.notifEmails
                                     && logInfo.cieMembers[user].config.notifEmails.quotations
                                     && logInfo.cieMembers[user].config.notifEmails.quotations.qot
                                     && logInfo.cieMembers[user].config.notifEmails.quotations.qot.length
-                                    && logInfo.cieMembers[user].config.notifEmails.quotations.qot.map((recipient) => (
-                                  <Chip
-                                    //icon={icon}
-                                    size="small"
-                                    variant='outlined'
-                                    label={recipient}
-                                    onDelete={() => console.log(recipient)}
-                                    className={classes.chip}
-                                  />
+                                    ? logInfo.cieMembers[user].config.notifEmails.quotations.qot.map((recipient) => (
+                                  <div>
+                                    <Chip
+                                      //icon={icon}
+                                      size="small"
+                                      variant='outlined'
+                                      label={recipient}
+                                      onDelete={() => deleteNotifEmails(user,recipient,'quotations')}
+                                      className={classes.chip}
+                                    />
+                                  </div>
                                     ))
+                                    : <div style={{color : Color.lightgrey,fontSize : '0.7em'}}>Aucun destinataire</div>
+                                  }
+                                  {
+                                    <div><AddCircleIcon
+                                    style={{cursor:'pointer'}}
+                                    className={classes.icon}
+                                    onClick={() => setAddNotifEmail({open:true,type:'quotations',user:user})}
+                                    /></div>
                                   }
                                 </TableCell>
-                                <TableCell className={classes.smallFontSizeCells} align="center">{logInfo.cieMembers[user].phoneNumber}</TableCell>
                                 <TableCell className={classes.smallFontSizeCells} className={classes.TableCell} align="center" padding="none">
                                   {
                                     <Select
@@ -989,6 +1135,24 @@ function PrimarySearchAppBar(props) {
             </div>
           }
         </Container>
+      </Dialog>
+      <Dialog open={addNotifEmail.open} onClose={() => setAddNotifEmail({open:false})}>
+        <DialogContent>
+          <TextField 
+            label = 'Ajouter un destinataire'
+            onChange={(event) => setAddNotifEmail(
+              {...addNotifEmail,emailToAdd:event.target.value})
+              }>    
+          </TextField>
+        </DialogContent>
+        <Button
+          variant="contained"
+          color="primary" 
+          style={{margin:'20px'}}
+          onClick={() => addNotifEmailRequest()}
+          >
+            VALIDER
+        </Button>
       </Dialog>
       <SnackBar
         handleClose={() => setSnackbar({isopen : false})}

@@ -131,8 +131,25 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStateFromChild,getInspekts,getQots}) {
+export default function TitlebarGridList({inspektList,qotList,cieMembers,logInfo,setStateFromChild,getInspekts,getQots,displayFromUrl}) {
     const classes = useStyles();
+
+    if(displayFromUrl.waitUrlParam === true){
+      let params = new URLSearchParams(document.location.search.substring(1));
+      setStateFromChild({displayFromUrl : {...displayFromUrl,id : params.get("expId"),waitUrlParam : false}});
+  }
+
+    let inspektFromUrl;
+    let qotFromUrl;
+    let expertiseFromUrl;
+
+    if(displayFromUrl.id){
+      inspektFromUrl = inspektList && inspektList.find(i => i.id == displayFromUrl.id);
+      qotFromUrl = qotList && qotList.find(q => q.id == displayFromUrl.id);
+      expertiseFromUrl = inspektFromUrl || qotFromUrl;
+    }
+    
+    const [displayFromUrlHook,setDisplayFromUrlHook] = React.useState(true);
 
     ///////// CATALOGS \\\\\\\\\\
     const [machineCatalog,setMachineCatalog] = React.useState(() => {
@@ -168,7 +185,8 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
         value:['title','name','city'].map((element) => (
         expertise.customer && expertise.customer[element] && ' ' + expertise.customer[element]
         )).join(' '),
-        visibleOnPdf:true}
+        visibleOnPdf:true
+      }
       
         machineToArray.push(
           {
@@ -242,7 +260,7 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
             if(key === element.property){
               element.value = value;
               element.visibleOnPdf = true;
-              element.step = 'machine';
+              element.step = 'machineFeatures';
               machineToArray.push(element);
             }
           }
@@ -296,21 +314,23 @@ export default function TitlebarGridList({inspektList,cieMembers,logInfo,setStat
             pictureArrayList = [...pictureArrayList,{title : element.text,value:element.pictures[0]}];
           }
         })
-
       }
       
       expertise.imageList = pictureArrayList;
       expertise.orderedDetailsToPrint = machineToArray;
       setFocusMachine(expertise);
       setIsExpertiseDetailsOpen(true)
-      console.log('expertise : ',expertise);
+    }
+
+    if(displayFromUrl.allowed === true && displayFromUrlHook === true && expertiseFromUrl){ //need to use a local hook to avoid rerendering of InspektList and the state.param to remember after navigating in other tabs that the machine has already been displayed
+      machineClicked(expertiseFromUrl);
+      setDisplayFromUrlHook(false);
+      setStateFromChild({displayFromUrl : {...displayFromUrl,allowed : false}})
     }
 
     useEffect(() => {
       
-      //console.log('natureList : ',natureList);
     })
-
 
   return (
       <div className={classes.root}>

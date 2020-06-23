@@ -59,12 +59,12 @@ export default function Login({setStateFromChild,getInspekts,getQots}){
             'https://inspekt.herokuapp.com/api?request=LOGIN', 
             fetchOptions
          )
-         console.log('statut : ',fetchResponse.status);
+
          if(fetchResponse.status === 200){
             setStateFromChild({logInfo:await fetchResponse.json()});
             getInspekts();
             getQots();
-            //setStateFromChild({loading:false});
+
          }else if(fetchResponse.status === 401){
             alert('Utilisateur inconnu')
             setSnackbar({message : 'Utilisateur inconnu',type:'snackbarWarning',isOpen:true});

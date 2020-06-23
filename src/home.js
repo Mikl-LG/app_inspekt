@@ -19,6 +19,8 @@ import Login from './views/login';
 import NewExpertise from './views/newExpertise';
 import token from './constants/token';
 
+import ExpertiseDetails from './components/expertiseDetails';
+
 import 'moment/locale/fr';
 import { Typography } from '@material-ui/core';
 
@@ -29,7 +31,8 @@ class Home extends Component{
         this.state={
             navigation:1,
             searchText:'',
-            loading : false
+            loading : false,
+            displayFromUrl : {allowed : true,waitUrlParam : true}
         };
     }
 
@@ -84,16 +87,16 @@ class Home extends Component{
             });
 
             const isTeamRestricted = await Promise.resolve(typeof this.state.logInfo.user === 'object' && this.state.logInfo.user.team === false);
-                const sortedList = (
-                    isTeamRestricted 
-                    ? await Promise.resolve(
-                        axiosResponse.data.filter((e) => (
-                            (e.openedBy === this.state.logInfo.user.id)
-                            || e.inStock
-                        ))
-                    )
-                    : axiosResponse.data
+            const sortedList = (
+                isTeamRestricted 
+                ? await Promise.resolve(
+                    axiosResponse.data.filter((e) => (
+                        (e.openedBy === this.state.logInfo.user.id)
+                        || e.inStock
+                    ))
                 )
+                : axiosResponse.data
+            )
 
             this.setState({qotList : sortedList,loading:false});
 
@@ -124,11 +127,11 @@ class Home extends Component{
     }
 
     componentDidUpdate(){
-        console.log('homeState updated : ',this.state);
+         
+        console.log('stateUpDated : ',this.state);
     }
 
     async componentDidMount(){
-        
         
     };
 
@@ -182,11 +185,13 @@ class Home extends Component{
                                     navigation === 1
                                     ?   <InspektList
                                             inspektList = {inspektList}
+                                            qotList = {qotList}
                                             cieMembers = {cieMembers} 
                                             logInfo={logInfo}
                                             setStateFromChild={this.setStateFromChild}
                                             getInspekts={this.getInspekts}
                                             getQots={this.getQots}
+                                            displayFromUrl={this.state.displayFromUrl && this.state.displayFromUrl}
                                         />
                                         :navigation === 2
                                         ?   <QotList
@@ -239,7 +244,8 @@ class Home extends Component{
                     <Login
                         setStateFromChild={this.setStateFromChild}
                         getInspekts = {this.getInspekts}
-                        getQots = {this.getQots}/>
+                        getQots = {this.getQots}
+                    />
                 }
                 
             </ThemeProvider>
