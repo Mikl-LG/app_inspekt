@@ -363,7 +363,7 @@ export default function NewExpertise({setStateFromChild,logInfo,getInspekts}){
 
   /**USEEFFECT ONLY USED ON CONSOLE */
   useEffect(() => {
-    console.log('machineFeatures : ',machineFeatures);
+    console.log('machineFormList : ',machineFormList);
   })
 
     const classes = useStyles();
@@ -424,7 +424,6 @@ export default function NewExpertise({setStateFromChild,logInfo,getInspekts}){
             <FormControl className={classes.formControl}>
               <Select
                   native
-                  select
                   className={classes.optionsInput}
                   id="nature_select"
                   placeholder="Nature"
@@ -444,73 +443,67 @@ export default function NewExpertise({setStateFromChild,logInfo,getInspekts}){
             {
               (nature && machineFormList)
               ?machineFormList.regular.map((input) => (
-                  input.data
+                input.property == 'brand'
+                ?
+                  brands.length
                   ?
-                    (
-                      input.property == 'brand'
-                      ?
-                        brands.length > 0
-                        ?
-                        <div key={input.property}>
-                          <InputLabel>Marque</InputLabel>
-                          <Select
-                            
-                            className={classes.optionsInput}
-                            id='brand'
-                            variant="outlined"
-                            value={machine.brand && machine.brand}
-                            onChange={(e) => machineHandleChange(e.target,'brand')}
-                          >
-                          {
-                            brands.map((data) => (
-                              <MenuItem key={data} value={data}>{data}</MenuItem>
-                            ))
-                          }
-                          </Select>
-                        </div>
-                        :
-                        <div key={input.property}>
-                          <TextField
-                            key={input.property}
-                            className={classes.optionsInput}
-                            id='brand'
-                            label='Marque'
-                            variant="outlined"
-                            value={machine.brand && machine.brand}
-                            onChange={(e) => machineHandleChange(e.target,'brand')}
-                          >
-                          </TextField>
-                        </div>
-                      :
-                        <div key={input.property}>
-                          <InputLabel>{input.title}</InputLabel>
-                          <Select
-                            
-                            key={input.property}
-                            className={classes.optionsInput}
-                            id={input.property}
-                            variant="outlined"
-                            value={machine[input.property] && machine[input.property]}
-                            onChange={(e) => machineHandleChange(e.target,input.property)}
-                          >
-                          {
-                            input.data.map((data) => (
-                              <MenuItem key={data} value={data}>{data}</MenuItem>
-                            ))
-                          }
-                          </Select>
-                        </div>
-                      )
+                  <div key={input.property}>
+                    <InputLabel>Marque</InputLabel>
+                    <Select
+                      className={classes.optionsInput}
+                      id='brand'
+                      variant="outlined"
+                      value={machine.brand && machine.brand}
+                      onChange={(e) => machineHandleChange(e.target,'brand')}
+                    >
+                    {
+                      brands.map((data) => (
+                        <MenuItem key={data} value={data}>{data}</MenuItem>
+                      ))
+                    }
+                    </Select>
+                  </div>
                   :
+                  <div key={input.property}>
                     <TextField
                       key={input.property}
                       className={classes.optionsInput}
-                      id={input.property}
-                      label={input.title}
+                      id='brand'
+                      label='Marque'
                       variant="outlined"
-                      onChange={(e) => machineHandleChange(e.target,input.property)}
+                      value={machine.brand && machine.brand}
+                      onChange={(e) => machineHandleChange(e.target,'brand')}
                     />
-
+                  </div>
+                :
+                input.data
+                ?
+                  <div key={input.property}>
+                    <InputLabel>{input.title}</InputLabel>
+                    <Select
+                      key={input.property}
+                      className={classes.optionsInput}
+                      id={input.property}
+                      variant="outlined"
+                      value={machine[input.property] && machine[input.property]}
+                      onChange={(e) => machineHandleChange(e.target,input.property)}
+                    >
+                    {
+                      input.data.map((data) => (
+                        <MenuItem key={data} value={data}>{data}</MenuItem>
+                      ))
+                    }
+                    </Select>
+                  </div>
+                :
+                  <TextField
+                    key={input.property}
+                    className={classes.optionsInput}
+                    id={input.property}
+                    label={input.title}
+                    variant="outlined"
+                    onChange={(e) => machineHandleChange(e.target,input.property)}
+                  />
               ))
               :null
             }

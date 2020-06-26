@@ -1425,6 +1425,7 @@ const formsCatalog = {
 
     sprayerAutomotive: {                      // formsCatalog properties (here "tractor") MUST be equal to Natures[index].key
         brands : [ 
+            "ARTEC",
             "AMAZONE",
             "BERTHOUD",
             "CARUELLE",
@@ -2035,7 +2036,6 @@ const formsCatalog = {
     frontAxle:[
         "FIXE 2RM",
         "FIXE 4RM",
-        "SUSPENDU 2RM",
         "SUSPENDU 4RM"
     ],
 
@@ -2303,6 +2303,7 @@ const formsCatalog = {
     reverse:[
         "MECANIQUE",
         "ELECTRO-HYDR.",
+        "PRESELECTION.",
         "NON EQUIPE"
     ],
 
@@ -4201,11 +4202,6 @@ const formsCatalog = {
             4:{
                 regular:[
                     {
-                        title:'Numéro de série',
-                        property : 'serialNumber',
-                        picture: true
-                    },
-                    {
                         title : '3/4 avant gauche',
                         property:'leftFront',
                         picture: true
@@ -4224,15 +4220,16 @@ const formsCatalog = {
                         title:'3/4 arrière gauche',
                         property : 'leftBack',
                         picture: true
-                    }
-                ],
-
-                trailed:[
+                    },
                     {
                         title:'Numéro de série',
                         property : 'serialNumber',
                         picture: true
-                    },
+                    }
+                ],
+
+                trailed:[
+                    
                     {
                         title : '3/4 avant gauche',
                         property:'leftFront',
@@ -4261,6 +4258,11 @@ const formsCatalog = {
                     {
                         title:'Carte grise',
                         property:'registrationCard',
+                        picture: true
+                    },
+                    {
+                        title:'Numéro de série',
+                        property : 'serialNumber',
                         picture: true
                     }
                 ],
@@ -4340,6 +4342,12 @@ const formsCatalog = {
                     "conditionneur":{
                         title:'Conditionneur',
                         property:'Conditionning',
+                        picture: true
+                    },
+
+                    "controleTechnique":{
+                        title:'Contrôle technique',
+                        property:'technicalCertification',
                         picture: true
                     },
 

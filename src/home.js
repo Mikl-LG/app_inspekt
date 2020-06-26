@@ -127,8 +127,7 @@ class Home extends Component{
     }
 
     componentDidUpdate(){
-         
-        console.log('stateUpDated : ',this.state);
+
     }
 
     async componentDidMount(){
@@ -199,6 +198,7 @@ class Home extends Component{
                                                 cieMembers = {cieMembers} 
                                                 logInfo={logInfo}
                                                 setStateFromChild={this.setStateFromChild}
+                                                getInspekts={this.getInspekts}
                                                 getQots={this.getQots}
                                                 searchText={this.state.searchText}
                                                 stateMenuItemsFiltered={stateMenuItemsFiltered}

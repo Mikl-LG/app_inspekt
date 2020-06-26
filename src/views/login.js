@@ -27,7 +27,8 @@ const useStyles = makeStyles((theme) => ({
         height:'100%',
         width:'100%',
         display: 'flex',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        flexWrap : 'wrap'
     },
     margin: {
       margin: theme.spacing(1),

@@ -577,7 +577,7 @@ const Natures = [
             },
             4:{
                 type:'trailed',
-                addOns:["boitier","rampeDroite","rampeGauche","cadreCentral","cuve"]
+                addOns:["boitier","rampeDroite","rampeGauche","cadreCentral","cuve","controleTechnique"]
             }
         }
     },

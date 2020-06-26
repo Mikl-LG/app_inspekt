@@ -128,7 +128,7 @@ function LoadSelectHeadTable(props){
                 {
                 autoList[headCell.id] && autoList[headCell.id].map((element) => (
                   element &&
-                  <MenuItem value={element} style={{fontSize:'1em'}}>
+                  <MenuItem value={element} style={{fontSize:'1em'}} key={element}>
                     {element}
                   </MenuItem>
                 ))

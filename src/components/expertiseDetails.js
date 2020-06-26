@@ -31,6 +31,7 @@ import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
+import UndoIcon from '@material-ui/icons/Undo';
 import Slide from '@material-ui/core/Slide';
 
 import Color from '../constants/color.js';
@@ -139,7 +140,7 @@ export default function ExpertiseDetails(props) {
   const [priceDialog,setPriceDialog] = React.useState({isOpen : false});
   const [qoterMode,setQoterMode] = React.useState()
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
-  const [isOpenDeleteValidation,setIsOpenDeleteValidation] = React.useState(false);
+  const [validation,setValidation] = React.useState({isOpen : false});
   const [updateMachineFeatures,setUpdateMachineFeatures] = React.useState({open:false});
 
   const checkDetailsToPrint = (detail) => {
@@ -184,8 +185,6 @@ export default function ExpertiseDetails(props) {
     let response = !error && await Promise.resolve(fetching.json());
 
     if(error == false){
-
-      const subject = [focusMachine.machine.nature.name,focusMachine.machine.brand,focusMachine.machine.model,focusMachine.customer && focusMachine.customer.name].map((element) => element && element).join(' ');
 
       setSnackbar({message : 'Cette machine est désormais évaluée, beau boulot.',type:'snackbarSuccess',isOpen:true});
       setDrawer({isOpen:false});
@@ -309,7 +308,7 @@ export default function ExpertiseDetails(props) {
         if(error == false){
           setSnackbar({message : 'INSPEKT supprimé',type:'snackbarSuccess',isOpen:true});
           setOpen(false);
-          setIsOpenDeleteValidation(false);
+          setValidation({isOpen:false});
           getInspekts();
         }else{
           setSnackbar({message : 'Essayes à nouveau en vérifiant ta connexion Internet',type:'snackbarWarning',isOpen:true});
@@ -376,6 +375,47 @@ export default function ExpertiseDetails(props) {
     setQoterMode(logInfo.user.config && logInfo.user.config.isDefaultQoter === true ? true : false);
     setDrawer({isOpen:true});
 
+  }
+
+  const undoQot = async() => {
+
+    if(
+      logInfo.user.licence === 'admin'
+      || logInfo.user.licence === 'manager'
+      || logInfo.user.licence === 'qoter'
+      ){
+        const body = await Promise.resolve({
+          expId : focusMachine.id,
+          cieId : focusMachine.cieId && focusMachine.cieId || logInfo.company.id
+        })
+
+        //**ADD COTATION REQUEST**\\
+        const url = `https://inspekt.herokuapp.com/api?request=UNDO_QOT&token=${logInfo.token}`
+        let fetchOptions = await Promise.resolve(
+            {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body)
+            }
+        )
+        let fetching = await fetch(url, fetchOptions)
+        let error = await Promise.resolve(!fetching.ok)
+        let response = !error && await Promise.resolve(fetching.json());
+
+        if(error == false){
+          getInspekts();
+          getQots();
+          setSnackbar({message : 'Expertise ' + focusMachine.id + ' prête à évaluer.',type:'snackbarSuccess',isOpen:true});
+          setValidation({isOpen:false});
+          setOpen(false);
+        }
+      }else{
+          setSnackbar({message : 'Seul un QOTER peut basculer un QOT en INSPEKT.',type:'snackbarWarning',isOpen:true});
+        }
   }
 
   const updateMachineFeaturesRequest = async() => {
@@ -447,8 +487,17 @@ export default function ExpertiseDetails(props) {
               focusMachine.status === 'inspekt'
                 &&
             <Tooltip title="Supprimer">
-              <Button autoFocus color="inherit" onClick={() => setIsOpenDeleteValidation(true)}>
+              <Button autoFocus color="inherit" onClick={() => setValidation({isOpen : true,title : 'Supprimer cet Inspekt',message : 'Vous êtes sur le point de supprimer un Inspekt : ces données seront effacées et ne pourront pas être récupérées.',validationLabel : 'Supprimer',methodType : 'delete'})}>
                 <DeleteIcon/>
+              </Button>
+            </Tooltip>
+            }
+            {
+              focusMachine.status === 'qot'
+                &&
+            <Tooltip title="Supprimer">
+              <Button autoFocus color="inherit" onClick={() => setValidation({isOpen : true,title : 'Annuler QOT',message : 'Cette expertise sera à nouveau disponible dans votre liste INSPEKT.',validationLabel : 'Valider',methodType : 'undo'})}>
+                <UndoIcon/>
               </Button>
             </Tooltip>
             }
@@ -519,7 +568,7 @@ export default function ExpertiseDetails(props) {
               {
                 focusMachine.orderedDetailsToPrint && focusMachine.orderedDetailsToPrint.map((element,index) => (
                   element == 'divider' 
-                  ? <Divider/>
+                  ? <Divider key={index}/>
                   :
                     <ListItemText key={element.property} classes={{primary:classes.listItemText}}>
                       <div style={{display:'flex', alignItems:'center'}}>
@@ -561,23 +610,23 @@ export default function ExpertiseDetails(props) {
         </Grid>
       </Dialog>
       <Dialog
-        open={isOpenDeleteValidation}
-        onClose={() => setIsOpenDeleteValidation(false)}
+        open={validation.isOpen}
+        onClose={() => setValidation({isOpen : false})}
         aria-labelledby="alert-deleteInspekt-title"
         aria-describedby="alert-deleteInspekt-description"
       >
-        <DialogTitle id="alert-deleteInspekt-title">{"Supprimer cet Inspekt?"}</DialogTitle>
+        <DialogTitle id="alert-deleteInspekt-title">{validation.title}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-deleteInspekt-description">
-            Vous êtes sur le point de supprimer un Inspekt : ces données seront effacées et ne pourront pas être récupérées.
+            {validation.message}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setIsOpenDeleteValidation(false)} color="primary">
+          <Button onClick={() => setValidation({isOpen : false})} color="primary">
             Annuler
           </Button>
-          <Button onClick={() => inspektDelete(focusMachine)} color="primary" autoFocus>
-            Supprimer
+          <Button onClick={validation.methodType === 'delete' ? () => inspektDelete(focusMachine) : () => undoQot()} color="primary" autoFocus>
+            {validation.validationLabel}
           </Button>
         </DialogActions>
       </Dialog>
@@ -722,6 +771,7 @@ export default function ExpertiseDetails(props) {
                       {title : 'Prix d\'achat',key:'estimatedBuyingPrice'},
                     ].map((value) => (
                       <div 
+                      key={value}
                         className={classes.listItemText}
                         style={{color:value.key === 'estimatedBuyingPrice' && Color.secondary}}
                       >

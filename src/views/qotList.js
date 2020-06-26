@@ -11,6 +11,7 @@ import Drawer from '@material-ui/core/Drawer';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
+import GetAppIcon from '@material-ui/icons/GetApp';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -37,6 +38,8 @@ import ExpertiseDetails from '../components/expertiseDetails';
 import FormsCatalog from '../constants/FormsCatalog';
 import Natures from '../constants/Natures';
 import SnackBar from '../components/snackBar';
+
+const { Parser } = require('json2csv');
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -78,6 +81,18 @@ function LoadSelectHeadTable(props){
     autoList = {...autoList,[headCell.id] : headCell.selectOptions}
   })
 
+  const csvQotList = async() => {
+    const fields = ['field1', 'field2', 'field3'];
+    const opts = { fields };
+      try {
+        const parser = new Parser();
+        const csv = await Promise.resolve(parser.parse(qotList));
+        console.log(csv);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   const handleSelectTempSort = (key,value) =>{
     let newSelected = tempSort[key];
     console.log('newSelected : ',key);
@@ -98,7 +113,6 @@ function LoadSelectHeadTable(props){
 
   return(
     <TableHead>
-      <p style={{marginLeft:'15px',fontSize:'0.8em',fontStyle:'italic',color:Color.secondary}}>{qotList.length} résultat(s)</p>
       <TableRow style={{borderTop:'solid grey 1px'}}>
         {headCells.map((headCell) => (
           headCell.select === false
@@ -141,7 +155,7 @@ function LoadSelectHeadTable(props){
                 {
                 autoList[headCell.id] && autoList[headCell.id].map((element) => (
                   element &&
-                  <MenuItem value={element} style={{fontSize:'1em'}}>
+                  <MenuItem value={element} style={{fontSize:'1em'}} key={element}>
                     {element}
                   </MenuItem>
                 ))
@@ -205,7 +219,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromChild,getQots,searchText,stateMenuItemsFiltered}) {
+export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromChild,getInspekts,getQots,searchText,stateMenuItemsFiltered}) {
   const classes = useStyles();
 
   ///////// CATALOGS \\\\\\\\\\
@@ -567,12 +581,13 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
     }
 
   useEffect(()=>{
-    console.log('inputStock : ',inputInStock);
+
   })
 
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
+        <span style={{marginLeft:'15px',fontSize:'0.8em',fontStyle:'italic',color:Color.secondary}}>{qotList.length} résultat(s)</span>
         <TableContainer>
           <Table
             className={classes.table}
@@ -612,7 +627,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
                             ? setStockDrawer({qot : row.expertiseObject,inStock : row.inStock, isOpen:true})
                             : updateQotInStock(row.expertiseObject,false)
                           }
-                          name={row.inStock}
+                          //name={row.inStock}
                           color="primary"
                           />
                       </TableCell>
@@ -664,7 +679,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
                       >
                         {
                         stateMenuItemsFiltered.map((e) => (
-                          <MenuItem value={e} style={{fontSize:'0.8em'}}>
+                          <MenuItem value={e} style={{fontSize:'0.8em'}} key={e}>
                             {e}
                           </MenuItem>
                         ))
@@ -686,6 +701,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
           setFocusMachine={(newFocusMachine) => setFocusMachine(newFocusMachine)}
           logInfo={logInfo}
           setStateFromChild={setStateFromChild}
+          getInspekts={getInspekts}
           getQots={getQots}
         />
         <Drawer anchor='left' open={stockDrawer.isOpen} onClose={() => setStockDrawer({isOpen:false})}>

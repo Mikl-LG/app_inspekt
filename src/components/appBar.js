@@ -187,21 +187,23 @@ function PrimarySearchAppBar(props) {
     console.log('addNotifEmail : ',addNotifEmail);
 
     let recipientList;
-    let userConfig = logInfo.cieMembers[addNotifEmail.user].config || {};
+    let userConfig = logInfo.cieMembers[addNotifEmail.user].config ? logInfo.cieMembers[addNotifEmail.user].config : {};
     let _cieMembers = logInfo.cieMembers;
 
-    addNotifEmail.type === 'newExp'
-    ? recipientList = userConfig && userConfig.notifEmails && userConfig.notifEmails.newExp || []
-    : recipientList = userConfig && userConfig.notifEmails && userConfig.notifEmails.quotations.qot || []
+    console.log('userConfig : ',userConfig);
 
-    console.log('recipientList : ',recipientList);
+    addNotifEmail.type === 'newExp'
+    ? recipientList = (userConfig.notifEmails && userConfig.notifEmails.newExp) ? userConfig.notifEmails.newExp : []
+    : recipientList = (userConfig.notifEmails && userConfig.notifEmails.quotations &&userConfig.notifEmails.quotations.qot) ? userConfig.notifEmails.quotations.qot : []
+
+    console.log('recipientListBeforePush : ',recipientList);
 
     addNotifEmail.emailToAdd && addNotifEmail.emailToAdd != '' && 
       recipientList.push(addNotifEmail.emailToAdd)
 
       addNotifEmail.type === 'newExp'
-    ? userConfig = {...userConfig,notifEmails : {newExp : recipientList}}
-    : userConfig = {...userConfig,notifEmails : {quotations : {qot : recipientList}}}
+    ? userConfig = {...userConfig,notifEmails : {...userConfig.notifEmails,newExp : recipientList}}
+    : userConfig = {...userConfig,notifEmails : {...userConfig.notifEmails,quotations : {qot : recipientList}}}
 
     const body = await Promise.resolve({
       userId : addNotifEmail.user,
@@ -209,6 +211,8 @@ function PrimarySearchAppBar(props) {
         config : userConfig
       }
     })
+
+    console.log('body : ',body);
 
     _cieMembers[addNotifEmail.user].config = userConfig;
 
@@ -582,8 +586,9 @@ function PrimarySearchAppBar(props) {
     </Menu>
   );
 
+  let listOfMembers = Object.keys(logInfo.cieMembers);
+
   useEffect(() => {
-    console.log('modifiableUserInformations : ',modifiableUserInformations);
   })
 
   return (
@@ -609,8 +614,8 @@ function PrimarySearchAppBar(props) {
           </div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <IconButton aria-label="show 17 new notifications" color="inherit">
-                <SyncIcon onClick={() => synchroniser()} />
+            <IconButton aria-label="show 17 new notifications" color="inherit" onClick={() => synchroniser()} >
+                <SyncIcon/>
             </IconButton>
             <IconButton
               edge="end"
@@ -691,7 +696,7 @@ function PrimarySearchAppBar(props) {
                       {key:'phoneNumber',title:'Numéro de téléphone'},
                       {key:'email',title:'Email'}]
                       .map((element) => (
-                        <div style={{display:'flex'}}>
+                        <div style={{display:'flex'}} key={element.key}>
                           <TextField
                             defaultValue={logInfo.user && logInfo.user[element.key]}
                             label={logInfo.user && element.title}
@@ -757,7 +762,7 @@ function PrimarySearchAppBar(props) {
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            {logInfo.company.members && logInfo.company.members.map((user) => (
+                            {listOfMembers && listOfMembers.map((user) => (
                               logInfo.cieMembers[user]
                               &&
                               <TableRow key={logInfo.cieMembers[user].email}>
