@@ -184,19 +184,14 @@ function PrimarySearchAppBar(props) {
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
 
   const addNotifEmailRequest = async() => {
-    console.log('addNotifEmail : ',addNotifEmail);
 
     let recipientList;
     let userConfig = logInfo.cieMembers[addNotifEmail.user].config ? logInfo.cieMembers[addNotifEmail.user].config : {};
     let _cieMembers = logInfo.cieMembers;
 
-    console.log('userConfig : ',userConfig);
-
     addNotifEmail.type === 'newExp'
     ? recipientList = (userConfig.notifEmails && userConfig.notifEmails.newExp) ? userConfig.notifEmails.newExp : []
     : recipientList = (userConfig.notifEmails && userConfig.notifEmails.quotations &&userConfig.notifEmails.quotations.qot) ? userConfig.notifEmails.quotations.qot : []
-
-    console.log('recipientListBeforePush : ',recipientList);
 
     addNotifEmail.emailToAdd && addNotifEmail.emailToAdd != '' && 
       recipientList.push(addNotifEmail.emailToAdd)
@@ -211,8 +206,6 @@ function PrimarySearchAppBar(props) {
         config : userConfig
       }
     })
-
-    console.log('body : ',body);
 
     _cieMembers[addNotifEmail.user].config = userConfig;
 
@@ -500,14 +493,28 @@ function PrimarySearchAppBar(props) {
     
   }
 
-  const updateUserFromManager = async(value,key,user) => {
+  const updateUserFromManager = async(value,key,user,path) => {
     
-    const body = await Promise.resolve({
-      userId : user,
-      merge : {
-        [key] : value
-      }
-    })
+    let body = {};
+
+    if(path === 'root'){
+      //in this case, param is directly attached to the user
+      body = await Promise.resolve({
+        userId : user,
+        merge : {
+          [key] : value
+        }
+      })
+    }else if(path === 'config'){
+      //in this case, param is attached to user.config
+      const userConfig = logInfo.user.config || {};
+      body = await Promise.resolve({
+        userId : user,
+        merge : {
+          config : {...userConfig,[key] : value}
+        }
+      })
+    }
 
     try{
       const url = `https://inspekt.herokuapp.com/api?request=MERGE_ANY_USER&token=${logInfo.token}`;
@@ -526,9 +533,14 @@ function PrimarySearchAppBar(props) {
       let error = await Promise.resolve(!fetching.ok)
       let response = !error && await Promise.resolve(fetching.json());
   
-      if(error === false){
+      if(error === false && path === 'root'){
         let _logInfo = {...logInfo};
         _logInfo.cieMembers[user][key] = value;
+        setStateFromChild({logInfo : _logInfo});
+        setSnackbar({message : 'Mise à jour réussie',type:'snackbarSuccess',isOpen:true});
+      }else if(error === false && path === 'config'){
+        let _logInfo = {...logInfo};
+        _logInfo.cieMembers[user].config = {...logInfo.cieMembers[user].config,[key] : value}
         setStateFromChild({logInfo : _logInfo});
         setSnackbar({message : 'Mise à jour réussie',type:'snackbarSuccess',isOpen:true});
       }
@@ -757,6 +769,7 @@ function PrimarySearchAppBar(props) {
                               <TableCell className={classes.smallFontSizeCells} align="center">Licence</TableCell>
                               <TableCell className={classes.smallFontSizeCells} align="center">Notifications expertise</TableCell>
                               <TableCell className={classes.smallFontSizeCells} align="center">Notifications cotation</TableCell>
+                              <TableCell className={classes.smallFontSizeCells} align="center">Masquer prix achat</TableCell>
                               <TableCell className={classes.smallFontSizeCells} align="center">Mode</TableCell>
                               <TableCell className={classes.smallFontSizeCells} align="center">Actif</TableCell>
                             </TableRow>
@@ -867,6 +880,17 @@ function PrimarySearchAppBar(props) {
                                 </TableCell>
                                 <TableCell className={classes.smallFontSizeCells} className={classes.TableCell} align="center" padding="none">
                                   {
+                                    <Switch 
+                                      id="isUserRestrictedOnBuyingPrice"
+                                      checked={logInfo.cieMembers[user].config.restrictionOnBuyingPrice}
+                                      disabled={licences[logInfo.user.licence].disabled}
+                                      color="primary"
+                                      onChange={()=>updateUserFromManager(logInfo.cieMembers[user].config.restrictionOnBuyingPrice === true ? false : true,"restrictionOnBuyingPrice",user,'config')}
+                                    />
+                                  }
+                                </TableCell>
+                                <TableCell className={classes.smallFontSizeCells} className={classes.TableCell} align="center" padding="none">
+                                  {
                                     <Select
                                       id="isUserTeamSelect"
                                       value={logInfo.cieMembers[user].team === false ? 'SOLO' : 'TEAM'}
@@ -881,7 +905,7 @@ function PrimarySearchAppBar(props) {
                                         style={{fontSize:'1em',cursor:'pointer',color:Color.success}}
                                         icon={faUsers}/>
                                       )}
-                                      onChange={(event) => updateUserFromManager(event.target.value === 'SOLO' ? false : true,"team",user)}
+                                      onChange={(event) => updateUserFromManager(event.target.value === 'SOLO' ? false : true,"team",user,'root')}
                                     >
                                       {
                                       ["SOLO","TEAM"].map((e) => (
@@ -899,7 +923,7 @@ function PrimarySearchAppBar(props) {
                                     checked={logInfo.cieMembers[user].active}
                                     disabled={licences[logInfo.user.licence].disabled}
                                     color="primary"
-                                    onChange={()=>updateUserFromManager(logInfo.cieMembers[user].active === true ? false : true,"active",user)}
+                                    onChange={()=>updateUserFromManager(logInfo.cieMembers[user].active === true ? false : true,"active",user,'root')}
                                   />
                                   }
                                 </TableCell>

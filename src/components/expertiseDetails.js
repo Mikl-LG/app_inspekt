@@ -546,7 +546,7 @@ export default function ExpertiseDetails(props) {
             >
               <MenuItem onClick={() => editPdf('ficheExpertise')}>Fiche d'expertise</MenuItem>
               <MenuItem onClick={() => editPdf('bonReprise')}>Bon de reprise</MenuItem>
-              <MenuItem onClick={() => {setAnchorEl(null)}}>Contre-expertise</MenuItem>
+              <MenuItem onClick={() => editPdf('contreExpertise')}>Contre-expertise</MenuItem>
             </Menu>
             
           </Toolbar>
@@ -784,7 +784,14 @@ export default function ExpertiseDetails(props) {
                             marginRight:'5px'}}
                           />
                         }
-                        {element[value.key] && value.title + ' : ' + element[value.key] + '€'}
+                        {
+                          (value.key === 'estimatedBuyingPrice' 
+                          && logInfo.user.config
+                          && logInfo.user.config.restrictionOnBuyingPrice
+                          && logInfo.user.config.restrictionOnBuyingPrice === true)
+                          ? 'Cette cotation n\'est pas disponible'
+                          : element[value.key] && value.title + ' : ' + element[value.key] + '€'
+                        }
                       </div>
                     ))}
                       <div className={classes.listItemText} style={{fontStyle:'italic'}}>

@@ -53,7 +53,7 @@ const MenuProps = {
 };
 
 function LoadSelectHeadTable(props){
-  const {logInfo,qotList,sort,setSort,tempSort,setTempSort} = props;
+  const {logInfo,priceType,qotList,sort,setSort,tempSort,setTempSort} = props;
 
   const headCells = [
     { id: 'inStock', select: true, width:'1vi', label: 'Stock' ,selectOptions : ['STOCKS','QOTS']},
@@ -72,7 +72,7 @@ function LoadSelectHeadTable(props){
     { id: 'details', select: true, width:'30vi', label: 'Détails',selectOptions : [] },
     { id: 'year', select: true, label: 'Année',selectOptions : [ ...new Set(qotList.map((element) => (
       element.machine && element.machine.year && element.machine.year))) ].sort() },
-    { id: 'estimatedBuyingPrice', width:'7vi', select: true, label: 'Cotation',selectOptions : [ ...new Set(qotList.map((element) => (element.quotations[element.quotations.length - 1].estimatedBuyingPrice))) ].sort() },
+    { id: 'quotation', width:'7vi', select: true, label: 'Cotation',selectOptions : [ ...new Set(qotList.map((element) => (element.quotations[element.quotations.length - 1][priceType]))) ].sort() },
     { id: 'qotState', width:'10vi', select: true, label: 'Affaire',selectOptions : [ ...new Set(qotList.map((element) => (element.state && element.state))) ].sort() }
   ];
 
@@ -95,7 +95,6 @@ function LoadSelectHeadTable(props){
 
   const handleSelectTempSort = (key,value) =>{
     let newSelected = tempSort[key];
-    console.log('newSelected : ',key);
     const selectedIndex = newSelected.indexOf(value);
 
     //if(selectedIndex == -1){
@@ -222,6 +221,13 @@ const useStyles = makeStyles((theme) => ({
 export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromChild,getInspekts,getQots,searchText,stateMenuItemsFiltered}) {
   const classes = useStyles();
 
+  //priceType is set on customerEstimatedPrice when user is not allowed to see the buying prices
+  const priceType = logInfo.user.config 
+    && logInfo.user.config.restrictionOnBuyingPrice 
+    && logInfo.user.config.restrictionOnBuyingPrice === true 
+    ? 'customerEstimatedSalePrice'
+    : 'estimatedBuyingPrice'
+
   ///////// CATALOGS \\\\\\\\\\
 
   const [machineFeatureCatalog,setMachineFeatureCatalog] = React.useState(() => {
@@ -240,8 +246,8 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
   const [isExpertiseDetailsOpen,setIsExpertiseDetailsOpen] = React.useState(false);
   const [focusMachine,setFocusMachine] = React.useState({});
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
-  const [sort,setSort] = React.useState({inStock:[],id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],qotState:[],estimatedBuyingPrice:[]});
-  const [tempSort,setTempSort] = React.useState({inStock:[],id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],qotState:[],estimatedBuyingPrice:[]});
+  const [sort,setSort] = React.useState({inStock:[],id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],qotState:[],quotation:[]});
+  const [tempSort,setTempSort] = React.useState({inStock:[],id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],qotState:[],quotation:[]});
 
   const handleChangeInStock = (event,key) => {
     setInputInStock({...inputInStock,[key]:event.target.value});
@@ -301,7 +307,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
         model : element.machine.model && element.machine.model,
         details : element.machineFeatures && machineFeatureToString(element.machineFeatures),
         year : element.machine.year && element.machine.year,
-        estimatedBuyingPrice : element.quotations[element.quotations.length -1].estimatedBuyingPrice,
+        quotation : element.quotations[element.quotations.length -1][priceType],
         state : element.state ? element.state : 'En-cours',
         expertiseObject : element
       }]
@@ -597,6 +603,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
           >
             <LoadSelectHeadTable
               logInfo={logInfo}
+              priceType={priceType}
               qotList={qotListFiltered}
               sort={sort}
               setSort={setSort}
@@ -642,7 +649,9 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.model}</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.details}</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.year}</TableCell>
-                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.estimatedBuyingPrice}€</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{
+                      row.quotation
+                      }€</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none">
                       {
                         <Select

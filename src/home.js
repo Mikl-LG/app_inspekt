@@ -127,7 +127,7 @@ class Home extends Component{
     }
 
     componentDidUpdate(){
-
+        console.log('stateUpdate : ',this.state);
     }
 
     async componentDidMount(){
