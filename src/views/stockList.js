@@ -380,7 +380,7 @@ export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFrom
       let pictureArrayList = [];
       if(expertise.pictures){
         for (let [key,value] of Object.entries(expertise.pictures)){
-          pictureArrayList.push(value);
+          pictureArrayList.push({title : "",value:value});
         }
       }
       
@@ -530,7 +530,7 @@ export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFrom
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.model}</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.details}</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.year}</TableCell>
-                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.buyingPrice}€</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.customerSalePrice}€</TableCell>
                     </TableRow>
                   );
                 })}

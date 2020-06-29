@@ -507,7 +507,7 @@ function PrimarySearchAppBar(props) {
       })
     }else if(path === 'config'){
       //in this case, param is attached to user.config
-      const userConfig = logInfo.user.config || {};
+      const userConfig = logInfo.cieMembers[user].config || {};
       body = await Promise.resolve({
         userId : user,
         merge : {
@@ -807,7 +807,7 @@ function PrimarySearchAppBar(props) {
                                           icon={licences[logInfo.cieMembers[user].licence].icon}
                                         />
                                       )}
-                                      onChange={(event) => updateUserFromManager(event.target.value,"licence",user)}
+                                      onChange={(event) => updateUserFromManager(event.target.value,"licence",user,'root')}
                                     >
                                       {
                                       ["manager","qoter","inspekter"].map((e) => (
