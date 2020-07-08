@@ -7,6 +7,7 @@ import AddCircleIcon from '@material-ui/icons/AddCircle';
 import AppBar from '@material-ui/core/AppBar';
 import Badge from '@material-ui/core/Badge';
 import Button from '@material-ui/core/Button';
+import Checkbox from '@material-ui/core/Checkbox';
 import Chip from '@material-ui/core/Chip';
 import CloseIcon from '@material-ui/icons/Close';
 import Container from '@material-ui/core/Container';
@@ -227,6 +228,11 @@ function PrimarySearchAppBar(props) {
       let response = !error && await Promise.resolve(fetching.json());
   
       if(error === false){
+        let _logInfo = {...logInfo};
+        _logInfo.cieMembers = _cieMembers;
+        if(logInfo.user.id === addNotifEmail.user){
+          _logInfo.user.config = userConfig
+        }
         setAddNotifEmail({open:false});
         setStateFromChild({logInfo : {...logInfo,cieMembers : _cieMembers}});
         setSnackbar({message : 'Mise à jour réussie',type:'snackbarSuccess',isOpen:true});
@@ -324,7 +330,12 @@ function PrimarySearchAppBar(props) {
       let response = !error && await Promise.resolve(fetching.json());
   
       if(error === false){
-        setStateFromChild({logInfo : {...logInfo,cieMembers : _cieMembers}});
+        let _logInfo = {...logInfo};
+        _logInfo.cieMembers = _cieMembers;
+        if(logInfo.user.id === user){
+          _logInfo.user.config = userConfig
+        }
+        setStateFromChild({logInfo : _logInfo});
         setSnackbar({message : 'Mise à jour réussie',type:'snackbarSuccess',isOpen:true});
       }
     }catch(error){
@@ -536,11 +547,17 @@ function PrimarySearchAppBar(props) {
       if(error === false && path === 'root'){
         let _logInfo = {...logInfo};
         _logInfo.cieMembers[user][key] = value;
+        if(logInfo.user.id === user){
+          _logInfo.user[key] = value
+        }
         setStateFromChild({logInfo : _logInfo});
         setSnackbar({message : 'Mise à jour réussie',type:'snackbarSuccess',isOpen:true});
       }else if(error === false && path === 'config'){
         let _logInfo = {...logInfo};
         _logInfo.cieMembers[user].config = {...logInfo.cieMembers[user].config,[key] : value}
+        if(logInfo.user.id === user){
+          _logInfo.user.config = {..._logInfo.user.config,[key] : value}
+        }
         setStateFromChild({logInfo : _logInfo});
         setSnackbar({message : 'Mise à jour réussie',type:'snackbarSuccess',isOpen:true});
       }
@@ -769,7 +786,8 @@ function PrimarySearchAppBar(props) {
                               <TableCell className={classes.smallFontSizeCells} align="center">Licence</TableCell>
                               <TableCell className={classes.smallFontSizeCells} align="center">Notifications expertise</TableCell>
                               <TableCell className={classes.smallFontSizeCells} align="center">Notifications cotation</TableCell>
-                              <TableCell className={classes.smallFontSizeCells} align="center">Masquer prix achat</TableCell>
+                              <TableCell className={classes.smallFontSizeCells} align="center">Restrictions (cotations)</TableCell>
+                              <TableCell className={classes.smallFontSizeCells} align="center">Restrictions (stocks)</TableCell>
                               <TableCell className={classes.smallFontSizeCells} align="center">Mode</TableCell>
                               <TableCell className={classes.smallFontSizeCells} align="center">Actif</TableCell>
                             </TableRow>
@@ -878,18 +896,101 @@ function PrimarySearchAppBar(props) {
                                     /></div>
                                   }
                                 </TableCell>
-                                <TableCell className={classes.smallFontSizeCells} className={classes.TableCell} align="center" padding="none">
+                                <TableCell className={classes.smallFontSizeCells} align="left" padding="none">
                                   {
-                                    <Switch 
-                                      id="isUserRestrictedOnBuyingPrice"
-                                      checked={logInfo.cieMembers[user].config.restrictionOnBuyingPrice}
-                                      disabled={licences[logInfo.user.licence].disabled}
-                                      color="primary"
-                                      onChange={()=>updateUserFromManager(logInfo.cieMembers[user].config.restrictionOnBuyingPrice === true ? false : true,"restrictionOnBuyingPrice",user,'config')}
-                                    />
+                                    [
+                                      {title : 'Prix vente',property : 'customerEstimatedSalePrice'},
+                                      {title : 'Prix marchand',property : 'marketerEstimatedSalePrice'},
+                                      {title : 'Préparation',property : 'estimatedRepairCost'},
+                                      {title : 'Préparation marchand',property : 'estimatedMarketerRepairCost'},
+                                      {title : 'Prix achat',property : 'estimatedBuyingPrice'},
+                                    ].map(priceType => 
+                                      <div style={{color : Color.lightgrey,fontSize : '0.2em'}}>
+                                        <FormControlLabel
+                                          control={
+                                            <Checkbox 
+                                              id={priceType.property}
+                                              size = 'small'
+                                              checked={
+                                                (
+                                                  logInfo.cieMembers[user].config
+                                                  && logInfo.cieMembers[user].config.restriction
+                                                  && logInfo.cieMembers[user].config.restriction[priceType.property]
+                                                  && logInfo.cieMembers[user].config.restriction[priceType.property] === true
+                                                )
+                                              }
+                                              disabled={licences[logInfo.user.licence].disabled}
+                                              color="primary"
+                                              onChange={()=>updateUserFromManager(
+                                                (
+                                                  logInfo.cieMembers[user].config
+                                                  && logInfo.cieMembers[user].config.restriction
+                                                  && logInfo.cieMembers[user].config.restriction[priceType.property]
+                                                  && logInfo.cieMembers[user].config.restriction[priceType.property] === true
+                                                )
+                                                  ? {...logInfo.cieMembers[user].config.restriction,[priceType.property] : false}
+                                                  : {...logInfo.cieMembers[user].config.restriction,[priceType.property] : true},
+                                                  'restriction',user,'config'
+                                              )}
+                                            />
+                                          }
+                                          label = {
+                                            <div className={classes.smallFontSizeCells}>{priceType.title}</div>
+                                          }
+                                        />
+                                      </div>
+                                    )
+                                    
                                   }
                                 </TableCell>
-                                <TableCell className={classes.smallFontSizeCells} className={classes.TableCell} align="center" padding="none">
+                                <TableCell className={classes.smallFontSizeCells} align="left" padding="none">
+                                  {
+                                    [
+                                      {title : 'Prix de vente',property : 'customerSalePrice'},
+                                      {title : 'Prix marchand',property : 'marketerSalePrice'},
+                                      {title : 'Préparation',property : 'repairCost'},
+                                      {title : 'Préparation marchand',property : 'marketerRepairCost'},
+                                      {title : 'Prix d\'achat',property : 'buyingPrice'},
+                                    ].map(priceType => 
+                                      <div style={{color : Color.lightgrey,fontSize : '0.2em'}}>
+                                        <FormControlLabel
+                                          control={
+                                            <Checkbox 
+                                              id={priceType.property}
+                                              size = 'small'
+                                              checked={
+                                                (
+                                                  logInfo.cieMembers[user].config
+                                                  && logInfo.cieMembers[user].config.restriction
+                                                  && logInfo.cieMembers[user].config.restriction[priceType.property]
+                                                  && logInfo.cieMembers[user].config.restriction[priceType.property] === true
+                                                )
+                                              }
+                                              disabled={licences[logInfo.user.licence].disabled}
+                                              color="primary"
+                                              onChange={()=>updateUserFromManager(
+                                                (
+                                                  logInfo.cieMembers[user].config
+                                                  && logInfo.cieMembers[user].config.restriction
+                                                  && logInfo.cieMembers[user].config.restriction[priceType.property]
+                                                  && logInfo.cieMembers[user].config.restriction[priceType.property] === true
+                                                )
+                                                  ? {...logInfo.cieMembers[user].config.restriction,[priceType.property] : false}
+                                                  : {...logInfo.cieMembers[user].config.restriction,[priceType.property] : true},
+                                                  'restriction',user,'config'
+                                              )}
+                                            />
+                                          }
+                                        label = {
+                                          <div className={classes.smallFontSizeCells}>{priceType.title}</div>
+                                        }
+                                        />
+                                      </div>
+                                    )
+                                    
+                                  }
+                                </TableCell>
+                                <TableCell className={classes.smallFontSizeCells} align="center" padding="none">
                                   {
                                     <Select
                                       id="isUserTeamSelect"

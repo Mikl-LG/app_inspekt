@@ -31,25 +31,6 @@ const formsCatalog = {
         "4 RM"
     ],
 
-    multifonction: [
-        "Bras multifonction",
-        "Chariot dépose tête",
-        "Chassis porte-masses",
-        "Ecimage",
-        "Effeuillage",
-        "Kit push-pull",
-        "Palissage",
-        "Prétaillage",
-        "Pulvérisation",
-        "Taille rase",
-    ],
-
-    porteurOptions: [
-        "Anti-patinage",
-        "Régulateur vitesse",
-        "TPI"
-    ],
-
     /* end ajouté par Mathieu */
 
     baler:{
@@ -442,6 +423,17 @@ const formsCatalog = {
             "SOPEMA",
             "SULPICE",
             "TECHMAGRI"
+        ]
+    },
+
+    grapeHarvesting:{
+        brands:[
+            "ALMA",
+            "BRAUD",
+            "GREGOIRE",
+            "ERO",
+            "NEW HOLLAND",
+            "PELLENC"
         ]
     },
 
@@ -1569,6 +1561,7 @@ const formsCatalog = {
             "BOBCAT", 
             "CASE", 
             "CLAAS",
+            "CATERPILLAR",
             "DEUTZ FAHR",
             "DIECI", 
             "FENDT",
@@ -1926,7 +1919,8 @@ const formsCatalog = {
      */
     airConditioning:[
         "AUTOMATIQUE",
-        "MANUELLE"
+        "MANUELLE",
+        "NON EQUIPE"
     ],
 
     assistantFunction:[
@@ -2031,6 +2025,16 @@ const formsCatalog = {
         "MANUEL D'UTILISATION"
     ],
 
+    electricRearValves:[
+        "1 DOUBLE EFFET",
+        "2 DOUBLE EFFET",
+        "3 DOUBLE EFFET",
+        "4 DOUBLE EFFET",
+        "5 DOUBLE EFFET",
+        "6 DOUBLE EFFET",
+        "7 DOUBLE EFFET"
+    ],
+
     floatFromThreeToFifteen,
 
     frontAxle:[
@@ -2045,7 +2049,8 @@ const formsCatalog = {
         "ORIGINE",
         "SAUTER",
         "ZUIDBERG",
-        "AUTRE"
+        "AUTRE",
+        "NON EQUIPE"
     ],
 
     frontValves:[
@@ -2112,10 +2117,11 @@ const formsCatalog = {
     ],
 
     implementHandCommand:[
+        "BASSE PRESSION",
         "DISTRIBUTEURS",
         "MONOL. ELECTRIQUE",
         "MONOL. MECANIQUE",
-        "BASSE PRESSION"
+        "TELEFLEXIBLES"
     ],
 
     implementWrapperHandCommand:[
@@ -2202,6 +2208,14 @@ const formsCatalog = {
         "4 FONCTIONS"
     ],
 
+    grapeHarvesterOptions: [
+        "Anti-patinage",
+        "Camera",
+        "Pesée embarquée",
+        "Régulateur vitesse",
+        "TPI"
+    ],
+
     metersFrom1To10:[
         "1 METRE",
         "1.5 METRES",
@@ -2234,6 +2248,19 @@ const formsCatalog = {
         "HELICOIDAL COURT",
         "LOSANGE",
         "PLASTIQUE"
+    ],
+
+    grapeHarvesterMultifonction: [
+        "Bras multifonction",
+        "Chariot dépose tête",
+        "Chassis porte-masses",
+        "Ecimage",
+        "Effeuillage",
+        "Kit push-pull",
+        "Palissage",
+        "Prétaillage",
+        "Pulvérisation",
+        "Taille rase",
     ],
 
     numberOneToTwenty,//: Array.from(new Array(20)).map((e, i) => i + 1),  // 1 to 20
@@ -2281,23 +2308,16 @@ const formsCatalog = {
     ],
 
     rearValves:[
-        "MECA 1 SIMPLE EFFET",
-        "MECA 1 DOUBLE EFFET",
-        "MECA 1 SIMPLE EFFET + 1 DOUBLE EFFET",
-        "MECA 1 SIMPLE EFFET + 2 DOUBLE EFFET",
-        "MECA 2 DOUBLE EFFET",
-        "MECA 3 DOUBLE EFFET",
-        "MECA 4 DOUBLE EFFET",
-        "MECA 5 DOUBLE EFFET",
-        "MECA 6 DOUBLE EFFET",
-        "MECA 7 DOUBLE EFFET",
-        "ELEC 1 DOUBLE EFFET",
-        "ELEC 2 DOUBLE EFFET",
-        "ELEC 3 DOUBLE EFFET",
-        "ELEC 4 DOUBLE EFFET",
-        "ELEC 5 DOUBLE EFFET",
-        "ELEC 6 DOUBLE EFFET",
-        "ELEC 7 DOUBLE EFFET",
+        "1 SIMPLE EFFET",
+        "1 DOUBLE EFFET",
+        "1 SIMPLE EFFET + 1 DOUBLE EFFET",
+        "1 SIMPLE EFFET + 2 DOUBLE EFFET",
+        "2 DOUBLE EFFET",
+        "3 DOUBLE EFFET",
+        "4 DOUBLE EFFET",
+        "5 DOUBLE EFFET",
+        "6 DOUBLE EFFET",
+        "7 DOUBLE EFFET"
     ],
 
     reverse:[
@@ -2308,6 +2328,8 @@ const formsCatalog = {
     ],
 
     rollType:[
+        "BARRE",
+        "CAGE",
         "CAMBRIDGE",
         "CROSSKILETTES",
         "CROSSKILL",
@@ -2544,6 +2566,11 @@ const formsCatalog = {
                         property: 'estimatedHours',
                         numeric: true
                     },
+                    "hrsRecolte": {
+                        title: 'Heures de récolte',
+                        property: 'harvestHours',
+                        numeric: true
+                    },
                     "hrsRotor": {
                         title: 'Heures rotor',
                         property: 'rotorHours',
@@ -2669,6 +2696,12 @@ const formsCatalog = {
                             "120 X 120",
                             "120 X 130"
                         ]  
+                    },
+
+                    "capaciteBacEnLitres":{
+                        title:'Capacité bac (litres)',
+                        property:'literCapacity',
+                        numeric: true
                     },
 
                     "capaciteEnLitres":{
@@ -2817,9 +2850,15 @@ const formsCatalog = {
                     },
 
                     "distributeursArriere":{
-                        title:'Distrib. AR',
+                        title:'Distrib. AR mécaniques',
                         property:'rearValves',
                         data : formsCatalog.rearValves
+                    },
+
+                    "distributeursArriereElectriques":{
+                        title:'Distrib. AR électriques',
+                        property:'electricRearValves',
+                        data : formsCatalog.electricRearValves
                     },
 
                     "documents" : {
@@ -3092,6 +3131,12 @@ const formsCatalog = {
                         data: ["ELECTRIQUE","DIESEL","ESSENCE"]
                     },
 
+                    "multifonction": {
+                        title : 'Multifonction',
+                        property: "multifonction",
+                        toggle: formsCatalog.grapeHarvesterMultifonction
+                    },
+
                     "nettoyageNoueurs":{
                         title:'Nettoyage noueurs',
                         property:'knotterCleaning',
@@ -3101,6 +3146,12 @@ const formsCatalog = {
                     "nombreAssiettesTambours":{
                         title:'Nombre assiettes/tambours',
                         property:'platesDrumsNumber',
+                        numeric: true
+                    },
+
+                    "nombreBrasCueilleurs":{
+                        title:'Nombre de bras cueilleurs',
+                        property:'harvestArmNumber',
                         numeric: true
                     },
 
@@ -3362,6 +3413,7 @@ const formsCatalog = {
                             "BRAS DEPORTE",
                             "BRAS ARTICULE",
                             "CENTRALE HYDRAULIQUE",
+                            "REFROIDISSEUR",
                             "ROTOR A EQUILIBRER"
                         ]  
                     },
@@ -3422,6 +3474,11 @@ const formsCatalog = {
                             "TRACEURS"
                             
                         ]  
+                    },
+                    "optionsMachineVendanger":{
+                        title:'Options',
+                        property:'grapeHarvesterOptions',
+                        toggle: formsCatalog.grapeHarvesterOptions
                     },
 
                     "optionsMoissonneuse":{
@@ -3537,16 +3594,22 @@ const formsCatalog = {
                         ]  
                     },
 
-                    "optionsTonneLisier":{
-                        title:'Options',
-                        property:'manureTankSpreaderOptions',
-                        data: ["ACCELERATEUR DE POMPAGE","BRAS DE POMPAGE AVANT","DEBITMETRE","BOUBLE BUSE","DPAE","ENFOUISSEUR","RAMPE A BUSES","RAMPE PENDILLARDS","TOURELLE DE POMPAGE"]
+                    "optionTeteRecolte":{
+                        title:'Tête de récolte',
+                        property:'harvestingHead',
+                        toggle: ["ACTIVE","CLASSIC","CLEAN TECH","COMMANDE DEPORT. LAVAGE","EGRENEUR","INDIC. NIV. BENNE","REPARTITEURS","SELECTIVE PROCESS","SMART","SUIVI DE SOL","VARIO","VIS DE BENNE","4 ASPIRATEURS","GRAISSAGE GROUPE","GRAISSAGE AUTO"]                        
                     },
 
                     "optionsTelescopique":{
                         title:'Options',
                         property:'telehandlerOptions',
                         data: ["BEQUILLES","CROCHET A ECHELLE","CROCHET RAMASSEUR","PITON FIXE","RELEVAGE","ROTULES","SUSPENSION FLECHE","VERROUILLAGE OUTIL HYDR."]
+                    },
+
+                    "optionsTonneLisier":{
+                        title:'Options',
+                        property:'manureTankSpreaderOptions',
+                        data: ["ACCELERATEUR DE POMPAGE","BRAS DE POMPAGE AVANT","DEBITMETRE","BOUBLE BUSE","DPAE","ENFOUISSEUR","RAMPE A BUSES","RAMPE PENDILLARDS","TOURELLE DE POMPAGE"]
                     },
 
                     "ouvertureTrappes":{
@@ -4151,52 +4214,7 @@ const formsCatalog = {
                         title:'Vitesse PDF',
                         property:'powerTakeOffSpeed',
                         data: ["540","1000"]
-                    },
-                    
-                    "porteurType": {
-                        title: 'Type',
-                        property: 'porteurType',
-                        data: formsCatalog.porteurTypes
-                    },
-
-                    "transmission": {
-                        title: 'Transmission',
-                        property: 'transmission'
-                    },
-
-                    "multifonction": {  // toggle
-                        title : 'Multifonction',
-                        property: "multifonction",
-                        toggle: formsCatalog.multifonction
-                    },
-
-                    "porteurOptions": {
-                        title: 'Options',
-                        property: "porteurOption",
-                        toggle: formsCatalog.porteurOptions
-                    },
-
-                    "porteurConformity": {
-                        title: 'Conformité',
-                        property: "porteurConformity",
-                        toggle: [
-                            "Eclairage",
-                            "Clignotants",
-                            "Gyrophare",
-                            "Extincteur"
-                        ]
-                    },
-
-                    "porteurSeat": {
-                        title: 'Siège',
-                        property: 'seat',
-                        data: [
-                            "MÉCANIQUE",
-                            "PNEUMATIQUE",
-                            "NON ÉQUIPÉ"
-                        ]
                     }
-                    /** end ajouté par Mathieu */
                 }
             },
             4:{
@@ -4278,7 +4296,21 @@ const formsCatalog = {
                         property:'vanes',
                         picture: true
                     },
-
+                    "arriere":{
+                        title:'Arrière',
+                        property:'rear',
+                        picture: true
+                    },
+                    "avant":{
+                        title:'Face',
+                        property:'front',
+                        picture: true
+                    },
+                    "baches":{
+                        title:'Bâches',
+                        property:'tarpaulin',                 
+                        picture: true
+                    },
                     "bras":{
                         title:'Bras',
                         property:'arm',                 
@@ -4327,6 +4359,12 @@ const formsCatalog = {
                         picture: true
                     },
 
+                    "capotLateral":{
+                        title:'Capot latéral',
+                        property:'leftHood',
+                        picture: true
+                    },
+
                     "carteGrise":{
                         title:'Carte grise',
                         property:'registrationCard',
@@ -4362,19 +4400,36 @@ const formsCatalog = {
                         property:'tank',
                         picture: true
                     },
-
+                    "defautChassis":{
+                        title:'Défaut chassis',
+                        property:'frameDefault',
+                        picture: true
+                    },
+                    "defautDirection":{
+                        title:'Défaut direction',
+                        property:'steeringDefault',
+                        picture: true
+                    },
+                    "defautMoteurRoue":{
+                        title:'Défaut moteur roue',
+                        property:'motorWheelDefault',
+                        picture: true
+                    },
+                    "defautPompeHydraulique":{
+                        title:'Défaut pompe hydraulique',
+                        property:'hydraulicPumpDefault',
+                        picture: true
+                    },
                     "dents":{
                         title:'Dents',
                         property:'tine',
                         picture: true
                     },
-
                     "demeleurs":{
                         title:'Démêleurs',
                         property:'unravel',
                         picture: true
                     },
-
                     "dimensionPneumatiqueAvant":{
                         title:'Dimension pneus AV',
                         property:'frontTyreSize',
@@ -4383,6 +4438,11 @@ const formsCatalog = {
                     "dimensionPneumatiqueArriere":{
                         title:'Dimension pneus AR',
                         property:'rearTyreSize',
+                        picture: true
+                    },
+                    "ecaille":{
+                        title:'Ecailles - noria',
+                        property:'shell',
                         picture: true
                     },
                     "entrainementGauche":{
@@ -4420,7 +4480,11 @@ const formsCatalog = {
                         property:'trailerIn_2',
                         picture: true
                     },
-
+                    "interieurTeteRecolte":{
+                        title:'Intérieur tête de récolte',
+                        property:'harvestingHeadInside',
+                        picture: true
+                    },
                     "lame":{
                         title:'Lame',
                         property:'blade',
@@ -4486,7 +4550,11 @@ const formsCatalog = {
                         property:'pumping',
                         picture: true
                     },
-
+                    "portes":{
+                        title:'Portes',
+                        property:'doors',
+                        picture: true
+                    },
                     "rampe":{
                         title:'Rampe',
                         property:'ramp',
@@ -4553,6 +4621,18 @@ const formsCatalog = {
                         picture: true
                     },
 
+                    "spoilerDroit":{
+                        title:'Spoiler droit',
+                        property:'rightSpoiler',        
+                        picture: true
+                    },
+
+                    "spoilerGauche":{
+                        title:'Spoiler gauche',
+                        property:'leftSpoiler',        
+                        picture: true
+                    },
+
                     "tapis":{
                         title:'Tapis',
                         property:'conveyorBelt',        
@@ -4565,12 +4645,22 @@ const formsCatalog = {
                         picture: true
                     },
 
+                    "toit":{
+                        title:'Toit',
+                        property:'roof',        
+                        picture: true
+                    },
+
                     "turbine":{
                         title:'Turbine',
                         property:'turbine',        
                         picture: true
                     },
-
+                    "virages":{
+                        title:'Virages',
+                        property:'curves',        
+                        picture: true
+                    },
                     "visAlimentation":{
                         title:'Vis alimentation',
                         property:'feedingScrew',        

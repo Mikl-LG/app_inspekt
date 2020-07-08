@@ -444,6 +444,23 @@ const Natures = [
         }
     },
     {
+        name: "Machine à vendanger",
+        key: "grapeHarvesting",
+        formStepsTypes : {
+            2: {
+                type: 'regular',
+                addOns: ["version","hrsMoteur", "hrsRecolte","hrsPrev"]
+            },
+            3: {
+                addOns:["puissance","cabine","climatisation","siege","radio","capaciteBacEnLitres","nombreBrasCueilleurs","dimensionPneumatiquesAvant", "marquePneumatiquesAvant", "usurePneumatiquesAvant", "dimensionPneumatiquesArriere", "marquePneumatiquesArriere", "usurePneumatiquesArriere","optionTeteRecolte","multifonction","optionsMachineVendanger","conformite","documents"]
+            },
+            4: {
+                type:'regular',
+                addOns:["compteur","interieurCabine_1","interieurCabine_2","toit","spoilerDroit","spoilerGauche","capotLateral","avant","arriere","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","interieurTeteRecolte","ecaille","tapis","virages","baches","portes","defautChassis","defautDirection","defautMoteurRoue","defautPompeHydraulique","carteGrise"]
+            }
+        }
+    },
+    {
         name: "Melangeuse",
         key: "mixFeeder",
         formStepsTypes : {
@@ -509,25 +526,6 @@ const Natures = [
                 type:'trailed',
                 addOns:["pickUp","entrainementGauche","entrainementDroit","rouleau"]
             }
-        }
-    },
-    {
-        name: "Porteur Multifonction",
-        key: "porteur_multifonction",
-        formStepsTypes : {
-            2: {
-                type: 'regular',
-                addOns: ["hrsMoteur", "hrsSecouage"]
-            },
-            /** RAT : Ajouté par Mathieu : plz confirm */
-            3: {
-                addOns:["porteurType", "puissance", "transmission", "cabine", "porteurSeat", "dimensionPneumatiquesAvant", "marquePneumatiquesAvant", "usurePneumatiquesAvant", "dimensionPneumatiquesArriere", "marquePneumatiquesArriere", "usurePneumatiquesArriere", "multifonction", "porteurOptions", "porteurConformity","documents"]
-            },
-            4: {
-                type:'regular'  // RAT : plz confirm : step 4 est inexistante sur la v1 ?
-            }
-
-            /** end ajouté par Mathieu */
         }
     },
     {
@@ -679,7 +677,7 @@ const Natures = [
             },
             4:{
                 type:'regular',
-                addOns:["compteur","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","interieurCabine_1","interieurCabine_2",,"outil_1","outil_2","outil_3","outil_4","outil_5","carteGrise"]
+                addOns:["compteur","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","interieurCabine_1","interieurCabine_2","outil_1","outil_2","outil_3","outil_4","outil_5","carteGrise"]
             }
         }
     },
@@ -709,7 +707,7 @@ const Natures = [
                 addOns: ["version","hrsMoteur","hrsPrev"]
             },
             3: {
-                addOns:["usureGenerale","puissance","transmissionTracteur","transmissionTracteurModele","nombreVitesses","vitesseMaximaleTracteur","inverseur","freinage","cabine","climatisation","siege","radio","priseDeForceAR","distributeursArriere","chandelles","stabilisateurs","pontAvant","relevageAvant","distributeursAvant","priseDeForceAV","autoguidageEmbarque","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","attelageTracteur","documents"]
+                addOns:["usureGenerale","puissance","transmissionTracteur","transmissionTracteurModele","nombreVitesses","vitesseMaximaleTracteur","inverseur","freinage","cabine","climatisation","siege","radio","priseDeForceAR","distributeursArriere","distributeursArriereElectriques","chandelles","stabilisateurs","pontAvant","relevageAvant","distributeursAvant","priseDeForceAV","autoguidageEmbarque","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","attelageTracteur","documents"]
             },
             4:{
                 type:'regular',

@@ -192,7 +192,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFromChild,getQots,searchText,stateMenuItemsFiltered}) {
+export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFromChild,getInspekts,getQots,searchText,stateMenuItemsFiltered}) {
   const classes = useStyles();
 
   ///////// CATALOGS \\\\\\\\\\
@@ -318,6 +318,7 @@ export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFrom
             if(key === element.property){
               element.value = value;
               element.visibleOnPdf = true;
+              element.step = 'machine';
               machineToArray.push(element);
             }
           }
@@ -334,6 +335,7 @@ export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFrom
           if(key === element.property){
             element.value = value;
             element.visibleOnPdf = true;
+            element.step = 'machine';
             machineToArray.push(element);
           }
         }
@@ -354,6 +356,7 @@ export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFrom
 
               element.value = value;
               element.visibleOnPdf = true;
+              element.step = 'machineFeatures';
               machineToArray.push(element);
             }
           }
@@ -545,6 +548,7 @@ export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFrom
           setFocusMachine={(newFocusMachine) => setFocusMachine(newFocusMachine)}
           logInfo={logInfo}
           setStateFromChild={setStateFromChild}
+          getInspekts={getInspekts}
           getQots={getQots}
         />
         <SnackBar

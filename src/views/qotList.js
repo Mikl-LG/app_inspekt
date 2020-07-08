@@ -58,7 +58,7 @@ function LoadSelectHeadTable(props){
   const headCells = [
     { id: 'inStock', select: true, width:'1vi', label: 'Stock' ,selectOptions : ['STOCKS','QOTS']},
     { id: 'id', select: true, width:'1vi', label: 'id', selectOptions : [ ...new Set(qotList.map((element) => (element.id))) ].sort() },
-    { id: 'date', select: true, width:'8vi', label: 'Date', selectOptions : [ ...new Set(qotList.map((element) => (Moment(element.addedOn).format('MMMM-YYYY')))) ].sort() },
+    { id: 'date', select: true, width:'8vi', label: 'Date', selectOptions : [ ...new Set(qotList.map((element) => (Moment(element.openedOn).format('MMMM-YYYY')))) ].sort() },
     { id: 'salesman', select: true, width:'20vi', label: 'Commercial', selectOptions : [ ...new Set(qotList.map((element) => (
       logInfo.cieMembers[element.openedBy].name))) ].sort() },
     { id: 'customer', select: true, width:'20vi', label: 'Client', selectOptions : [ ...new Set(qotList.map((element) => (
@@ -222,9 +222,10 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
   const classes = useStyles();
 
   //priceType is set on customerEstimatedPrice when user is not allowed to see the buying prices
-  const priceType = logInfo.user.config 
-    && logInfo.user.config.restrictionOnBuyingPrice 
-    && logInfo.user.config.restrictionOnBuyingPrice === true 
+  const priceType = logInfo.user.config
+    && logInfo.user.config.restriction
+    && logInfo.user.config.restriction.estimatedBuyingPrice
+    && logInfo.user.config.restriction.estimatedBuyingPrice === true 
     ? 'customerEstimatedSalePrice'
     : 'estimatedBuyingPrice'
 
@@ -275,14 +276,14 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
   }
 
     let rows = [];
-    const keyWords = searchText.split(' ');
+    const keyWords = searchText.split(' '); //keywords are the words contained in the main search bar
     let qotListFiltered = [];
     qotList.forEach((element) => {
       if(
         JSON.stringify(element).toUpperCase().includes(keyWords[0].toUpperCase())
         && new RegExp(sort.inStock.join('|')).test(element.inStock) === true
         && new RegExp(sort.id.join('|')).test(element.id) === true
-        && new RegExp(sort.date.join('|')).test(Moment(element.addedOn).format('MMMM-YYYY')) === true
+        && new RegExp(sort.date.join('|')).test(Moment(element.openedOn).format('MMMM-YYYY')) === true
         && new RegExp(sort.salesman.join('|')).test(logInfo.cieMembers[element.openedBy].name) === true
         && new RegExp(sort.customer.join('|')).test(element.customer) === true
         && new RegExp(sort.nature.join('|')).test(element.machine.nature.name) === true
@@ -299,7 +300,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
       rows = [...rows, {
         inStock : element.inStock ? element.inStock : false,
         id : element.id,
-        date : Moment(element.addedOn).format('MMMM-YYYY'),
+        date : Moment(element.openedOn).format('MMMM-YYYY'),
         salesman: logInfo.cieMembers[element.openedBy].name,
         customer: element.customer && element.customer.name && element.customer.name,
         nature : element.machine.nature.name,
@@ -361,6 +362,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
             if(key === element.property){
               element.value = value;
               element.visibleOnPdf = true;
+              element.step = 'machine';
               machineToArray.push(element);
             }
           }
@@ -377,6 +379,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
           if(key === element.property){
             element.value = value;
             element.visibleOnPdf = true;
+            element.step = 'machine';
             machineToArray.push(element);
           }
         }
@@ -397,6 +400,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
 
               element.value = value;
               element.visibleOnPdf = true;
+              element.step = 'machineFeatures';
               machineToArray.push(element);
             }
           }
@@ -587,13 +591,13 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
     }
 
   useEffect(()=>{
-
+    console.log('sort : ',sort);
   })
 
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <span style={{marginLeft:'15px',fontSize:'0.8em',fontStyle:'italic',color:Color.secondary}}>{qotList.length} résultat(s)</span>
+        <span style={{marginLeft:'15px',fontSize:'0.8em',fontStyle:'italic',color:Color.secondary}}>{qotListFiltered.length} résultat(s)</span>
         <TableContainer>
           <Table
             className={classes.table}
@@ -649,9 +653,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.model}</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.details}</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.year}</TableCell>
-                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{
-                      row.quotation
-                      }€</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.quotation}€</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none">
                       {
                         <Select
@@ -712,7 +714,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
           setStateFromChild={setStateFromChild}
           getInspekts={getInspekts}
           getQots={getQots}
-        />
+      />
         <Drawer anchor='left' open={stockDrawer.isOpen} onClose={() => setStockDrawer({isOpen:false})}>
           <div
             className={clsx(classes.list, {[classes.fullList]: false})}

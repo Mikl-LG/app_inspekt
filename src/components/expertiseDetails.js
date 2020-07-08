@@ -40,7 +40,7 @@ import ImageSlider from '../components/imageslider';
 import SnackBar from '../components/snackBar';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalculator,faPen,faTimesCircle,faMoneyBillAlt,faCheck,faComments, faEuroSign } from '@fortawesome/free-solid-svg-icons';
+import { faCalculator,faPen,faTimesCircle,faMoneyBillAlt,faCheck,faComments, faEuroSign, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { faImages } from '@fortawesome/free-solid-svg-icons';
 
 // configuring the AWS environment
@@ -142,6 +142,15 @@ export default function ExpertiseDetails(props) {
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
   const [validation,setValidation] = React.useState({isOpen : false});
   const [updateMachineFeatures,setUpdateMachineFeatures] = React.useState({open:false});
+  const[updateInStockPrices,setUpdateInStockPrices] = React.useState({open:false})
+
+  const allowedLicenses = {
+    admin : true,
+    manager : true,
+    qoter : true,
+    inspekter : false}; //unauthorized user.license for company user modification
+
+  const userRestrictions = logInfo.user.config.restriction || {};
 
   const checkDetailsToPrint = (detail) => {
 
@@ -279,9 +288,7 @@ export default function ExpertiseDetails(props) {
   const inspektDelete = async(expertise) => {
 
     if(
-      logInfo.user.licence === 'admin'
-      || logInfo.user.licence === 'manager'
-      || logInfo.user.licence === 'qoter'
+      allowedLicenses[logInfo.user.licence]
       ){
         const body = await Promise.resolve(
           { expId : expertise.id, 
@@ -423,7 +430,7 @@ export default function ExpertiseDetails(props) {
     const body = await Promise.resolve({
       cieId : focusMachine.cieId,
       expId : focusMachine.id,
-      status: 'inspekt',
+      status: focusMachine.status,
       merge: {            // {object} list des quotations à jour
         //[machineFeatures] : {...expertise.machineFeatures, tyreSize : 420-75-28}
         [updateMachineFeatures.step] : {...focusMachine[updateMachineFeatures.step],[updateMachineFeatures.property] : updateMachineFeatures.updatedValue}
@@ -449,9 +456,49 @@ export default function ExpertiseDetails(props) {
     let error = await Promise.resolve(!fetching.ok)
     if(error === false){
       getInspekts();
+      getQots();
       setUpdateMachineFeatures({open:false});
       setOpen(false);
     }
+    
+  }
+
+  const updateInStockPricesRequest = async() => {
+
+    const body = await Promise.resolve({
+      cieId : focusMachine.cieId,
+      expId : focusMachine.id,
+      status: 'inspekt',
+      merge: {            // {object} list des quotations à jour
+        //[machineFeatures] : {...expertise.machineFeatures, tyreSize : 420-75-28}
+        [updateMachineFeatures.step] : {...focusMachine[updateMachineFeatures.step],[updateMachineFeatures.property] : updateMachineFeatures.updatedValue}
+      },
+      /**cieId is required if the qot is not from the user company but from a linkage */
+      cieId:focusMachine.cieId && focusMachine.cieId
+    })
+
+    console.log('body : ',body);
+  
+    //**ADD COTATION REQUEST**\\
+    // const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
+    // let fetchOptions = await Promise.resolve(
+    //     {
+    //         method: 'POST',
+    //         mode: 'cors',
+    //         headers: {
+    //             Accept: 'application/json',
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify(body)
+    //     }
+    // )
+    // let fetching = await fetch(url, fetchOptions)
+    // let error = await Promise.resolve(!fetching.ok)
+    // if(error === false){
+    //   getInspekts();
+    //   setUpdateMachineFeatures({open:false});
+    //   setOpen(false);
+    // }
     
   }
 
@@ -495,7 +542,7 @@ export default function ExpertiseDetails(props) {
             {
               focusMachine.status === 'qot'
                 &&
-            <Tooltip title="Supprimer">
+            <Tooltip title="Annuler">
               <Button autoFocus color="inherit" onClick={() => setValidation({isOpen : true,title : 'Annuler QOT',message : 'Cette expertise sera à nouveau disponible dans votre liste INSPEKT.',validationLabel : 'Valider',methodType : 'undo'})}>
                 <UndoIcon/>
               </Button>
@@ -590,7 +637,8 @@ export default function ExpertiseDetails(props) {
                             </div>
                         }
                         {
-                          element.step && focusMachine.status === 'inspekt' // detail update only available on INSPEKT status and for detail mentionned as step
+                          element.step
+                          && (logInfo.user.licence != 'inspekter' || focusMachine.openedBy === logInfo.user.id)
                           && <FontAwesomeIcon
                                 className={classes.penEdit}
                                 icon={faPen}
@@ -640,8 +688,6 @@ export default function ExpertiseDetails(props) {
         <Divider/>
         <DialogContent>
           <List>
-            
-              
                 {
                   [
                     {key : 'customerSalePrice',title : 'Prix de vente',sigle:'€'},
@@ -654,13 +700,35 @@ export default function ExpertiseDetails(props) {
                   ].map((element) => 
                     focusMachine.stockInfo
                     && focusMachine.stockInfo[element.key]
-                      && <ListItem>
-                        <span style={{fontWeight:'bold'}}>{element.title}</span>{' : ' + focusMachine.stockInfo[element.key] + element.sigle}
+                    && 
+                      (userRestrictions[element.key] === true
+                      ? 
+                      (
+                        <ListItem>
+                          <span style={{fontWeight:'bold'}}>{element.title}</span>{' : n/c'}
                         </ListItem>
+                      )
+                      : 
+                      (
+                        <ListItem>
+                          <span style={{fontWeight:'bold'}}>{element.title}</span>{' : ' + focusMachine.stockInfo[element.key] + element.sigle}
+                          {
+                          allowedLicenses[logInfo.user.licence]
+                          && <FontAwesomeIcon
+                                className={classes.penEdit}
+                                icon={faPen}
+                                onClick={() => setUpdateInStockPrices({
+                                  open:true,
+                                  title:element.title,value:focusMachine.stockInfo[element.key],
+                                  property:element.key,step:element.step
+                                })}
+                              />
+                          }
+                        </ListItem>
+                      )
+                      )
                   )
                 }
-              
-            
           </List>
         </DialogContent>
       </Dialog>
@@ -762,38 +830,38 @@ export default function ExpertiseDetails(props) {
                       >
                       {logInfo.cieMembers[element.userId] && logInfo.cieMembers[element.userId].name}
                     </div>
-                    {[
-                      {title : 'Prix de vente',key:'customerEstimatedSalePrice'},
-                      {title : 'Prix marchand',key:'marketerEstimatedSalePrice'},
-                      {title : 'Préparation estimée',key:'estimatedRepairCost'},
-                      {title : 'Préparation estimée (marchand)',key:'estimatedMarketerRepairCost'},
-                      {title : 'Cote SIMO',key:'simoQuotation'},
-                      {title : 'Prix d\'achat',key:'estimatedBuyingPrice'},
-                    ].map((value) => (
-                      <div 
-                      key={value}
-                        className={classes.listItemText}
-                        style={{color:value.key === 'estimatedBuyingPrice' && Color.secondary}}
-                      >
-                        {value.key === 'estimatedBuyingPrice' &&
-                          <FontAwesomeIcon
-                            icon={faMoneyBillAlt}
-                            style={{
-                            fontSize:'1em',
-                            color:Color.secondary,
-                            marginRight:'5px'}}
-                          />
-                        }
-                        {
-                          (value.key === 'estimatedBuyingPrice' 
-                          && logInfo.user.config
-                          && logInfo.user.config.restrictionOnBuyingPrice
-                          && logInfo.user.config.restrictionOnBuyingPrice === true)
-                          ? 'Cette cotation n\'est pas disponible'
-                          : element[value.key] && value.title + ' : ' + element[value.key] + '€'
-                        }
-                      </div>
-                    ))}
+                    {
+                      [
+                        {title : 'Prix de vente',key:'customerEstimatedSalePrice'},
+                        {title : 'Prix marchand',key:'marketerEstimatedSalePrice'},
+                        {title : 'Préparation estimée',key:'estimatedRepairCost'},
+                        {title : 'Préparation estimée (marchand)',key:'estimatedMarketerRepairCost'},
+                        {title : 'Cote SIMO',key:'simoQuotation'},
+                        {title : 'Prix d\'achat',key:'estimatedBuyingPrice'},
+                      ].map((value) => (
+                        <div 
+                          key={value}
+                          className={classes.listItemText}
+                          style={{color:value.key === 'estimatedBuyingPrice' && Color.secondary}}
+                        >
+                          {
+                          value.key === 'estimatedBuyingPrice' &&
+                            <FontAwesomeIcon
+                              icon={faMoneyBillAlt}
+                              style={{
+                              fontSize:'1em',
+                              color:Color.secondary,
+                              marginRight:'5px'}}
+                            />
+                          }
+                          {
+                            userRestrictions[value.key] === true
+                            ? value.title + ' : n/c'
+                            : element[value.key] && value.title + ' : ' + element[value.key] + '€'
+                          }
+                        </div>
+                      ))
+                    }
                       <div className={classes.listItemText} style={{fontStyle:'italic'}}>
                         {element.comment &&
                           <div>
@@ -830,6 +898,25 @@ export default function ExpertiseDetails(props) {
         color="primary" 
         style={{margin:'20px'}}
         onClick={() => updateMachineFeaturesRequest()}
+        >
+          VALIDER
+      </Button>
+      </Dialog>
+      <Dialog open={updateInStockPrices.open} onClose={() => setUpdateInStockPrices({open:false})}>
+      <DialogContent>
+        <TextField 
+          label = {updateInStockPrices.title ? updateInStockPrices.title : 'Titre'}
+          defaultValue={updateInStockPrices.value ? updateInStockPrices.value : 'value'}
+          onChange={(event) => setUpdateInStockPrices(
+            {...updateInStockPrices,updatedValue:event.target.value})
+            }>    
+        </TextField>
+      </DialogContent>
+      <Button
+        variant="contained"
+        color="primary" 
+        style={{margin:'20px'}}
+        onClick={() => updateInStockPricesRequest()}
         >
           VALIDER
       </Button>
