@@ -2026,6 +2026,7 @@ const formsCatalog = {
     ],
 
     electricRearValves:[
+        "AUCUN",
         "1 DOUBLE EFFET",
         "2 DOUBLE EFFET",
         "3 DOUBLE EFFET",

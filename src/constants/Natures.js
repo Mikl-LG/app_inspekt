@@ -478,6 +478,23 @@ const Natures = [
         }
     },
     {
+        name: "Melangeuse automotrice",
+        key: "automotiveMixFeeder",
+        formStepsTypes : {
+            2: {
+                type: 'regular',
+                addOns: ["version","hrsMoteur","hrsPrev"]
+            },
+            3:{
+                addOns:["usureGenerale","capaciteEnM3","usureTurbine","nombreDemeleurs","entrainementDemeleurs","usureDemeleurs","usureTapis","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","optionsDesileuse","conformite","documents"]
+            },
+            4:{
+                type:'regular',
+                addOns:["turbine","demeleurs","tapis","interieurCaisse_1","interieurCaisse_2","compteur","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","interieurCabine_1","interieurCabine_2","carteGrise"]
+            }
+        }
+    },
+    {
         name: "Moissonneuse",
         key: "combineHarvester",
         formStepsTypes : {
@@ -525,6 +542,22 @@ const Natures = [
             4:{
                 type:'trailed',
                 addOns:["pickUp","entrainementGauche","entrainementDroit","rouleau"]
+            }
+        }
+    },
+    {
+        name: "Plateau fourrager",
+        key: "forageTrailer",
+        formStepsTypes : {
+            2: {
+                type: 'regular',
+                addOns: []
+            },
+            3:{
+                addOns:["usureGenerale","chargeUtile","materiauxCaisse","attelageRemorque","suspensionFleche","typeEssieuRemorque","sectionEssieu","commandesHydrauliques","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","documents"]
+            },
+            4:{
+                type:'trailed'
             }
         }
     },

@@ -219,7 +219,7 @@ export default function ExpertiseDetails(props) {
           let blob = await Promise.resolve(new Blob([data.Body], {type: 'image/jpeg'}));
           let link = await Promise.resolve(document.createElement('a'));
           link.href = await Promise.resolve(window.URL.createObjectURL(blob));
-          link.download = await Promise.resolve(k);
+          link.download = await Promise.resolve(k+'.jpeg');
           let clicked = await new Promise((_clicked) => {
             link.click();
             _clicked(true);
