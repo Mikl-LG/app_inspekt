@@ -1056,6 +1056,7 @@ const formsCatalog = {
             "NOLI",
             "OVLAC",
             "PERREIN",
+            "RABEWERK",
             "RANSOMES",
             "RAVIOT",
             "RIBATEJO",
@@ -3604,13 +3605,13 @@ const formsCatalog = {
                     "optionsTelescopique":{
                         title:'Options',
                         property:'telehandlerOptions',
-                        data: ["BEQUILLES","CROCHET A ECHELLE","CROCHET RAMASSEUR","PITON FIXE","RELEVAGE","ROTULES","SUSPENSION FLECHE","VERROUILLAGE OUTIL HYDR."]
+                        toggle: ["BEQUILLES","CROCHET A ECHELLE","CROCHET RAMASSEUR","PITON FIXE","RELEVAGE","ROTULES","SUSPENSION FLECHE","VERROUILLAGE OUTIL HYDR."]
                     },
 
                     "optionsTonneLisier":{
                         title:'Options',
                         property:'manureTankSpreaderOptions',
-                        data: ["ACCELERATEUR DE POMPAGE","BRAS DE POMPAGE AVANT","DEBITMETRE","BOUBLE BUSE","DPAE","ENFOUISSEUR","RAMPE A BUSES","RAMPE PENDILLARDS","TOURELLE DE POMPAGE"]
+                        toggle: ["ACCELERATEUR DE POMPAGE","BRAS DE POMPAGE AVANT","DEBITMETRE","BOUBLE BUSE","DPAE","ENFOUISSEUR","RAMPE A BUSES","RAMPE PENDILLARDS","TOURELLE DE POMPAGE"]
                     },
 
                     "ouvertureTrappes":{

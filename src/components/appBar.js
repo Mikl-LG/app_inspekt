@@ -1021,11 +1021,11 @@ function PrimarySearchAppBar(props) {
                                 <TableCell className={classes.smallFontSizeCells}>
                                   {
                                     <Switch 
-                                    checked={logInfo.cieMembers[user].active}
-                                    disabled={licences[logInfo.user.licence].disabled}
-                                    color="primary"
-                                    onChange={()=>updateUserFromManager(logInfo.cieMembers[user].active === true ? false : true,"active",user,'root')}
-                                  />
+                                      checked={logInfo.cieMembers[user].active}
+                                      disabled={licences[logInfo.user.licence].disabled}
+                                      color="primary"
+                                      onChange={()=>updateUserFromManager(logInfo.cieMembers[user].active === true ? false : true,"active",user,'root')}
+                                    />
                                   }
                                 </TableCell>
                               </TableRow>

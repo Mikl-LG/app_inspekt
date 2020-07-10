@@ -241,6 +241,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
       setMachineCatalog(value);
     })
   });
+  const allowedLicenses = {admin : true, manager:true, qoter:true};
   const [stockDrawer,setStockDrawer] = React.useState({isOpen:false});
   const [natureList,setNatureList] = React.useState(Natures.Natures);
   const [inputInStock, setInputInStock] = React.useState({});
@@ -420,6 +421,13 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
           value:(expertise.particularities && expertise.particularities.comments) ? expertise.particularities.comments : 'pas de commentaires',
           visibleOnPdf:true,
           step:'particularities'
+        },
+        {
+          title:'PAG estimé',
+          property:'estimatedBuyingPrice',
+          value:(expertise.quotations && expertise.quotations[expertise.quotations.length - 1].estimatedBuyingPrice),
+          visibleOnPdf:true,
+          step:'quotations'
         }
       )
 
@@ -632,6 +640,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
                       <TableCell className={classes.TableCell} align="center" padding="none">
                         <Switch
                           size="small"
+                          disabled = {!allowedLicenses[logInfo.user.licence]}
                           defaultChecked={row.inStock === true ? true : false}
                           onChange={() => 
                             row.inStock === false 

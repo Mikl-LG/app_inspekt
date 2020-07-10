@@ -15,14 +15,13 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo) => {
         
         s3.getObject(params, async(err, data) => {
         
-        let blob=new Blob([data.Body], {type: data.ContentType});
-        var reader = new FileReader();
-        reader.readAsDataURL(blob); 
-        reader.onloadend = async() => {
-            let base64data = await Promise.resolve(reader.result);
-            resolve(base64data);
-        }
-        
+            let blob=new Blob([data.Body], {type: data.ContentType});
+            var reader = new FileReader();
+            reader.readAsDataURL(blob); 
+            reader.onloadend = async() => {
+                let base64data = await Promise.resolve(reader.result);
+                resolve(base64data);
+            }
         })
     })
 
@@ -169,11 +168,6 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo) => {
             documentPdf.save('contreExpertise_' + orderedDetailsToPrint[0].value+'.pdf');
         }
     })
-
-    //documentPdf.addImage(dealerHeader,'JPG',0,10,210,40);
-
-    
-    
 }
 
 export default getPdf;
