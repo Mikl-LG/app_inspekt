@@ -160,6 +160,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 function PrimarySearchAppBar(props) {
 
+  const allowedLicenses = {
+    admin : true,
+    manager : true,
+    qoter : true,
+    inspekter : false
+  };
   const {cieMembers,logInfo,setStateFromChild,search,setSearch,stateMenuItems,synchroniser} = props;
   const classes = useStyles();
   const [addNotifEmail,setAddNotifEmail] = React.useState({open:false});
@@ -1127,8 +1133,9 @@ function PrimarySearchAppBar(props) {
                     </ExpansionPanelDetails>
                   </ExpansionPanel>
                   {
-                    (logInfo.user.licence === 'admin' || logInfo.user.licence === 'manager' || logInfo.user.licence === 'qoter') &&
-                      <ExpansionPanel 
+                    allowedLicenses[logInfo.user.licence] === true
+                    &&
+                    <ExpansionPanel 
                       square
                       style={{width:'100%'}}
                       expanded={expanded === 'qoterMode'}
@@ -1153,6 +1160,39 @@ function PrimarySearchAppBar(props) {
                                 name='isDefaultQoter'
                                 color="primary"
                               />}
+                            label="Activer"
+                          />
+                        </FormControl>
+                      </ExpansionPanelDetails>
+                    </ExpansionPanel>
+                  }
+                  {
+                    <ExpansionPanel 
+                      square
+                      style={{width:'100%'}}
+                      expanded={expanded === 'editedPrice'}
+                      onChange={(event) => expanded === 'editedPrice' ? setExpanded(''):setExpanded('editedPrice')}
+                    >
+                      <ExpansionPanelSummary style={{display:'flex',alignItems:'center'}}>
+                        <Typography className={classes.sectionTitle} variant='subtitle1'>Afficher les prix sur les documents PDF</Typography>
+                      </ExpansionPanelSummary>
+                      <ExpansionPanelDetails className={classes.centeredList}>
+                        <FormControl style={{width:'100%',alignSelf:'center'}}>
+                          <FormControlLabel
+                            control={
+                              <Switch
+                                checked={modifiableUserInformations.isPriceEdited}
+                                onChange={() =>
+                                  modifiableUserInformations.isPriceEdited == true 
+                                  ? setModifiableUserInformations(
+                                    {...modifiableUserInformations,isPriceEdited : false}) 
+                                  : setModifiableUserInformations(
+                                      {...modifiableUserInformations,isPriceEdited : true})
+                                }
+                                name='isPriceEdited'
+                                color="primary"
+                              />
+                            }
                             label="Activer"
                           />
                         </FormControl>

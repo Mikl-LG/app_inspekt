@@ -40,7 +40,7 @@ import ImageSlider from '../components/imageslider';
 import SnackBar from '../components/snackBar';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalculator,faPen,faTimesCircle,faMoneyBillAlt,faCheck,faComments, faEuroSign, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faCalculator,faPen,faTimesCircle,faMoneyBillAlt,faCheck,faComments, faEuroSign,faFileSignature, faCheckSquare,faSearch } from '@fortawesome/free-solid-svg-icons';
 import { faImages } from '@fortawesome/free-solid-svg-icons';
 
 // configuring the AWS environment
@@ -210,7 +210,6 @@ export default function ExpertiseDetails(props) {
     let promises = await Promise.resolve(keys.map(async(k) => {
       return new Promise(async(resolve) => {
         let picture = await Promise.resolve(pictures[k].replace('%2F','/'));
-
         let splitted = await Promise.resolve(picture.split('/'));
         let key = await Promise.resolve(splitted[splitted.length-1]);
         let params = await Promise.resolve({Bucket : 'inspekt-prod',Key:`MEDIASLANDER/${key}`})
@@ -263,7 +262,7 @@ export default function ExpertiseDetails(props) {
   const editPdf = (type) => {
     //type = ficheExpertise || bonReprise || contreExpertise
     setAnchorEl(null);
-    getPdf(focusMachine.orderedDetailsToPrint,type,logInfo)
+    getPdf(focusMachine.orderedDetailsToPrint,type,logInfo,focusMachine.pictures)
   }
 
   /**
@@ -591,11 +590,45 @@ export default function ExpertiseDetails(props) {
               open={Boolean(anchorEl)}
               onClose={() => {setAnchorEl(null)}}
             >
-              <MenuItem onClick={() => editPdf('ficheExpertise')}>Fiche d'expertise</MenuItem>
-              <MenuItem onClick={() => editPdf('bonReprise')}>Bon de reprise</MenuItem>
-              <MenuItem onClick={() => editPdf('contreExpertise')}>Contre-expertise</MenuItem>
+              <MenuItem onClick={() => editPdf('bonReprise')}>
+                <FontAwesomeIcon
+                  icon={faFileSignature}
+                  style={{
+                    fontSize:'1em',
+                    color:Color.secondary,
+                    marginRight:'15px'}}
+                />
+                Bon de reprise
+              </MenuItem>
+              <MenuItem onClick={() => editPdf('contreExpertise')}>
+                <FontAwesomeIcon
+                  icon={faCheckSquare}
+                  style={{
+                    fontSize:'1em',
+                    color:Color.secondary,
+                    marginRight:'15px'}}
+                />
+                Contre-expertise</MenuItem>
+              <MenuItem onClick={() => editPdf('ficheExpertise')}>
+                <FontAwesomeIcon
+                  icon={faSearch}
+                  style={{
+                    fontSize:'1em',
+                    color:Color.secondary,
+                    marginRight:'15px'}}
+                />
+                Fiche d'expertise</MenuItem>
+              <MenuItem onClick={() => editPdf('fichePhotos')}>
+                <FontAwesomeIcon
+                  icon={faImages}
+                  style={{
+                    fontSize:'1em',
+                    color:Color.secondary,
+                    marginRight:'15px'}}
+                />
+                Fiche photos
+              </MenuItem>
             </Menu>
-            
           </Toolbar>
         </AppBar>
         <Divider />

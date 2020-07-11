@@ -421,13 +421,21 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
           value:(expertise.particularities && expertise.particularities.comments) ? expertise.particularities.comments : 'pas de commentaires',
           visibleOnPdf:true,
           step:'particularities'
-        },
+        }
+      )
+      logInfo.user.config && logInfo.user.config.isPriceEdited &&
+      machineToArray.push(
         {
           title:'PAG estimé',
           property:'estimatedBuyingPrice',
           value:(expertise.quotations && expertise.quotations[expertise.quotations.length - 1].estimatedBuyingPrice),
-          visibleOnPdf:true,
-          step:'quotations'
+          visibleOnPdf:true
+        },
+        {
+          title:'Prix de vente',
+          property:'customerEstimatedSalePrice',
+          value:(expertise.quotations && expertise.quotations[expertise.quotations.length - 1].customerEstimatedSalePrice || 'n/c'),
+          visibleOnPdf:true
         }
       )
 
