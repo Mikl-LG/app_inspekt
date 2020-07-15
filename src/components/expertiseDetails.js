@@ -15,10 +15,10 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
@@ -137,6 +137,7 @@ export default function ExpertiseDetails(props) {
   const [drawer,setDrawer] = React.useState({isOpen:false});
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [inputQuotations, setInputQuotations] = React.useState({});
+  const [loader,setLoader] = React.useState({isOpen:false,title:'',content:''})
   const [priceDialog,setPriceDialog] = React.useState({isOpen : false});
   const [qoterMode,setQoterMode] = React.useState()
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
@@ -262,7 +263,8 @@ export default function ExpertiseDetails(props) {
   const editPdf = (type) => {
     //type = ficheExpertise || bonReprise || contreExpertise
     setAnchorEl(null);
-    getPdf(focusMachine.orderedDetailsToPrint,type,logInfo,focusMachine.pictures)
+    getPdf(focusMachine.orderedDetailsToPrint,type,logInfo,focusMachine.pictures,setLoader)
+    setLoader({isOpen:true,title:'PDF en construction...',content:'Tu pourras télécharger ta fiche dans quelques secondes.'});
   }
 
   /**
@@ -926,33 +928,47 @@ export default function ExpertiseDetails(props) {
             }>    
         </TextField>
       </DialogContent>
-      <Button
-        variant="contained"
-        color="primary" 
-        style={{margin:'20px'}}
-        onClick={() => updateMachineFeaturesRequest()}
-        >
-          VALIDER
-      </Button>
+        <Button
+          variant="contained"
+          color="primary" 
+          style={{margin:'20px'}}
+          onClick={() => updateMachineFeaturesRequest()}
+          >
+            VALIDER
+        </Button>
       </Dialog>
       <Dialog open={updateInStockPrices.open} onClose={() => setUpdateInStockPrices({open:false})}>
-      <DialogContent>
-        <TextField 
-          label = {updateInStockPrices.title ? updateInStockPrices.title : 'Titre'}
-          defaultValue={updateInStockPrices.value ? updateInStockPrices.value : 'value'}
-          onChange={(event) => setUpdateInStockPrices(
-            {...updateInStockPrices,updatedValue:event.target.value})
-            }>    
-        </TextField>
-      </DialogContent>
-      <Button
-        variant="contained"
-        color="primary" 
-        style={{margin:'20px'}}
-        onClick={() => updateInStockPricesRequest()}
-        >
-          VALIDER
-      </Button>
+        <DialogContent>
+          <TextField 
+            label = {updateInStockPrices.title ? updateInStockPrices.title : 'Titre'}
+            defaultValue={updateInStockPrices.value ? updateInStockPrices.value : 'value'}
+            onChange={(event) => setUpdateInStockPrices(
+              {...updateInStockPrices,updatedValue:event.target.value})
+              }>    
+          </TextField>
+        </DialogContent>
+        <Button
+          variant="contained"
+          color="primary" 
+          style={{margin:'20px'}}
+          onClick={() => updateInStockPricesRequest()}
+          >
+            VALIDER
+        </Button>
+      </Dialog>
+      <Dialog
+        open={loader.isOpen}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{loader.title}</DialogTitle>
+        <DialogContent>
+          <LinearProgress style={{width:'100%'}} />
+          <LinearProgress style={{width:'100%'}} color="secondary" />
+          <DialogContentText id="alert-dialog-description">
+            {loader.content}
+          </DialogContentText>
+        </DialogContent>
       </Dialog>
       <SnackBar
         handleClose={() => setSnackbar({isopen : false})}

@@ -268,7 +268,6 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
 
     let rows = [];
     const keyWords = searchText.split(' '); //keywords are the words contained in the main search bar
-    console.log('keyWords : ',keyWords);
     let qotListFiltered = [];
     qotList.forEach((element) => {
 
@@ -605,7 +604,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
     }
 
   useEffect(()=>{
-    console.log('sort : ',sort)
+
   })
 
   return (

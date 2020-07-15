@@ -1,7 +1,7 @@
 import jsPdf from 'jspdf';
 import AWS from 'aws-sdk';
 
-const getPdf = async(orderedDetailsToPrint,type,logInfo,pictures) => {
+const getPdf = async(orderedDetailsToPrint,type,logInfo,pictures,setLoader) => {
 
     let s3 = new AWS.S3();
     
@@ -220,27 +220,24 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo,pictures) => {
                 let base64ArrayPictures = [];
                 let n = 0;
                 const keys = await Promise.resolve(Object.keys(pictures)); //[leftFront,rightBack]
-
-                let promises = await Promise.resolve(keys.map(async(k) => {
-                    let picture = await Promise.resolve(pictures[k].replace('%2F','/'));
-                    let splitted = await Promise.resolve(picture.split('/'));
-                    let key = await Promise.resolve(splitted[splitted.length-1]);
-                    let params = await Promise.resolve({Bucket : 'inspekt-prod',Key:`MEDIASLANDER/${key}`})
-            
-                    s3.getObject(params, async(err, data) => {
-                        let blob = await Promise.resolve(new Blob([data.Body], {type: data.ContentType}));
-                        console.log('blob : ',blob);
-                        var pictureReader = new FileReader();
-                        pictureReader.readAsDataURL(blob); 
-                        pictureReader.onloadend = async() => {
-                            let picturebase64data = await Promise.resolve(pictureReader.result);
-                            base64ArrayPictures.push(picturebase64data); 
-                            k === keys[keys.length - 1]
-                            && resolve(base64ArrayPictures)
-                                            
-                        }
-                    })            
-                }))
+                keys.map(async(k) => {                      
+                        let picture = await Promise.resolve(pictures[k].replace('%2F','/'));
+                        let splitted = await Promise.resolve(picture.split('/'));
+                        let key = await Promise.resolve(splitted[splitted.length-1]);
+                        let params = await Promise.resolve({Bucket : 'inspekt-prod',Key:`MEDIASLANDER/${key}`})
+                
+                        s3.getObject(params, async(err, data) => {
+                            let blob = await Promise.resolve(new Blob([data.Body], {type: data.ContentType}));
+                            var pictureReader = new FileReader();
+                            pictureReader.readAsDataURL(blob); 
+                            pictureReader.onloadend = async() => {
+                                let picturebase64data = await Promise.resolve(pictureReader.result);
+                                base64ArrayPictures = await Promise.resolve([...base64ArrayPictures,picturebase64data]);
+                                base64ArrayPictures.length === keys.length
+                                && resolve(base64ArrayPictures)             
+                            }
+                        })  
+                })
             })
 
             const pictureHeightSelected = 85;
@@ -253,13 +250,13 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo,pictures) => {
                         Xline =10;
                     }
                     let pictureRatio = documentPdf.getImageProperties(picture).width / documentPdf.getImageProperties(picture).height;
-                    let leftMargin = (210 - pictureHeightSelected*pictureRatio)/2;
-                    console.log('pictureRatio : ',pictureRatio);
+                    let leftMargin = (210 - pictureHeightSelected * pictureRatio) / 2;
                     documentPdf.addImage(picture,'JPG',leftMargin,Xline,pictureHeightSelected*pictureRatio,pictureHeightSelected);
                     Xline += pictureHeightSelected + 5;
                 })
 
-                documentPdf.save('ficheMachine_' + orderedDetailsToPrint[0].value+'.pdf');
+                documentPdf.save('fichePhoto_' + orderedDetailsToPrint[0].value+'.pdf');
+                setLoader({isOpen:false});
             })
         }
     })
