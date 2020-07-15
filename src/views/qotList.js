@@ -3,15 +3,12 @@ import Moment from 'moment';
 
 import Button from '@material-ui/core/Button';
 import CancelIcon from '@material-ui/icons/Cancel';
-import { lighten, makeStyles } from '@material-ui/core/styles';
-import Chip from '@material-ui/core/Chip';
+import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
-import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-import GetAppIcon from '@material-ui/icons/GetApp';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -26,8 +23,6 @@ import Paper from '@material-ui/core/Paper';
 import SaveIcon from '@material-ui/icons/Save';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
-import Tooltip from '@material-ui/core/Tooltip';
-import SearchIcon from '@material-ui/icons/Search';
 import Switch from '@material-ui/core/Switch';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -81,27 +76,22 @@ function LoadSelectHeadTable(props){
     autoList = {...autoList,[headCell.id] : headCell.selectOptions}
   })
 
-  const csvQotList = async() => {
-    const fields = ['field1', 'field2', 'field3'];
-    const opts = { fields };
-      try {
-        const parser = new Parser();
-        const csv = await Promise.resolve(parser.parse(qotList));
-        console.log(csv);
-    } catch (err) {
-      console.error(err);
-    }
-  }
+  // const csvQotList = async() => {
+  //   const fields = ['field1', 'field2', 'field3'];
+  //   const opts = { fields };
+  //     try {
+  //       const parser = new Parser();
+  //       const csv = await Promise.resolve(parser.parse(qotList));
+  //       console.log(csv);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // }
 
   const handleSelectTempSort = (key,value) =>{
     let newSelected = tempSort[key];
     const selectedIndex = newSelected.indexOf(value);
-
-    //if(selectedIndex == -1){
-      newSelected = [...value];
-    //}else{
-      //newSelected.splice(selectedIndex,1)
-    //}
+    newSelected = [...value];
     setTempSort({...tempSort,[key]:newSelected})
   }
 
@@ -278,10 +268,18 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
 
     let rows = [];
     const keyWords = searchText.split(' '); //keywords are the words contained in the main search bar
+    console.log('keyWords : ',keyWords);
     let qotListFiltered = [];
     qotList.forEach((element) => {
+
+      let elementValues = [];
+      ['customer','machine','machineFeatures'].forEach((param) => element[param] && (elementValues = [...elementValues,...Object.values(element[param])])); 
+      elementValues.push(element.id);
+      elementValues.push(logInfo.cieMembers[element.openedBy].name);
+      //elementValues is use to test only datas collected by user and not the params names
+
       if(
-        JSON.stringify(element).toUpperCase().includes(keyWords[0].toUpperCase())
+        JSON.stringify(elementValues).toUpperCase().includes(keyWords[0].toUpperCase())
         && new RegExp(sort.inStock.join('|')).test(element.inStock) === true
         && new RegExp(sort.id.join('|')).test(element.id) === true
         && new RegExp(sort.date.join('|')).test(Moment(element.openedOn).format('MMMM-YYYY')) === true
@@ -607,7 +605,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
     }
 
   useEffect(()=>{
-    console.log('sort : ',sort);
+    console.log('sort : ',sort)
   })
 
   return (

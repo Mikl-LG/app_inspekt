@@ -13,6 +13,7 @@ import Color from './constants/color.js';
 import Header from './components/header';
 import InspektList from './views/inspektList';
 import logo from './logo_inspekt.png';
+import Compass from './views/compass';
 import QotList from './views/qotList';
 import StockList from './views/stockList';
 import Login from './views/login';
@@ -170,7 +171,7 @@ class Home extends Component{
                             getInspekts={this.getInspekts}
                             synchroniser={this.synchroniser}
                         />
-                        <Container>
+                        <Container maxWidth='xl'>
                             <Header navigation = {navigation}/>
                             {
                                 navigation === 0
@@ -214,13 +215,18 @@ class Home extends Component{
                                             searchText={this.state.searchText}
                                             stateMenuItemsFiltered={stateMenuItemsFiltered}
                                         />
+                                        :navigation === 4
+                                        ? <Compass
+                                            logInfo = {logInfo}
+                                        />
                                         : null
                                 )
                             }
                         </Container>
                         <BottomTabNavigator
                             setNavigation = {this.setNavigation}
-                            deleteSearchText = {() => this.setState({searchText:''})}/>
+                            deleteSearchText = {() => this.setState({searchText:''})}
+                            logInfo = {logInfo}/>
                     </div>
                 :
                     this.state.loading == true

@@ -20,7 +20,6 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
-import InfoIcon from '@material-ui/icons/Info';
 import InputBase from '@material-ui/core/InputBase';
 import List from '@material-ui/core/List';
 import MailIcon from '@material-ui/icons/Mail';
@@ -166,7 +165,7 @@ function PrimarySearchAppBar(props) {
     qoter : true,
     inspekter : false
   };
-  const {cieMembers,logInfo,setStateFromChild,search,setSearch,stateMenuItems,synchroniser} = props;
+  const {logInfo,setStateFromChild,search,setSearch,stateMenuItems,synchroniser} = props;
   const classes = useStyles();
   const [addNotifEmail,setAddNotifEmail] = React.useState({open:false});
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -661,6 +660,7 @@ function PrimarySearchAppBar(props) {
               color="inherit"
             >
               <AccountCircle />
+              <Typography style={{marginLeft:'5px'}}>{logInfo.user.name.toUpperCase()}</Typography>
             </IconButton>
           </div>
           <div className={classes.sectionMobile}>

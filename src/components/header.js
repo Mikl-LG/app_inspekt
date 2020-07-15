@@ -5,6 +5,7 @@ import InsertCommentIcon from '@material-ui/icons/InsertComment';
 import { makeStyles } from '@material-ui/core/styles';
 import StorageIcon from '@material-ui/icons/Storage';
 import Typography from '@material-ui/core/Typography';
+import ExploreIcon from '@material-ui/icons/Explore';
 
 import Color from '../constants/color.js';
 
@@ -63,6 +64,12 @@ export default function Header(navigation){
             icon = <HomeWorkIcon style={{color:Color.secondary}}/>
             title = 'STOCKS';
             subtitle = 'Machines en stock';
+        break;
+
+        case 4:
+            icon = <ExploreIcon style={{color:Color.secondary}}/>
+            title = 'COMPASS';
+            subtitle = 'Cotation assistée';
         break;
 
         default:

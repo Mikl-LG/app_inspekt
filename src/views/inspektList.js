@@ -1,51 +1,27 @@
 import React, { useEffect } from 'react';
 import Moment from 'moment';
 
-import AppBar from '@material-ui/core/AppBar';
 import Badge from '@material-ui/core/Badge';
 import Button from '@material-ui/core/Button';
-import CloseIcon from '@material-ui/icons/Close';
-import clsx from 'clsx';
-import DeleteIcon from '@material-ui/icons/Delete';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import Divider from '@material-ui/core/Divider';
-import Drawer from '@material-ui/core/Drawer';
-import Grid from '@material-ui/core/Grid';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
-import InsertCommentIcon from '@material-ui/icons/InsertComment';
 import { makeStyles } from '@material-ui/core/styles';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItem from '@material-ui/core/ListItem';
-import List from '@material-ui/core/List';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
-import SaveIcon from '@material-ui/icons/Save';
-import TextField from '@material-ui/core/TextField';
-import Toolbar from '@material-ui/core/Toolbar';
-import Tooltip from '@material-ui/core/Tooltip';
-import Typography from '@material-ui/core/Typography';
 import Slide from '@material-ui/core/Slide';
-import Snackbar from '@material-ui/core/Snackbar';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
 
 import Color from '../constants/color.js';
 import ExpertiseDetails from '../components/expertiseDetails';
 import FormsCatalog from '../constants/FormsCatalog';
-import getPdf from '../components/expertisePdf';
-import ImageSlider from '../components/imageslider';
 import Natures from '../constants/Natures';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalculator,faEye,faUserShield,faTimesCircle,faMoneyBillAlt,faCheck,faComments } from '@fortawesome/free-solid-svg-icons';
-import { faImages } from '@fortawesome/free-solid-svg-icons';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
