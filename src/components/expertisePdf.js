@@ -78,6 +78,7 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo,pictures,setLoader) => {
             documentPdf.setFontStyle('bold');
         
             documentPdf.save('expertise_'+orderedDetailsToPrint[0].value+'.pdf');
+            setLoader({isOpen:false});
     
         }else if(type === 'bonReprise'){
     
@@ -129,6 +130,8 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo,pictures,setLoader) => {
             documentPdf.setFontStyle('bold');
         
             documentPdf.save('reprise_' + orderedDetailsToPrint[0].value+'.pdf');
+            setLoader({isOpen:false});
+
         }else if(type === 'contreExpertise'){
     
             const title = orderedDetailsToPrint.map((element) => {
@@ -176,6 +179,7 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo,pictures,setLoader) => {
             documentPdf.setFontStyle('bold');
         
             documentPdf.save('contreExpertise_' + orderedDetailsToPrint[0].value+'.pdf');
+            setLoader({isOpen:false});
         
         }else if(type === 'fichePhotos'){
     
