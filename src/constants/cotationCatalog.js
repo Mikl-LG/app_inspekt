@@ -20,13 +20,12 @@ const CotationCatalog = {
                         {
                             range:'MAGISTRA',
                             model:'M55',
-                            optionsAvailable:['Mixtes','Monolevier E','3eme MVT prop','4eme MVT prop','Retour auto','PDF 800 tr/min'],
                             purchasePriceList : {2004 : 25268, 2005 : 26515, 2006 : 27842,2007 : 28757,2008 : 30553,2009 : 32029,2010 : 32229,2011 : 33406,2012 : 34094},
-                            firstYearDevaluation : '20%',
-                            secondYearDevaluation : '15%',
-                            standardYearDevaluation : '8%',
-                            damage:[
-                                {name : 'Bâti', key:'framework',price:'1217.14'},
+                            firstYearDevaluation : 20,
+                            secondYearDevaluation : 15,
+                            standardYearDevaluation : 8,
+                            damages:[
+                                {name : 'Bâti', key:'framework',price:'1217,14'},
                                 {name : 'Kit bagues-axes-bielles', key:'axlesKit',price:'300'},
                                 {name : 'Kit hydraulique', key:'hydraulicKit',price:'1839'},
                                 {name : 'Kit groupe', key:'groupKit',price:'1000'},
@@ -48,12 +47,11 @@ const CotationCatalog = {
                         {
                             range:'MAGISTRA',
                             model:'M60',
-                            optionsAvailable:['Mixtes','Monolevier E','3eme MVT prop','4eme MVT prop','Retour auto','PDF 800 tr/min'],
                             purchasePriceList : {2004 : 25885, 2005 : 27163, 2006 : 28508,2007 : 29459,2008 : 31300,2009 : 32821,2010 : 33021,2011 : 34207,2012 : 34913},
-                            firstYearDevaluation : '15%',
-                            secondYearDevaluation : '10%',
-                            standardYearDevaluation : '8%',
-                            damage:[
+                            firstYearDevaluation : 15,
+                            secondYearDevaluation : 10,
+                            standardYearDevaluation : 8,
+                            damages:[
                                 {name : 'Bâti', key:'framework',price:'1217.14'},
                                 {name : 'Kit bagues-axes-bielles', key:'axlesKit',price:'300'},
                                 {name : 'Kit hydraulique', key:'hydraulicKit',price:'1839'},

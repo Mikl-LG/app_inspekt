@@ -461,6 +461,23 @@ const Natures = [
         }
     },
     {
+        name: "Machine à vendanger tractée",
+        key: "grapeHarvestingTrailed",
+        formStepsTypes : {
+            2: {
+                type: 'regular',
+                addOns: ["version","hrsRecolte","hrsPrev"]
+            },
+            3: {
+                addOns:["capaciteBacEnLitres","nombreBrasCueilleurs","dimensionPneumatiques", "marquePneumatiques", "usurePneumatiques","optionTeteRecolte","optionsMachineVendangertrainee","conformite","documents"]
+            },
+            4: {
+                type:'regular',
+                addOns:["compteur","pupitreCommande","capotLateral","avant","arriere","dimensionPneumatiques","interieurTeteRecolte","ecaille","tapis","virages","baches","portes","defautChassis","defautDirection","defautMoteurRoue","defautPompeHydraulique","carteGrise"]
+            }
+        }
+    },
+    {
         name: "Melangeuse",
         key: "mixFeeder",
         formStepsTypes : {
@@ -596,6 +613,23 @@ const Natures = [
         }
     },
     {
+        name: "Pré-tailleuse",
+        key: "prePruners",
+        formStepsTypes : {
+            2: {
+                type: 'regular',
+                addOns: ["version","hrsRecolte"]
+            },
+            3: {
+                addOns:["attelageOutilViti","monolevier","nombrePairesDisques","typeTaille","optionsPreTailleuse","conformite","documents"]
+            },
+            4: {
+                type:'trailed',
+                addOns:["couteaux","defautChassis","defautPompeHydraulique"]
+            }
+        }
+    },
+    {
         name: "Pulverisateur",
         key: "sprayer",
         formStepsTypes : {
@@ -626,6 +660,23 @@ const Natures = [
             4:{
                 type:'regular',
                 addOns:["compteur","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","interieurCabine_1","interieurCabine_2","carteGrise","attelage","boitier","rampeDroite","rampeGauche","cadreCentral","cuve"]
+            }
+        }
+    },
+    {
+        name: "Rogneuse",
+        key: "trimmer",
+        formStepsTypes : {
+            2: {
+                type: 'regular',
+                addOns: ["version","hrsRecolte"]
+            },
+            3: {
+                addOns:["nombreDemiRangs","attelageOutilViti","monolevier","nombreCouteauxVerticaux","nombreCouteauxHorizontaux","typeCoupe","dimensionPneumatiques", "marquePneumatiques", "usurePneumatiques","optionsRogneuse","conformite","documents"]
+            },
+            4: {
+                type:'trailed',
+                addOns:["couteaux","defautChassis","defautPompeHydraulique"]
             }
         }
     },

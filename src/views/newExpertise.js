@@ -578,7 +578,6 @@ export default function NewExpertise({setStateFromChild,logInfo,getInspekts}){
                   /**DISPLAY TOGGLE AT THE END OF THE FORM */
                   nature
                   ?nature.formStepsTypes[3].addOns.map((input) => (
-
                     machineFeaturesFormList.addOns[input].toggle
                     ?
                       (

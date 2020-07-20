@@ -437,6 +437,17 @@ const formsCatalog = {
         ]
     },
 
+    grapeHarvestingTrailed:{
+        brands:[
+            "ALMA",
+            "BRAUD",
+            "GREGOIRE",
+            "ERO",
+            "NEW HOLLAND",
+            "PELLENC"
+        ]
+    },
+
     harvestingPlatform:{
         brands:[
             "BOURDONNEAU",
@@ -1068,6 +1079,41 @@ const formsCatalog = {
             "TUBERT",
             "UNIA",
             "VIAUD"
+        ]
+    },
+
+    prePruners : {
+        brands : [
+            "BINGER",
+            "COLLARD",
+            "FERRAND",
+            "KIROGN",
+            "PELLENC",
+            "PROVITIS",
+            "TERRAL",
+            //DIVIDER
+            "BMV",
+            "BELOUGNE",
+            "BERTHELOT",
+            "BINGER",
+            "BONNY",
+            "BRUNET",
+            "CELLIER BOISSET",
+            "COLOMBARDO",
+            "CONCEPT BERNHARDT",
+            "COUP'ECO",
+            "ERO",
+            "FABRICATION ARTISANALE",
+            "FEHRENBACH",
+            "FERRAND",
+            "GREGOIRE",
+            "KMS",
+            "LAGARDE",
+            "LEKRON",
+            "MASSINELLI",
+            "TECNOMA",
+            "VBC",
+            "VERMEER"
         ]
     },
 
@@ -1748,6 +1794,7 @@ const formsCatalog = {
             "VALTRA",
             // divider
             "CARRARO",
+            "FERRARI",
             "FIAT", 
             "FORD",
             "HURLIMANN",
@@ -1855,6 +1902,41 @@ const formsCatalog = {
             "SIAM",
             "SIMONNEAU",
             "THIERART"
+        ]
+    },
+
+    trimmer : {
+        brands : [
+            "BINGER",
+            "COLLARD",
+            "FERRAND",
+            "KIROGN",
+            "PELLENC",
+            "PROVITIS",
+            "TERRAL",
+            //DIVIDER
+            "BMV",
+            "BELOUGNE",
+            "BERTHELOT",
+            "BINGER",
+            "BONNY",
+            "BRUNET",
+            "CELLIER BOISSET",
+            "COLOMBARDO",
+            "CONCEPT BERNHARDT",
+            "COUP'ECO",
+            "ERO",
+            "FABRICATION ARTISANALE",
+            "FEHRENBACH",
+            "FERRAND",
+            "GREGOIRE",
+            "KMS",
+            "LAGARDE",
+            "LEKRON",
+            "MASSINELLI",
+            "TECNOMA",
+            "VBC",
+            "VERMEER"
         ]
     },
 
@@ -2121,7 +2203,7 @@ const formsCatalog = {
     implementHandCommand:[
         "BASSE PRESSION",
         "DISTRIBUTEURS",
-        "MONOL. ELECTRIQUE",
+        "JOYSTICK",
         "MONOL. MECANIQUE",
         "TELEFLEXIBLES"
     ],
@@ -2147,6 +2229,13 @@ const formsCatalog = {
         "PORTE",
         "SEMI-PORTE",
         "TRAINE (piton)",
+    ],
+
+    implementVitiLinkageType:[
+        "BOULON. SUR CHASSIS",
+        "PORTE ARRIERE",
+        "PORTE FRONTAL",
+        "TRAINE",
     ],
 
     implementMainAxle:[
@@ -2212,10 +2301,22 @@ const formsCatalog = {
 
     grapeHarvesterOptions: [
         "Anti-patinage",
-        "Camera",
+        "Commande déport. lavage",
+        "Caméra",
+        "Graissage auto",
+        "Graissage groupé",
+        "Indicateur niv. benne",
         "Pesée embarquée",
         "Régulateur vitesse",
+        "Répartiteurs",
+        "Suivi de sol",
         "TPI"
+    ],
+
+    grapeTrailedHarvesterOptions: [
+        "Camera",
+        "Pesée embarquée",
+        "Transmission motrice"
     ],
 
     metersFrom1To10:[
@@ -2644,6 +2745,12 @@ const formsCatalog = {
                         title:'Attelage outil',
                         property:'implementLinkageType',
                         data: formsCatalog.implementLinkageType
+                    },
+
+                    "attelageOutilViti":{
+                        title:'Attelage outil',
+                        property:'implementVitiLinkageType',
+                        data: formsCatalog.implementVitiLinkageType
                     },
 
                     "attelageRemorque":{
@@ -3187,6 +3294,18 @@ const formsCatalog = {
                         numeric: true
                     },
 
+                    "nombreCouteauxVerticaux":{
+                        title:'Nombre de couteaux verticaux',
+                        property:'knifeVerticalNumber',
+                        numeric: true
+                    },
+
+                    "nombreCouteauxHorizontaux":{
+                        title:'Nombre de couteaux horizontaux',
+                        property:'knifeHorizontalNumber',
+                        numeric: true
+                    },
+
                     "nombreDentsARemplacer":{
                         title:'Nombre de dents à remplacer',
                         property:'toothToReplace',
@@ -3196,6 +3315,17 @@ const formsCatalog = {
                     "nombreDemeleurs":{
                         title:'Nombre de démêleurs',
                         property:'unravelNumber',
+                        numeric: true
+                    },
+                    "nombreDemiRangs":{
+                        title:'Nombre de rangs',
+                        property:'halfRowowNumber',
+                        data: ["1 demi-rang","2 demi-rangs","1 rang","2 rangs","2 rangs + 1/2"]
+                    },
+
+                    "nombrePairesDisques":{
+                        title:'Nombre de paires de disques',
+                        property:'discPairNumber',
                         numeric: true
                     },
 
@@ -3483,12 +3613,20 @@ const formsCatalog = {
                         toggle: formsCatalog.grapeHarvesterOptions
                     },
 
+                    "optionsMachineVendangertrainee":{
+                        title:'Options',
+                        property:'grapeTrailedHarvesterOptions',
+                        toggle: formsCatalog.grapeTrailedHarvesterOptions
+                    },
+
                     "optionsMoissonneuse":{
                         title:'Options',
                         property : 'combineOptions',
                         toggle:[
+                            "BROYEUR",
                             "COMPRESSEUR",
                             "COUPE EXTENSIBLE",
+                            "EPARPILLEUR",
                             "PONT AR MOTEUR"
                         ]  
                     },
@@ -3552,6 +3690,37 @@ const formsCatalog = {
                         ]  
                     },
 
+                    "optionsPreTailleuse":{
+                        title:'Options',
+                        property : 'prePrunersOptions',
+                        toggle:[
+                            "BARRE DE COUPE",
+                            "CHASSIS DE DEPOSE",
+                            "DETECTION DE PIQUET",
+                            "DISQUE INFERIEUR SECATEUR",
+                            "DISQUE LATERAL SECATEUR",
+                            "BRANCARD D'ATTELAGE",
+                            "MAT FIXE",
+                            "MAT MULTIFONCTION",
+                            "HAUTEUR HYDRAULIQUE",
+                            "SUIVI DE CORDON",
+                            "TRANSLATION HYDRAULIQUE"
+                        ]  
+                    },
+
+                    "optionsRogneuse":{
+                        title:'Options',
+                        property : 'trimmerOptions',
+                        toggle:[
+                            "DERNIER COUTEAU INCLINE",
+                            "BRANCARD D'ATTELAGE",
+                            "MAT FIXE",
+                            "MAT MULTIFONCTION",
+                            "HAUTEUR HYDRAULIQUE",
+                            "TRANSLATION HYDRAULIQUE"
+                        ]  
+                    },
+
                     "optionsQuad":{
                         title:'Options',
                         property : 'quadOptions',
@@ -3599,7 +3768,7 @@ const formsCatalog = {
                     "optionTeteRecolte":{
                         title:'Tête de récolte',
                         property:'harvestingHead',
-                        toggle: ["ACTIVE","CLASSIC","CLEAN TECH","COMMANDE DEPORT. LAVAGE","EGRENEUR","INDIC. NIV. BENNE","REPARTITEURS","SELECTIVE PROCESS","SMART","SUIVI DE SOL","VARIO","VIS DE BENNE","4 ASPIRATEURS","GRAISSAGE GROUPE","GRAISSAGE AUTO"]                        
+                        toggle: ["ACTIVE","CLASSIC","CLEAN TECH","CLEAN TECH VARIO","EGRENEUR","SELECTIV PROCESS","SMART","VIS DE BENNE","4 ASPIRATEURS"]                        
                     },
 
                     "optionsTelescopique":{
@@ -3876,6 +4045,12 @@ const formsCatalog = {
                         data : ["PORTEE","MONOROUE","SEMI PORTEE","FRONTALE"]
                     },
 
+                    "typeCoupe":{
+                        title:'Type de coupe',
+                        property:'cuttingType',
+                        data : ["COUTEAUX","SECTIONS"]
+                    },
+
                     "typeCueilleur":{
                         title:'Type',
                         property:'harvestingPlatformType',
@@ -3982,6 +4157,12 @@ const formsCatalog = {
                         title:'Type rouleau',
                         property:'rollType',
                         data: formsCatalog.rollType
+                    },
+
+                    "typeTaille":{
+                        title:'Type de taille',
+                        property:'prunerType',
+                        data: ["CLASSIQUE","DISQUES"]
                     },
 
                     "typeVersoirs":{
@@ -4555,6 +4736,11 @@ const formsCatalog = {
                     "portes":{
                         title:'Portes',
                         property:'doors',
+                        picture: true
+                    },
+                    "pupitreCommande":{
+                        title:'Pupitre de commande',
+                        property:'desk',
                         picture: true
                     },
                     "rampe":{

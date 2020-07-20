@@ -43,7 +43,7 @@ export default function SimpleBottomNavigation({setNavigation,deleteSearchText,l
         <BottomNavigationAction label="INSPEKT" icon={<InsertCommentIcon />} />
         <BottomNavigationAction label="QOT" icon={<StorageIcon />} />
         <BottomNavigationAction label="STOCK" icon={<HomeWorkIcon />} />
-        {logInfo.user.licence === 'admin' && <BottomNavigationAction label="COMPASS" icon={<ExploreIcon />} />}
+        {logInfo.user.config && logInfo.user.config.compassAccess === true && <BottomNavigationAction label="COMPASS" icon={<ExploreIcon />} />}
     </BottomNavigation>
   );
 }
