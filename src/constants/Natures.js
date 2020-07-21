@@ -472,8 +472,8 @@ const Natures = [
                 addOns:["capaciteBacEnLitres","nombreBrasCueilleurs","dimensionPneumatiques", "marquePneumatiques", "usurePneumatiques","optionTeteRecolte","optionsMachineVendangertrainee","conformite","documents"]
             },
             4: {
-                type:'regular',
-                addOns:["compteur","pupitreCommande","capotLateral","avant","arriere","dimensionPneumatiques","interieurTeteRecolte","ecaille","tapis","virages","baches","portes","defautChassis","defautDirection","defautMoteurRoue","defautPompeHydraulique","carteGrise"]
+                type:'trailed',
+                addOns:["compteur","pupitreCommande","capotLateral","avant","arriere","interieurTeteRecolte","ecaille","tapis","virages","baches","portes","defautChassis","defautDirection","defautMoteurRoue","defautPompeHydraulique"]
             }
         }
     },

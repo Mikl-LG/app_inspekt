@@ -433,7 +433,14 @@ const formsCatalog = {
             "GREGOIRE",
             "ERO",
             "NEW HOLLAND",
-            "PELLENC"
+            "PELLENC",
+            "BARGAM",
+            "BOBARD",
+            "ERO",
+            "IMECA",
+            "LAUPRETRE",
+            "PULCINELLI",
+            "VECTUR"
         ]
     },
 
@@ -444,7 +451,14 @@ const formsCatalog = {
             "GREGOIRE",
             "ERO",
             "NEW HOLLAND",
-            "PELLENC"
+            "PELLENC",
+            "BARGAM",
+            "BOBARD",
+            "ERO",
+            "IMECA",
+            "LAUPRETRE",
+            "PULCINELLI",
+            "VECTUR"
         ]
     },
 

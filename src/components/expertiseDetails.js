@@ -137,13 +137,14 @@ export default function ExpertiseDetails(props) {
   const [drawer,setDrawer] = React.useState({isOpen:false});
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [inputQuotations, setInputQuotations] = React.useState({});
+  const [gridScreenWidth,setGridScreenWidth] = React.useState({xs:12,sm:6,md:6,lg:6})
   const [loader,setLoader] = React.useState({isOpen:false,title:'',content:''})
   const [priceDialog,setPriceDialog] = React.useState({isOpen : false});
   const [qoterMode,setQoterMode] = React.useState()
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
   const [validation,setValidation] = React.useState({isOpen : false});
   const [updateMachineFeatures,setUpdateMachineFeatures] = React.useState({open:false});
-  const[updateInStockPrices,setUpdateInStockPrices] = React.useState({open:false})
+  const [updateInStockPrices,setUpdateInStockPrices] = React.useState({open:false})
 
   const allowedLicenses = {
     admin : true,
@@ -477,8 +478,6 @@ export default function ExpertiseDetails(props) {
       /**cieId is required if the qot is not from the user company but from a linkage */
       cieId:focusMachine.cieId && focusMachine.cieId
     })
-
-    console.log('body : ',body);
   
     //**ADD COTATION REQUEST**\\
     // const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
@@ -635,10 +634,14 @@ export default function ExpertiseDetails(props) {
         </AppBar>
         <Divider />
         <Grid container>
-          <Grid item xs={12} sm={6} lg={6}>
-            <ImageSlider imageList={focusMachine.imageList}/>
+          <Grid item xs={gridScreenWidth.xs} sm={gridScreenWidth.sm} md={gridScreenWidth.md} lg={gridScreenWidth.lg}>
+            <ImageSlider 
+              imageList={focusMachine.imageList}
+              gridScreenWidth = {gridScreenWidth}
+              setGridScreenWidth = {setGridScreenWidth}
+            />
           </Grid>
-          <Grid item xs={12} sm={6} lg={6}>
+          <Grid item xs={gridScreenWidth.xs} sm={gridScreenWidth.sm} md={gridScreenWidth.md} lg={gridScreenWidth.lg}>
             <div className={classes.detailMachineContainer}>
               <Typography
                 variant="subtitle2"

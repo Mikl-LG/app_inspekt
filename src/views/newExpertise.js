@@ -361,7 +361,7 @@ export default function NewExpertise({setStateFromChild,logInfo,getInspekts}){
 
   /**USEEFFECT ONLY USED ON CONSOLE */
   useEffect(() => {
-    console.log('machineFormList : ',machineFormList);
+    //console.log('machineFormList : ',machineFormList);
   })
 
     const classes = useStyles();
@@ -536,12 +536,10 @@ export default function NewExpertise({setStateFromChild,logInfo,getInspekts}){
                           <div>
                             <InputLabel>{machineFeaturesFormList.addOns[input].title}</InputLabel>
                             <Select
-                              select
                               key={machineFeaturesFormList.addOns[input].property}
                               className={classes.optionsInput}
                               id={machineFeaturesFormList.addOns[input].property}
                               variant="outlined"
-                              //defaultValue={machineFeaturesFormList.addOns[input].data[2]}
                               onChange={(e) => machineFeaturesHandleChange(e.target,machineFeaturesFormList.addOns[input].property)}
                             >
                             {
@@ -561,7 +559,7 @@ export default function NewExpertise({setStateFromChild,logInfo,getInspekts}){
                           <div>
                             <InputLabel>{machineFeaturesFormList.addOns[input].title}</InputLabel>
                             <TextField
-                              key={machineFeaturesFormList.addOns[input].property}
+                              //key={machineFeaturesFormList.addOns[input].property}
                               className={classes.optionsInput}
                               id={machineFeaturesFormList.addOns[input].property}
                               variant="outlined"
@@ -586,11 +584,9 @@ export default function NewExpertise({setStateFromChild,logInfo,getInspekts}){
                           {
                             machineFeaturesFormList.addOns[input].toggle.map((data) => (
                               <FormControlLabel
-                                key={machineFeaturesFormList.addOns[input].property}
                                 label={data}
                                 control={
                                   <Switch
-                                    //checked={state.jason}
                                     onChange={() => machineFeaturesToggleChange(machineFeaturesFormList.addOns[input].property,data)}
                                     color="primary"
                                     name={data}
