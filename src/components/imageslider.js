@@ -14,22 +14,43 @@ import Typography from '@material-ui/core/Typography';
 import Color from '../constants/color.js';
 import { Tooltip } from '@material-ui/core';
 
-//const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
-
 const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: '100%',
     flexGrow: 1,
     paddingBottom:'20px'
   },
-  landscape: {
+  landscapeXS: {
     width:'100%',
     height:'auto'
   },
-  portrait: {
+  portraitXS: {
     height:window.innerHeight,
     width:'auto'
   },
+  landscapeLG: {
+    height:window.innerHeight - 50,
+    width:'auto'
+  },
+  portraitLG: {
+    height:window.innerHeight - 50,
+    width:'auto'
+  },
+  widget:{
+    width:'30px',
+    height:'30px',
+    borderRadius:'30px',
+    display:'flex',
+    justifyContent:'center',
+    alignItems:'center',
+    color:'white',
+    backgroundColor:Color.secondary,
+    opacity:'0.8',
+    fontSize: 15,
+    marginLeft:'5px',
+    marginTop:'5px',
+    cursor:'pointer'
+  }
 }));
 
 function SwipeableTextMobileStepper({imageList,gridScreenWidth,setGridScreenWidth}) {
@@ -50,11 +71,19 @@ function SwipeableTextMobileStepper({imageList,gridScreenWidth,setGridScreenWidt
     }
     getOrientation();
 
+    const imageClasses = (landscape === true && gridScreenWidth.lg === 6)
+    ? classes.landscapeXS 
+    : (landscape === true && gridScreenWidth.lg === 12)
+      ? classes.landscapeLG
+      : (landscape === false && gridScreenWidth.lg === 12)
+        ? classes.portraitLG
+        : classes.portraitXS
+
     return(
       <div key={step.value} style={{width:'100%',display:'flex',justifyContent:'center'}}>
             {Math.abs(activeStep - index) <= 2 ? (
               <img 
-                className={landscape === true ? classes.landscape : classes.portrait}
+                className={imageClasses}
                 onLoad={getOrientation}
                 src={step.value}
                 style={{transform: `rotate(${rotation}deg)`}}
@@ -62,6 +91,13 @@ function SwipeableTextMobileStepper({imageList,gridScreenWidth,setGridScreenWidt
             ) : null}
       </div>
     )
+  }
+
+  const displayFullWidth = () => {
+    setGridScreenWidth({xs:12,sm:12,md:12,lg:12,scrollToTop:document.getElementById('swipeableViews').offsetTop})
+  }
+  const displayHalfWidth = () => {
+    setGridScreenWidth({xs:6,sm:6,md:6,lg:6,scrollToTop:0})
   }
 
   const handleNext = () => {
@@ -76,28 +112,22 @@ function SwipeableTextMobileStepper({imageList,gridScreenWidth,setGridScreenWidt
     setActiveStep(step);
   };
 
+  
+  const swipeableViewsInformations = async()=>{
+    await Promise.resolve(document.getElementById('swipeableViews'));
+  }
+
+    useEffect(()=>{
+      const screen = document.getElementById('imageSlider');
+      (gridScreenWidth.scrollToTop != 0 && screen) && screen.scrollIntoView({
+        block:'start',
+        behavior: 'smooth'
+    });
+    })
+
   return (
-    <div className={classes.root}>
-      <div style={{display:'flex',justifyContent:'flex-end',color:Color.secondary}}>
-        {
-          gridScreenWidth.lg == 6
-          ?
-          <Tooltip title='Plein écran'>
-            <FullscreenIcon style={{ fontSize: 20,marginLeft:'5px',cursor:'pointer'}} onClick={() => setGridScreenWidth({xs:12,sm:12,md:12,lg:12})}/>
-          </Tooltip>
-          
-          :
-          <Tooltip title='Réduire'>
-            <FullscreenExitIcon style={{ fontSize: 20,marginLeft:'5px',cursor:'pointer'}} onClick={() => setGridScreenWidth({xs:12,sm:6,md:6,lg:6})}/>
-          </Tooltip>
-        }
-        <Tooltip title='Rotation à gauche'>
-          <RotateLeftIcon style={{ fontSize: 20,marginLeft:'5px',cursor:'pointer'}} onClick={() => setRotation(rotation-90)}/>
-        </Tooltip>
-        <Tooltip title='Rotation à droite'>
-          <RotateRightIcon style={{ fontSize: 20,marginLeft:'5px',cursor:'pointer'}} onClick={() => setRotation(rotation+90)}/>
-        </Tooltip>
-      </div>
+    <div id='imageSlider' className={classes.root}>
+      
       <MobileStepper
         steps={maxSteps}
         position="static"
@@ -116,11 +146,39 @@ function SwipeableTextMobileStepper({imageList,gridScreenWidth,setGridScreenWidt
           </Button>
         }
       />
+      <div style={{position:'absolute',top:swipeableViewsInformations && (swipeableViewsInformations.offsetTop),zIndex:'20'}}>
+        <div className={classes.widget}>
+          {
+            gridScreenWidth.lg == 6
+            ?
+            <Tooltip title='Plein écran'>
+              <FullscreenIcon onClick={displayFullWidth}/>
+            </Tooltip>
+            :
+            <Tooltip title='Réduire'>
+              <FullscreenExitIcon onClick={displayHalfWidth}/>
+            </Tooltip>
+          }
+        </div>
+        <div className={classes.widget}>
+          <Tooltip title='Rotation à gauche'>
+            <RotateLeftIcon onClick={() => setRotation(rotation-90)}/>
+          </Tooltip>
+        </div>
+        <div className={classes.widget}>
+          <Tooltip title='Rotation à droite'>
+          <RotateRightIcon onClick={() => setRotation(rotation+90)}/>
+          </Tooltip>
+        </div>
+      </div>
+      
+      
       <SwipeableViews
         axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
         index={activeStep}
         onChangeIndex={handleStepChange}
         enableMouseEvents
+        id='swipeableViews'
       >
         {imageList.map((step, index) => (
           displayImage(step,index)

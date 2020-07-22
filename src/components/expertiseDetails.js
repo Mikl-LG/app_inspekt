@@ -137,7 +137,7 @@ export default function ExpertiseDetails(props) {
   const [drawer,setDrawer] = React.useState({isOpen:false});
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [inputQuotations, setInputQuotations] = React.useState({});
-  const [gridScreenWidth,setGridScreenWidth] = React.useState({xs:12,sm:6,md:6,lg:6})
+  const [gridScreenWidth,setGridScreenWidth] = React.useState({xs:12,sm:6,md:6,lg:6,scrollToTop:0})
   const [loader,setLoader] = React.useState({isOpen:false,title:'',content:''})
   const [priceDialog,setPriceDialog] = React.useState({isOpen : false});
   const [qoterMode,setQoterMode] = React.useState()

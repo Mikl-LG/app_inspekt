@@ -304,8 +304,8 @@ export default function NewExpertise({setStateFromChild,logInfo,getInspekts}){
         particularities: particularities, 
         status: 'inspekt',
         
-    })
-    ////////// ADD INSPEKT TO S3 \\\\\\\\\\
+      })
+      ////////// ADD INSPEKT TO S3 \\\\\\\\\\
 
       const url = `https://inspekt.herokuapp.com/api?request=CREATE_INSPEKT&token=${token}`
       let fetchOptions = await Promise.resolve(
