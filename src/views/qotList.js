@@ -9,6 +9,7 @@ import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
+import GetAppIcon from '@material-ui/icons/GetApp';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -231,7 +232,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
       setMachineCatalog(value);
     })
   });
-  const allowedLicenses = {admin : true, manager:true, qoter:true};
+  const allowedLicenses = {admin : true, manager:true, qoter:true,inspekter:false};
   const [stockDrawer,setStockDrawer] = React.useState({isOpen:false});
   const [natureList,setNatureList] = React.useState(Natures.Natures);
   const [inputInStock, setInputInStock] = React.useState({});
@@ -243,7 +244,36 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
 
   const handleChangeInStock = (event,key) => {
     setInputInStock({...inputInStock,[key]:event.target.value});
+    
   };
+
+  const downloadQotsInCsv = async() => {
+
+    const body = await Promise.resolve({
+      cieId : logInfo.user.cieId
+    })
+
+    //**ADD COTATION REQUEST**\\
+    const url = `https://inspekt.herokuapp.com/api?request=CSV_QOTS&token=${logInfo.token}`
+    let fetchOptions = await Promise.resolve(
+      {
+        method: 'POST',
+        body: JSON.stringify(body)
+      }
+    )
+    let fetching = await fetch(url, fetchOptions)
+    let error = await Promise.resolve(!fetching.ok)
+    let response = !error && await Promise.resolve(fetching.text());
+
+    let blob = await Promise.resolve(new Blob(["\uFEFF"+response], {type: 'text/csv; charset=utf-18'}));
+    let link = await Promise.resolve(document.createElement('a'));
+    link.href = await Promise.resolve(window.URL.createObjectURL(blob));
+    link.download = await Promise.resolve('qots.csv');
+    let clicked = await new Promise((_clicked) => {
+      link.click();
+      _clicked(true);
+    })
+  }
 
   const machineFeatureToString = (machineFeatures) => {
 
@@ -477,9 +507,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
 
     const saveNewStock = async() => {
       if(
-        logInfo.user.licence === 'admin'
-        || logInfo.user.licence === 'manager'
-        || logInfo.user.licence === 'qoter'
+        allowedLicenses[logInfo.user.licence]
         ){
         
         inputInStock.userId = logInfo.user.id;
@@ -561,9 +589,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
     const updateQotState = async(qot,state) => {
 
       if(
-        logInfo.user.licence === 'admin'
-        || logInfo.user.licence === 'manager'
-        || logInfo.user.licence === 'qoter'
+        allowedLicenses[logInfo.user.licence]
         ){
         const body = await Promise.resolve({
           expId : qot.id,
@@ -610,7 +636,14 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <span style={{marginLeft:'15px',fontSize:'0.8em',fontStyle:'italic',color:Color.secondary}}>{qotListFiltered.length} résultat(s)</span>
+        <div style={{width:'100%',color:Color.secondary,right:'0px',display:'flex',justifyContent:'flex-end',alignItems:'center'}}>
+          <div style={{marginRight:'25px',fontSize:'0.8em',fontStyle:'italic',color:Color.secondary}}>{qotListFiltered.length} résultat(s)</div>
+          
+          {
+            allowedLicenses[logInfo.user.licence] && <div style={{marginRight:'15px'}}><GetAppIcon onClick={() => downloadQotsInCsv()}/>
+            </div>
+          }
+        </div>
         <TableContainer>
           <Table
             className={classes.table}

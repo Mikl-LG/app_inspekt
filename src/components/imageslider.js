@@ -133,16 +133,15 @@ function SwipeableTextMobileStepper({imageList,gridScreenWidth,setGridScreenWidt
         position="static"
         variant="text"
         activeStep={activeStep}
+        style={{fontSize : '0.9em'}}
         nextButton={
-          <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
-            Suiv.
-            {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+          <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1} style={{color:Color.secondary,fontSize:'2em'}}>
+            {theme.direction === 'rtl' ? <KeyboardArrowLeft/> : <KeyboardArrowRight/>}
           </Button>
         }
         backButton={
-          <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
-            {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-            Préc.
+          <Button size="small" onClick={handleBack} disabled={activeStep === 0} style={{color:Color.secondary,fontSize:'2em'}}>
+            {theme.direction === 'rtl' ? <KeyboardArrowRight/> : <KeyboardArrowLeft/>}
           </Button>
         }
       />
