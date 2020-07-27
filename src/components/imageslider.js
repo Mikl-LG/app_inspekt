@@ -202,7 +202,7 @@ function SwipeableTextMobileStepper({imageList,gridScreenWidth,setGridScreenWidt
             <RotateRightIcon onClick={() => setRotation(rotation + 90)}/>
           </Tooltip>
         </div>
-        <div className={classes.widget}>
+        {/* <div className={classes.widget}>
           <Tooltip title='Edition sur PDF'>
             {
               listOfPictures[activeStep].visibleOnPdf === true
@@ -210,7 +210,7 @@ function SwipeableTextMobileStepper({imageList,gridScreenWidth,setGridScreenWidt
               : <VisibilityOffIcon onClick={() => switchPictureVisibility(activeStep)}/>
             }
           </Tooltip>
-        </div>
+        </div> */}
       </div>
       
       

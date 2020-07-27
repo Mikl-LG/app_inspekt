@@ -5,11 +5,17 @@ import Button from '@material-ui/core/Button';
 import CancelIcon from '@material-ui/icons/Cancel';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import GetAppIcon from '@material-ui/icons/GetApp';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -34,8 +40,9 @@ import ExpertiseDetails from '../components/expertiseDetails';
 import FormsCatalog from '../constants/FormsCatalog';
 import Natures from '../constants/Natures';
 import SnackBar from '../components/snackBar';
+import { Tooltip } from '@material-ui/core';
 
-const { Parser } = require('json2csv');
+//const { Parser } = require('json2csv');
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -76,18 +83,6 @@ function LoadSelectHeadTable(props){
   headCells.forEach((headCell) => {
     autoList = {...autoList,[headCell.id] : headCell.selectOptions}
   })
-
-  // const csvQotList = async() => {
-  //   const fields = ['field1', 'field2', 'field3'];
-  //   const opts = { fields };
-  //     try {
-  //       const parser = new Parser();
-  //       const csv = await Promise.resolve(parser.parse(qotList));
-  //       console.log(csv);
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // }
 
   const handleSelectTempSort = (key,value) =>{
     let newSelected = tempSort[key];
@@ -239,6 +234,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
   const [isExpertiseDetailsOpen,setIsExpertiseDetailsOpen] = React.useState(false);
   const [focusMachine,setFocusMachine] = React.useState({});
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
+  const [loader,setLoader] = React.useState({isOpen:false,title:'',content:''})
   const [sort,setSort] = React.useState({inStock:[],id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],qotState:[],quotation:[]});
   const [tempSort,setTempSort] = React.useState({inStock:[],id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],qotState:[],quotation:[]});
 
@@ -248,6 +244,8 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
   };
 
   const downloadQotsInCsv = async() => {
+
+    setLoader({isOpen:true,title:'Téléchargement des QOTS...',content:'On récupère la liste de tes qots, au format CSV.'});
 
     const body = await Promise.resolve({
       cieId : logInfo.user.cieId
@@ -272,6 +270,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
     let clicked = await new Promise((_clicked) => {
       link.click();
       _clicked(true);
+      setLoader({isOpen:false});
     })
   }
 
@@ -636,11 +635,15 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <div style={{width:'100%',color:Color.secondary,right:'0px',display:'flex',justifyContent:'flex-end',alignItems:'center'}}>
-          <div style={{marginRight:'25px',fontSize:'0.8em',fontStyle:'italic',color:Color.secondary}}>{qotListFiltered.length} résultat(s)</div>
+        <div style={{width:'100%',color:Color.secondary,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+          <div style={{fontSize:'0.8em',fontStyle:'italic',marginLeft:'15px',color:Color.secondary}}>{qotListFiltered.length} résultat(s)
+          </div>
           
           {
-            allowedLicenses[logInfo.user.licence] && <div style={{marginRight:'15px'}}><GetAppIcon onClick={() => downloadQotsInCsv()}/>
+            allowedLicenses[logInfo.user.licence] && <div style={{cursor:'pointer',marginRight:'15px'}}>
+              <Tooltip title='Télécharger les QOTS'>
+                <GetAppIcon onClick={() => downloadQotsInCsv()}/>
+              </Tooltip>
             </div>
           }
         </div>
@@ -833,6 +836,20 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
             </List>
           </div>
         </Drawer>
+        <Dialog
+          open={loader.isOpen}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{loader.title}</DialogTitle>
+          <DialogContent>
+            <LinearProgress style={{width:'100%'}} />
+            <LinearProgress style={{width:'100%'}} color="secondary" />
+            <DialogContentText id="alert-dialog-description">
+              {loader.content}
+            </DialogContentText>
+          </DialogContent>
+        </Dialog>
         <SnackBar
           handleClose={() => setSnackbar({isopen : false})}
           message={snackbar.message}
