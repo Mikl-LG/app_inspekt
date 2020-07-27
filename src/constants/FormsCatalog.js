@@ -2990,6 +2990,12 @@ const formsCatalog = {
                         toggle : formsCatalog.documentation
                     },
 
+                    "ecartementDents":{
+                        title:'Ecartement entre bras / dents',
+                        property:'toothDistance',
+                        numeric: true
+                    },
+
                     "ecartementRangs":{
                         title:'Ecartement rangs',
                         property:'rowDistance',
@@ -3083,6 +3089,12 @@ const formsCatalog = {
                     "hauteurDegagement":{
                         title : 'Hauteur de dégagement (cm)',
                         property:'tillageHeight',
+                        numeric: true
+                    },
+
+                    "hauteursurelevation":{
+                        title : 'Hauteur de surélévateur (cm)',
+                        property:'overLiftHeight',
                         numeric: true
                     },
 
@@ -3323,6 +3335,12 @@ const formsCatalog = {
                     "nombreDentsARemplacer":{
                         title:'Nombre de dents à remplacer',
                         property:'toothToReplace',
+                        numeric: true
+                    },
+
+                    "nombreDentsParBras":{
+                        title:'Nombre de dents par bras',
+                        property:'toothPerArm',
                         numeric: true
                     },
 
@@ -3643,6 +3661,20 @@ const formsCatalog = {
                             "EPARPILLEUR",
                             "PONT AR MOTEUR"
                         ]  
+                    },
+
+                    "optionsPinceBalles" : {
+                        title:'Options',
+                        property : 'baleGrappleOptions',
+                        toggle : [
+                            "Attelage soudé",
+                            "Attelage coulissant",
+                            "Bâti inférieur",
+                            "Limiteur de pression",
+                            "Réhausses coulissantes",
+                            "Sur-élévateur",
+                            "Synchronisation de fermeture"
+                        ]
                     },
 
                     "optionsPresseBallesCarrees":{
@@ -4105,6 +4137,12 @@ const formsCatalog = {
                         title:'Type herse',
                         property:'harrowType',
                         data: ["ALTERNATIVE","ROTATIVE"]
+                    },
+
+                    "typePinceBalles":{
+                        title:'Type de pinces',
+                        property:'pliersType',
+                        data: ["Enrubanné","Griffes"]
                     },
 
                     "typePointes":{

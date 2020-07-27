@@ -77,7 +77,7 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo,pictures,setLoader) => {
             documentPdf.setFontSize(14);
             documentPdf.setFontStyle('bold');
         
-            documentPdf.save('expertise_'+orderedDetailsToPrint[0].value+'.pdf');
+            documentPdf.save('InspektExpertise_'+orderedDetailsToPrint[0].value+'.pdf');
             setLoader({isOpen:false});
     
         }else if(type === 'bonReprise'){
@@ -129,7 +129,7 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo,pictures,setLoader) => {
             documentPdf.setFontSize(14);
             documentPdf.setFontStyle('bold');
         
-            documentPdf.save('reprise_' + orderedDetailsToPrint[0].value+'.pdf');
+            documentPdf.save('inspektReprise_' + orderedDetailsToPrint[0].value+'.pdf');
             setLoader({isOpen:false});
 
         }else if(type === 'contreExpertise'){
@@ -178,7 +178,7 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo,pictures,setLoader) => {
             documentPdf.setFontSize(14);
             documentPdf.setFontStyle('bold');
         
-            documentPdf.save('contreExpertise_' + orderedDetailsToPrint[0].value+'.pdf');
+            documentPdf.save('InspektContreExpertise_' + orderedDetailsToPrint[0].value+'.pdf');
             setLoader({isOpen:false});
         
         }else if(type === 'fichePhotos'){
@@ -259,7 +259,7 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo,pictures,setLoader) => {
                     Xline += pictureHeightSelected + 5;
                 })
 
-                documentPdf.save('fichePhoto_' + orderedDetailsToPrint[0].value+'.pdf');
+                documentPdf.save('InspektFichePhoto_' + orderedDetailsToPrint[0].value+'.pdf');
                 setLoader({isOpen:false});
             })
         }

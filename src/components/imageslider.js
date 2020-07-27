@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
+import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
+import DeleteIcon from '@material-ui/icons/Delete';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
@@ -10,6 +12,8 @@ import RotateLeftIcon from '@material-ui/icons/RotateLeft';
 import RotateRightIcon from '@material-ui/icons/RotateRight';
 import SwipeableViews from 'react-swipeable-views';
 import Typography from '@material-ui/core/Typography';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 
 import Color from '../constants/color.js';
 import { Tooltip } from '@material-ui/core';
@@ -53,13 +57,41 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function SwipeableTextMobileStepper({imageList,gridScreenWidth,setGridScreenWidth}) {
+function SwipeableTextMobileStepper({imageList,gridScreenWidth,setGridScreenWidth,focusMachine,logInfo}) {
   const classes = useStyles();
   const theme = useTheme();
   const [activeStep, setActiveStep] = React.useState(0);
   const [imageSize,setImageSize] = React.useState({getSize : true});
+  const [listOfPictures,setListOfPictures] = React.useState(imageList);
   const [rotation, setRotation] = React.useState(0);
   const maxSteps = imageList.length;
+
+  const switchPictureVisibility = async(activeStep) => {
+    
+    listOfPictures[activeStep].visibleOnPdf === true
+    ? listOfPictures[activeStep].visibleOnPdf = false
+    :listOfPictures[activeStep].visibleOnPdf = true
+    console.log(listOfPictures);
+    setListOfPictures(listOfPictures);
+    //setListOfPictures(listOfPictures);
+  
+    //**ADD COTATION REQUEST**\\
+    // const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
+    // let fetchOptions = await Promise.resolve(
+    //     {
+    //       method: 'POST',
+    //       mode: 'cors',
+    //       headers: {
+    //         Accept: 'application/json',
+    //         'Content-Type': 'application/json',
+    //       },
+    //       body: JSON.stringify(body)
+    //     }
+    // )
+    // let fetching = await fetch(url, fetchOptions)
+    // let error = await Promise.resolve(!fetching.ok)
+    
+  }
 
   const displayImage = (step,index) => {
 
@@ -123,6 +155,7 @@ function SwipeableTextMobileStepper({imageList,gridScreenWidth,setGridScreenWidt
         block:'start',
         behavior: 'smooth'
     });
+    console.log('listOfPictures : ',listOfPictures);
     })
 
   return (
@@ -161,12 +194,21 @@ function SwipeableTextMobileStepper({imageList,gridScreenWidth,setGridScreenWidt
         </div>
         <div className={classes.widget}>
           <Tooltip title='Rotation à gauche'>
-            <RotateLeftIcon onClick={() => setRotation(rotation-90)}/>
+            <RotateLeftIcon onClick={() => setRotation(rotation - 90)}/>
           </Tooltip>
         </div>
         <div className={classes.widget}>
           <Tooltip title='Rotation à droite'>
-          <RotateRightIcon onClick={() => setRotation(rotation+90)}/>
+            <RotateRightIcon onClick={() => setRotation(rotation + 90)}/>
+          </Tooltip>
+        </div>
+        <div className={classes.widget}>
+          <Tooltip title='Edition sur PDF'>
+            {
+              listOfPictures[activeStep].visibleOnPdf === true
+              ? <VisibilityIcon onClick={() => switchPictureVisibility(activeStep)}/>
+              : <VisibilityOffIcon onClick={() => switchPictureVisibility(activeStep)}/>
+            }
           </Tooltip>
         </div>
       </div>

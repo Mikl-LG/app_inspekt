@@ -563,6 +563,22 @@ const Natures = [
         }
     },
     {
+        name: "Pince balles",
+        key: "baleGrapple",
+        formStepsTypes : {
+            2: {
+                type: 'regular',
+                addOns:[]
+            },
+            3:{
+                addOns: ["usureGenerale","typePinceBalles","tablierAttelage","nombreDentsParBras","ecartementDents","hauteursurelevation","commandesHydrauliques","optionsPinceBalles","documents"]
+            },
+            4:{
+                type:'regular'
+            }
+        }
+    },
+    {
         name: "Plateau fourrager",
         key: "forageTrailer",
         formStepsTypes : {

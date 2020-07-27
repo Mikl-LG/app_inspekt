@@ -208,6 +208,7 @@ export default function ExpertiseDetails(props) {
 
   const downloadPictures = async(pictures) => {
 
+    setLoader({isOpen:true,title:'Téléchargement...',content:'Tu pourras consulter les photos dans quelques secondes.'});
     const keys = await Promise.resolve(Object.keys(pictures)); //[leftFront,rightBack]
     let promises = await Promise.resolve(keys.map(async(k) => {
       return new Promise(async(resolve) => {
@@ -225,7 +226,8 @@ export default function ExpertiseDetails(props) {
             link.click();
             _clicked(true);
           })
-          resolve(true)
+          resolve(true);
+          setLoader({isOpen:false});
         })
       })
       
@@ -430,7 +432,6 @@ export default function ExpertiseDetails(props) {
   const updateMachineFeaturesRequest = async() => {
 
     const body = await Promise.resolve({
-      cieId : focusMachine.cieId,
       expId : focusMachine.id,
       status: focusMachine.status,
       merge: {            // {object} list des quotations à jour
@@ -639,6 +640,8 @@ export default function ExpertiseDetails(props) {
               imageList={focusMachine.imageList}
               gridScreenWidth = {gridScreenWidth}
               setGridScreenWidth = {setGridScreenWidth}
+              focusMachine = {focusMachine}
+              logInfo = {logInfo}
             />
           </Grid>
           <Grid item xs={gridScreenWidth.xs} sm={gridScreenWidth.sm} md={gridScreenWidth.md} lg={gridScreenWidth.lg}>

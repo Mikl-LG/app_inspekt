@@ -280,14 +280,14 @@ export default function TitlebarGridList({inspektList,qotList,cieMembers,logInfo
       let pictureArrayList = [];
       if(expertise.pictures){
         for (let [key,value] of Object.entries(expertise.pictures)){
-          pictureArrayList.push({title : "",value:value});
+          pictureArrayList.push({key : key,value:value,visibleOnPdf:true});
         }
       }
 
       if(expertise.particularities && expertise.particularities.points){
         expertise.particularities.points.forEach(element => {
           if(element.pictures && element.pictures.length){
-            pictureArrayList = [...pictureArrayList,{title : element.text,value:element.pictures[0]}];
+            pictureArrayList = [...pictureArrayList,{title : element.text,value:element.pictures[0],visibleOnPdf:true}];
           }
         })
       }
