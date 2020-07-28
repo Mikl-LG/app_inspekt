@@ -21,7 +21,7 @@ import FormsCatalog from '../constants/FormsCatalog';
 import Natures from '../constants/Natures';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalculator,faEye,faUserShield,faTimesCircle,faMoneyBillAlt,faCheck,faComments } from '@fortawesome/free-solid-svg-icons';
+import { faCalculator } from '@fortawesome/free-solid-svg-icons';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -120,8 +120,8 @@ export default function TitlebarGridList({inspektList,qotList,cieMembers,logInfo
     let expertiseFromUrl;
 
     if(displayFromUrl.id){
-      inspektFromUrl = inspektList && inspektList.find(i => i.id == displayFromUrl.id);
-      qotFromUrl = qotList && qotList.find(q => q.id == displayFromUrl.id);
+      inspektFromUrl = inspektList && inspektList.find(i => i.id === displayFromUrl.id);
+      qotFromUrl = qotList && qotList.find(q => q.id === displayFromUrl.id);
       expertiseFromUrl = inspektFromUrl || qotFromUrl;
     }
     
@@ -230,18 +230,17 @@ export default function TitlebarGridList({inspektList,qotList,cieMembers,logInfo
           (element) => (machineFeatureCatalog.addOns[element]));
 
       /**SETTING MACHINEFEATURE_HOOK WITH THE COMPLETE ADDONS : TITLE - PROPERTY - VALUE */
-      machineFeatureAddonsAvailable.forEach((element) => {
-        if(expertise.machineFeatures){
-          for (let [key,value] of Object.entries(expertise.machineFeatures)){
-            if(key === element.property){
-              element.value = value;
-              element.visibleOnPdf = true;
-              element.step = 'machineFeatures';
-              machineToArray.push(element);
-            }
-          }
-        }
-      })
+      if(expertise.machineFeatures){
+        const machineFeatureAddonsAvailableIndexed = machineFeatureAddonsAvailable.map((e,i) => {return {...e,index: i}}); //add index to machine addons available
+        const machineFeatureAddonsSorted = Object.keys(expertise.machineFeatures).map((k) => machineFeatureAddonsAvailableIndexed.find((addons) => addons.property == k) || {property : k, title : k}).sort((a,b) => a.index - b.index); //add index to machine  features addons documented for this expertise
+
+        machineFeatureAddonsSorted.forEach((feature) => {
+          feature.value = expertise.machineFeatures[feature.property];
+          feature.visibleOnPdf = true;
+          feature.step = 'machineFeatures';
+          machineToArray.push(feature);
+        })
+      }
 
       machineToArray.push(
         {

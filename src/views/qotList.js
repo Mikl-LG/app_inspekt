@@ -288,8 +288,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
     let output = [];
     if(machineFeatures){
       for (let [key,value] of Object.entries(machineFeatures)){
-        //console.log('value : ',getFeatureTitle(key) + ' : ' + value);
-        output = [...output,getFeatureTitle(key) + ' : ' + value];
+        output = [...output,(getFeatureTitle(key) || key) + ' : ' + value];
       }
     }
     return output.join(' - ');
@@ -328,6 +327,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
         inStock : element.inStock ? element.inStock : false,
         id : element.id,
         date : Moment(element.openedOn).format('MMMM-YYYY'),
+        openedOn : element.openedOn,
         salesman: logInfo.cieMembers[element.openedBy].name,
         customer: element.customer && element.customer.name && element.customer.name,
         nature : element.machine.nature.name,
@@ -335,7 +335,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
         model : element.machine.model && element.machine.model,
         details : element.machineFeatures && machineFeatureToString(element.machineFeatures),
         year : element.machine.year && element.machine.year,
-        quotation : element.quotations[element.quotations.length -1][priceType],
+        quotation : element.quotations[element.quotations.length -1][priceType] || '',
         state : element.state ? element.state : 'En-cours',
         expertiseObject : element
       }]
@@ -420,19 +420,17 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
           (element) => (machineFeatureCatalog.addOns[element]));
 
       /**SETTING MACHINEFEATURE_HOOK WITH THE COMPLETE ADDONS : TITLE - PROPERTY - VALUE */
-      machineFeatureAddonsAvailable.forEach((element) => {
-        if(expertise.machineFeatures){
-          for (let [key,value] of Object.entries(expertise.machineFeatures)){
-            if(element.property && key === element.property){
+      if(expertise.machineFeatures){
+        const machineFeatureAddonsAvailableIndexed = machineFeatureAddonsAvailable.map((e,i) => {return {...e,index: i}}); //add index to machine addons available
+        const machineFeatureAddonsSorted = Object.keys(expertise.machineFeatures).map((k) => machineFeatureAddonsAvailableIndexed.find((addons) => addons.property == k) || {property : k, title : k}).sort((a,b) => a.index - b.index); //add index to machine  features addons documented for this expertise
 
-              element.value = value;
-              element.visibleOnPdf = true;
-              element.step = 'machineFeatures';
-              machineToArray.push(element);
-            }
-          }
-        }
-      })
+        machineFeatureAddonsSorted.forEach((feature) => {
+          feature.value = expertise.machineFeatures[feature.property];
+          feature.visibleOnPdf = true;
+          feature.step = 'machineFeatures';
+          machineToArray.push(feature);
+        })
+      }
 
       machineToArray.push(
         {
@@ -485,7 +483,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
       let pictureArrayList = [];
       if(expertise.pictures){
         for (let [key,value] of Object.entries(expertise.pictures)){
-          pictureArrayList.push({title : "",value:value});
+          pictureArrayList.push({key : key,value:value,visibleOnPdf:true});
         }
       }
 
@@ -666,7 +664,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
             />
             <TableBody>
               {rows
-              && rows.sort((a,b)=>(b.id - a.id)).map((row, index) => {
+              && rows.sort((a,b)=>(b.openedOn - a.openedOn)).map((row, index) => {
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (

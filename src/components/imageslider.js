@@ -71,7 +71,7 @@ function SwipeableTextMobileStepper({imageList,gridScreenWidth,setGridScreenWidt
     listOfPictures[activeStep].visibleOnPdf === true
     ? listOfPictures[activeStep].visibleOnPdf = false
     :listOfPictures[activeStep].visibleOnPdf = true
-    console.log(listOfPictures);
+    //console.log(listOfPictures);
     setListOfPictures(listOfPictures);
     //setListOfPictures(listOfPictures);
   

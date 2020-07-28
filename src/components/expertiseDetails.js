@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import AWS from 'aws-sdk';
 import Badge from '@material-ui/core/Badge';
-import { borders } from '@material-ui/system';
 import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close';
 import clsx from 'clsx';
@@ -235,34 +234,6 @@ export default function ExpertiseDetails(props) {
     const result = await Promise.all(promises);
   }
 
-  const _DEPRECATEDdownloadPictures = async(pictures) => {
-    for (let [title,value] of Object.entries(pictures)){
-      const array2F = value.split('%2F');
-      const urlArray = value.split("/");
-
-      let bucket;
-      let key;
-      if(array2F.length > 1){
-        bucket = 'inspekt-prod';
-        key = `MEDIASLANDER/${array2F[array2F.length-1]}`
-      }else{
-        bucket = 'inspekt-prod';
-        key = `MEDIASLANDER/${urlArray[urlArray.length-1]}`
-      }
-      
-      let s3 = new AWS.S3();
-      let params = {Bucket: bucket, Key: key}
-
-      s3.getObject(params, async(err, data) => {
-        let blob=new Blob([data.Body], {type: data.ContentType});
-        let link=document.createElement('a');
-        link.href=window.URL.createObjectURL(blob);
-        link.download=title;
-        link.click();
-      })
-    }
-  }
-
   const editPdf = (type) => {
     //type = ficheExpertise || bonReprise || contreExpertise
     setAnchorEl(null);
@@ -479,32 +450,11 @@ export default function ExpertiseDetails(props) {
       /**cieId is required if the qot is not from the user company but from a linkage */
       cieId:focusMachine.cieId && focusMachine.cieId
     })
-  
-    //**ADD COTATION REQUEST**\\
-    // const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
-    // let fetchOptions = await Promise.resolve(
-    //     {
-    //         method: 'POST',
-    //         mode: 'cors',
-    //         headers: {
-    //             Accept: 'application/json',
-    //             'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify(body)
-    //     }
-    // )
-    // let fetching = await fetch(url, fetchOptions)
-    // let error = await Promise.resolve(!fetching.ok)
-    // if(error === false){
-    //   getInspekts();
-    //   setUpdateMachineFeatures({open:false});
-    //   setOpen(false);
-    // }
     
   }
 
   useEffect(()=>{
-
+    
   })
 
   return (
@@ -658,7 +608,8 @@ export default function ExpertiseDetails(props) {
                   element == 'divider' 
                   ? <Divider key={index}/>
                   :
-                    <ListItemText key={element.property} classes={{primary:classes.listItemText}}>
+                    element.value !== null 
+                    && <ListItemText key={element.property} classes={{primary:classes.listItemText}}>
                       <div style={{display:'flex', alignItems:'center'}}>
                         <FontAwesomeIcon
                           icon={focusMachine.orderedDetailsToPrint[index].visibleOnPdf && focusMachine.orderedDetailsToPrint[index].visibleOnPdf == true ? faCheck : faTimesCircle}
