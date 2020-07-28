@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
-import DeleteIcon from '@material-ui/icons/Delete';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
@@ -57,40 +55,22 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function SwipeableTextMobileStepper({imageList,gridScreenWidth,setGridScreenWidth,focusMachine,logInfo}) {
+function SwipeableTextMobileStepper({listOfPictures,setListOfPictures,gridScreenWidth,setGridScreenWidth,focusMachine,logInfo}) {
   const classes = useStyles();
   const theme = useTheme();
   const [activeStep, setActiveStep] = React.useState(0);
   const [imageSize,setImageSize] = React.useState({getSize : true});
-  const [listOfPictures,setListOfPictures] = React.useState(imageList);
+  //const [listOfPictures,setListOfPictures] = React.useState(imageList);
   const [rotation, setRotation] = React.useState(0);
-  const maxSteps = imageList.length;
+  const maxSteps = listOfPictures && listOfPictures.length;
 
   const switchPictureVisibility = async(activeStep) => {
-    
-    listOfPictures[activeStep].visibleOnPdf === true
-    ? listOfPictures[activeStep].visibleOnPdf = false
-    :listOfPictures[activeStep].visibleOnPdf = true
-    //console.log(listOfPictures);
-    setListOfPictures(listOfPictures);
-    //setListOfPictures(listOfPictures);
-  
-    //**ADD COTATION REQUEST**\\
-    // const url = `https://inspekt.herokuapp.com/api?request=SET_EXP&token=${logInfo.token}`
-    // let fetchOptions = await Promise.resolve(
-    //     {
-    //       method: 'POST',
-    //       mode: 'cors',
-    //       headers: {
-    //         Accept: 'application/json',
-    //         'Content-Type': 'application/json',
-    //       },
-    //       body: JSON.stringify(body)
-    //     }
-    // )
-    // let fetching = await fetch(url, fetchOptions)
-    // let error = await Promise.resolve(!fetching.ok)
-    
+    let _listOfPictures = [...listOfPictures];
+    _listOfPictures[activeStep].visibleOnPdf === true
+    ? _listOfPictures[activeStep].visibleOnPdf = false
+    : _listOfPictures[activeStep].visibleOnPdf = true
+    setListOfPictures(_listOfPictures);
+
   }
 
   const displayImage = (step,index) => {
@@ -155,7 +135,6 @@ function SwipeableTextMobileStepper({imageList,gridScreenWidth,setGridScreenWidt
         block:'start',
         behavior: 'smooth'
     });
-    console.log('listOfPictures : ',listOfPictures);
     })
 
   return (
@@ -202,16 +181,23 @@ function SwipeableTextMobileStepper({imageList,gridScreenWidth,setGridScreenWidt
             <RotateRightIcon onClick={() => setRotation(rotation + 90)}/>
           </Tooltip>
         </div>
-        {/* <div className={classes.widget}>
+        <div className={classes.widget}>
           <Tooltip title='Edition sur PDF'>
             {
-              listOfPictures[activeStep].visibleOnPdf === true
+              listOfPictures && listOfPictures[activeStep].visibleOnPdf === true
               ? <VisibilityIcon onClick={() => switchPictureVisibility(activeStep)}/>
               : <VisibilityOffIcon onClick={() => switchPictureVisibility(activeStep)}/>
             }
           </Tooltip>
-        </div> */}
+        </div>
       </div>
+      {
+        listOfPictures && listOfPictures[activeStep].visibleOnPdf === false
+        && <div style={{position:'absolute',top:swipeableViewsInformations && (swipeableViewsInformations.offsetTop),right:'50%',zIndex:'20',backgroundColor:'black',borderRadius:'10px',padding:'5px',marginTop:'15px',marginRight:'15px',opacity:'0.7'}}>
+        <Typography variant='h6' style={{color:'white'}}>Cette photo ne sera pas publiée sur tes documents PDF.</Typography>
+        </div>
+      
+      }
       
       
       <SwipeableViews
@@ -220,12 +206,13 @@ function SwipeableTextMobileStepper({imageList,gridScreenWidth,setGridScreenWidt
         onChangeIndex={handleStepChange}
         enableMouseEvents
         id='swipeableViews'
+        style={listOfPictures && listOfPictures[activeStep].visibleOnPdf === false && {border:'5px solid', borderColor:Color.secondary}}
       >
-        {imageList.map((step, index) => (
+        {listOfPictures && listOfPictures.map((step, index) => (
           displayImage(step,index)
         ))}
       </SwipeableViews>
-      <Typography style={{width:'100%',textAlign:'center',fontStyle:'italic'}}>{imageList.length && imageList[activeStep].title}</Typography>
+      <Typography style={{width:'100%',textAlign:'center',fontStyle:'italic'}}>{listOfPictures && listOfPictures.length && listOfPictures[activeStep].title}</Typography>
     </div>
   );
 }

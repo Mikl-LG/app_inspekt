@@ -120,8 +120,8 @@ export default function TitlebarGridList({inspektList,qotList,cieMembers,logInfo
     let expertiseFromUrl;
 
     if(displayFromUrl.id){
-      inspektFromUrl = inspektList && inspektList.find(i => i.id === displayFromUrl.id);
-      qotFromUrl = qotList && qotList.find(q => q.id === displayFromUrl.id);
+      inspektFromUrl = inspektList && inspektList.find(i => i.id == displayFromUrl.id);
+      qotFromUrl = qotList && qotList.find(q => q.id == displayFromUrl.id);
       expertiseFromUrl = inspektFromUrl || qotFromUrl;
     }
     

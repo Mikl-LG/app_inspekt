@@ -462,6 +462,49 @@ const formsCatalog = {
         ]
     },
 
+    guidanceSystem:{
+        brands:[
+            "AUTOFARM",
+            "BUISARD",
+            "ISAGRI",
+            "JOHN DEERE",
+            "KVERNELAND",
+            "MULLER",
+            "NEW HOLLAND",
+            "OUTBACK",
+            "PARROT",
+            "RDS",
+            "RAVEN",
+            "TEEJET",
+            "TOP CON",
+            "TRIMBLE",
+            "AGGPS",
+            "AGRAGPS",
+            "AGRICAD",
+            "AMAZONE",
+            "ARAG",
+            "ASHTECH",
+            "CASE IH",
+            "CAT",
+            "CLAAS",
+            "DICKEY JOHN",
+            "FENDT",
+            "FPI",
+            "FRITZMEIER",
+            "GENITRONIC",
+            "HEXAGONE",
+            "INNOVGPS",
+            "LAFORGE",
+            "LEICA",
+            "PULVEJUSTE",
+            "RINEX",
+            "SATEL",
+            "TECNOMA",
+            "WINTEX",
+            "YARA"
+        ]
+    },
+
     harvestingPlatform:{
         brands:[
             "BOURDONNEAU",
@@ -1537,6 +1580,53 @@ const formsCatalog = {
             "WILLMAR"
         ],// end sprayer brands
 
+    },
+
+    springTineHarrow : {
+        brands:[
+            "BEDNAR",
+            "CARRE",
+            "ECO MULCH",
+            "EINBOCK",
+            "HATZENBICHLER",
+            "JOSKIN",
+            "QUIVOGNE",
+            "APV",
+            "AGRI SYSTEM",
+            "AGRISTAL",
+            "AGRO FACTORY",
+            "AGRO MASZ",
+            "ALBERTI",
+            "AMAT",
+            "AWEMAK",
+            "BOURGAULT",
+            "BOURGUIGNON",
+            "BRANDT",
+            "BREMER",
+            "BROWNS",
+            "DEGELMANN",
+            "DOUCET",
+            "ETR BRETON",
+            "EXPOM",
+            "FABRICATION ARTISANALE",
+            "FAZA",
+            "FLEXI COIL",
+            "GARMACH",
+            "GORENC",
+            "HE-VA",
+            "JAR-MET",
+            "KLIMZA",
+            "KOCKERLING",
+            "MOM",
+            "MARSAGLIA",
+            "MC CONNEL",
+            "NAMYSLO",
+            "RABE",
+            "ROLMAKO",
+            "UNIA",
+            "WEAVING",
+            "ZAGRODA"
+        ]
     },
 
     sweeper:{
@@ -2735,6 +2825,12 @@ const formsCatalog = {
             },
             3:{
                 addOns:{
+
+                    "activationSignal":{
+                        title:'Activations de correction',
+                        property:'signalActivations'
+                    },
+
                     "attelageTracteur":{
                         title:'Attelage',
                         property : 'tractorLinkage',
@@ -2912,6 +3008,24 @@ const formsCatalog = {
                         data: formsCatalog.assistantFunction
                     },
 
+                    "correctionSignal":{
+                        title:'Signaux de correction compatibles',
+                        property:'signalCorrection',
+                        toggle: [
+                            "CENTERPOINT RTX",
+                            "CENTERPOINT VRS",
+                            "RANGEPOINT RTX",
+                            "EGNOS",
+                            "OMNISTAR HP",
+                            "OMNISTAR G2",
+                            "OMNISTAR XP",
+                            "RTK",
+                            "SF1",
+                            "SF2",
+                            "SF3",
+                        ]
+                    },
+
                     "cylindree":{
                         title:'Cylindrée (cm3)',
                         property:'cylinderVolume',
@@ -2928,6 +3042,12 @@ const formsCatalog = {
                         title:'Déchargement',
                         property:'trailerUnload',
                         data: formsCatalog.silageTrailerUnload
+                    },
+
+                    "diagonaleEcran":{
+                        title:'Diagonale écran (cm)',
+                        property:'screenDiagonal',
+                        numeric: true
                     },
 
                     "diametreDisquesSemeurs":{
@@ -3628,6 +3748,18 @@ const formsCatalog = {
                         ]  
                     },
 
+                    "optionsGuidage":{
+                        title:'Options',
+                        property : 'guidanceOptions',
+                        toggle:[
+                            "FAISCEAU",
+                            "KIT BAGUE",
+                            "RADIO",
+                            "SUPPORT ANTENNE"
+                            
+                        ]  
+                    },
+
                     "optionsHerse":{
                         title:'Options',
                         property : 'harrowOptions',
@@ -3883,6 +4015,12 @@ const formsCatalog = {
                         numeric: true
                     },
 
+                    "precisionSignal":{
+                        title:'Précision du signal (cm)',
+                        property:'signalPrecision',
+                        numeric: true
+                    },
+
                     "puissance":{
                         title:'Puissance (ch)',
                         property:'horsePower',
@@ -3971,7 +4109,6 @@ const formsCatalog = {
                     "sectionPoutre":{
                         title:'Section poutre',
                         property:'beamSection',
-                        
                     },
 
                     "sectionEssieu":{
@@ -4131,6 +4268,12 @@ const formsCatalog = {
                         title:'Type lamier',
                         property:'mowerType',
                         data: ["DISQUES","TAMBOURS"]
+                    },
+
+                    "typeGuidage":{
+                        title:'Type de guidage',
+                        property:'guidanceType',
+                        data: ["AUTOGUIDAGE SUR ORBITROL","AUTOGUIDAGE SUR VOLANT","BARRE DE GUIDAGE"]
                     },
 
                     "typeHerse":{
@@ -4427,6 +4570,11 @@ const formsCatalog = {
                         data: formsCatalog.implementPowerTransmission
                     },
 
+                    "versionConsole":{
+                        title:'Version console',
+                        property:'screenVersion'
+                    },
+
                     "vitesseMaximaleAutomoteur":{
                         title:'Vitesse maximale',
                         property:'automotiveMaxSpeed',
@@ -4521,6 +4669,11 @@ const formsCatalog = {
                 ],
 
                 addOns:{
+                    "antenne":{
+                        title:'Antenne',
+                        property:'antenna',
+                        picture: true
+                    },
                     "attelage":{
                         title:'Attelage',
                         property:'linkage',
@@ -4618,9 +4771,21 @@ const formsCatalog = {
                         picture: true
                     },
 
+                    "console":{
+                        title:'Console',
+                        property:'screen',
+                        picture: true
+                    },
+
                     "controleTechnique":{
                         title:'Contrôle technique',
                         property:'technicalCertification',
+                        picture: true
+                    },
+
+                    "controleur":{
+                        title:'Controleur',
+                        property:'controller',
                         picture: true
                     },
 
@@ -4873,6 +5038,12 @@ const formsCatalog = {
                         picture: true
                     },
 
+                    "supportAntenne":{
+                        title:'Support d\'antenne',
+                        property:'antennaSupport',        
+                        picture: true
+                    },
+
                     "tapis":{
                         title:'Tapis',
                         property:'conveyorBelt',        
@@ -4904,6 +5075,12 @@ const formsCatalog = {
                     "visAlimentation":{
                         title:'Vis alimentation',
                         property:'feedingScrew',        
+                        picture: true
+                    },
+
+                    "volant":{
+                        title:'Volant',
+                        property:'steeringWheel',        
                         picture: true
                     }
                 }

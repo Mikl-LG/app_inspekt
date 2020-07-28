@@ -223,9 +223,10 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo,pictures,setLoader) => {
 
                 let base64ArrayPictures = [];
                 let n = 0;
+
                 const keys = await Promise.resolve(Object.keys(pictures)); //[leftFront,rightBack]
                 keys.map(async(k) => {                      
-                        let picture = await Promise.resolve(pictures[k].replace('%2F','/'));
+                        let picture = await Promise.resolve(pictures[k].value.replace('%2F','/'));
                         let splitted = await Promise.resolve(picture.split('/'));
                         let key = await Promise.resolve(splitted[splitted.length-1]);
                         let params = await Promise.resolve({Bucket : 'inspekt-prod',Key:`MEDIASLANDER/${key}`})

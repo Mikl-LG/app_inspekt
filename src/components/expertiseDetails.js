@@ -137,6 +137,7 @@ export default function ExpertiseDetails(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [inputQuotations, setInputQuotations] = React.useState({});
   const [gridScreenWidth,setGridScreenWidth] = React.useState({xs:12,sm:6,md:6,lg:6,scrollToTop:0})
+  const [listOfPictures,setListOfPictures] = React.useState();
   const [loader,setLoader] = React.useState({isOpen:false,title:'',content:''})
   const [priceDialog,setPriceDialog] = React.useState({isOpen : false});
   const [qoterMode,setQoterMode] = React.useState()
@@ -237,7 +238,8 @@ export default function ExpertiseDetails(props) {
   const editPdf = (type) => {
     //type = ficheExpertise || bonReprise || contreExpertise
     setAnchorEl(null);
-    getPdf(focusMachine.orderedDetailsToPrint,type,logInfo,focusMachine.pictures,setLoader)
+    const visibleOnPdfPictures = listOfPictures.filter((p) => p.visibleOnPdf === true);
+    getPdf(focusMachine.orderedDetailsToPrint,type,logInfo,visibleOnPdfPictures,setLoader)
     setLoader({isOpen:true,title:'PDF en construction...',content:'Tu pourras télécharger ta fiche dans quelques secondes.'});
   }
 
@@ -454,7 +456,7 @@ export default function ExpertiseDetails(props) {
   }
 
   useEffect(()=>{
-    
+    setListOfPictures(focusMachine.imageList);
   })
 
   return (
@@ -587,7 +589,8 @@ export default function ExpertiseDetails(props) {
         <Grid container>
           <Grid item xs={gridScreenWidth.xs} sm={gridScreenWidth.sm} md={gridScreenWidth.md} lg={gridScreenWidth.lg}>
             <ImageSlider 
-              imageList={focusMachine.imageList}
+              listOfPictures = {listOfPictures}
+              setListOfPictures = {setListOfPictures}
               gridScreenWidth = {gridScreenWidth}
               setGridScreenWidth = {setGridScreenWidth}
               focusMachine = {focusMachine}

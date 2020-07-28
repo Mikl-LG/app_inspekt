@@ -376,6 +376,23 @@ const Natures = [
         }
     },
     {
+        name: "Guidage",
+        key: "guidanceSystem",
+        formStepsTypes : {
+            2: {
+                type: 'regular',
+                addOns:[]
+            },
+            3:{
+                addOns: ["usureGenerale","typeGuidage","precisionSignal","correctionSignal","activationSignal","versionConsole","diagonaleEcran","optionsGuidage","documents"]
+            },
+            4:{
+                type:'regular',
+                addOns:["antenne","console","volant","controleur","supportAntenne"]
+            }
+        }
+    },
+    {
         name: "Godet",
         key: "dipper",
         formStepsTypes : {
@@ -406,6 +423,23 @@ const Natures = [
             4:{
                 type:'regular',
                 addOns:["lame","spire"]
+            }
+        }
+    },
+    {
+        name: "Herse étrille",
+        key: "springTineHarrow",
+        formStepsTypes : {
+            2: {
+                type: 'regular',
+                addOns: ["nbrHectares"]
+            },
+            3:{
+                addOns:["usureGenerale","largeurTravailMetres","attelageOutil","repliageChassis","nombreDentsARemplacer","commandesHydrauliques","conformite","documents"]
+            },
+            4:{
+                type:'regular',
+                addOns:["dents"]
             }
         }
     },
