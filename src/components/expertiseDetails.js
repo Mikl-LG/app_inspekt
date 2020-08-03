@@ -215,7 +215,8 @@ export default function ExpertiseDetails(props) {
         let picture = await Promise.resolve(pictures[k].replace('%2F','/'));
         let splitted = await Promise.resolve(picture.split('/'));
         let key = await Promise.resolve(splitted[splitted.length-1]);
-        let params = await Promise.resolve({Bucket : 'inspekt-prod',Key:`MEDIASLANDER/${key}`})
+        let folder = await Promise.resolve(splitted[splitted.length-2]);
+        let params = await Promise.resolve({Bucket : 'inspekt-prod',Key:`${folder}/${key}`})
 
         s3.getObject(params, async(err, data) => {
           let blob = await Promise.resolve(new Blob([data.Body], {type: 'image/jpeg'}));
