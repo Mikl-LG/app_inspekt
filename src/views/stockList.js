@@ -2,11 +2,15 @@ import React, { useEffect } from 'react';
 import Moment from 'moment';
 
 import CancelIcon from '@material-ui/icons/Cancel';
-import { lighten, makeStyles } from '@material-ui/core/styles';
-import Chip from '@material-ui/core/Chip';
-import Input from '@material-ui/core/Input';
+import { makeStyles } from '@material-ui/core/styles';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import MenuItem from '@material-ui/core/MenuItem';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -16,12 +20,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
 import Select from '@material-ui/core/Select';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import SearchIcon from '@material-ui/icons/Search';
-import Switch from '@material-ui/core/Switch';
+import { Tooltip } from '@material-ui/core';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock,faEye,faFrown,faMoneyCheck,faSpinner,faTrashAlt,faTrophy } from '@fortawesome/free-solid-svg-icons';
@@ -29,6 +29,7 @@ import { faClock,faEye,faFrown,faMoneyCheck,faSpinner,faTrashAlt,faTrophy } from
 import Color from '../constants/color.js';
 import ExpertiseDetails from '../components/expertiseDetails';
 import FormsCatalog from '../constants/FormsCatalog';
+import listePdf from '../components/listePdf';
 import Natures from '../constants/Natures';
 import SnackBar from '../components/snackBar';
 
@@ -210,9 +211,31 @@ export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFrom
   const [natureList,setNatureList] = React.useState(Natures.Natures);
   const [isExpertiseDetailsOpen,setIsExpertiseDetailsOpen] = React.useState(false);
   const [focusMachine,setFocusMachine] = React.useState({});
+  const [loader,setLoader] = React.useState({isOpen:false,title:'',content:''})
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
   const [sort,setSort] = React.useState({id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],customerSalePrice:[]});
   const [tempSort,setTempSort] = React.useState({id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],customerSalePrice:[]});
+
+  const downloadStocksInPdf = async() => {
+
+    setLoader({isOpen:true,title:'Téléchargement de la liste occasion...',content:'On récupère la liste de tes stocks, au format PDF.'});
+
+    const _stockList = stockList.map((e) => {
+      return{...e,machineFeatureToString : machineFeatureToString(e.machineFeatures)}
+    })
+
+    const listeOccasion = await Promise.resolve(listePdf(_stockList,logInfo,setLoader));
+
+    // let blob = await Promise.resolve(new Blob([listeOccasion], {type: 'text/csv; charset=utf-18'}));
+    // let link = await Promise.resolve(document.createElement('a'));
+    // link.href = await Promise.resolve(window.URL.createObjectURL(blob));
+    // link.download = await Promise.resolve('qots.csv');
+    // let clicked = await new Promise((_clicked) => {
+    //   link.click();
+    //   _clicked(true);
+    //   setLoader({isOpen:false});
+    // })
+  }
 
   const machineFeatureToString = (machineFeatures) => {
 
@@ -490,6 +513,15 @@ export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFrom
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
+        <div style={{width:'100%',color:Color.secondary,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+            <div style={{fontSize:'0.8em',fontStyle:'italic',marginLeft:'15px',color:Color.secondary}}>{stockList.length} résultat(s)
+            </div>
+              <div style={{cursor:'pointer',marginRight:'15px'}}>
+                <Tooltip title='Télécharger au format PDF'>
+                  <GetAppIcon onClick={() => downloadStocksInPdf()}/>
+                </Tooltip>
+              </div>
+          </div>
         <TableContainer>
           <Table
             className={classes.table}
@@ -531,7 +563,11 @@ export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFrom
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.nature}</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.brand}</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.model}</TableCell>
-                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.details}</TableCell>
+                      <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>
+                        <div style={{height:'50px',overflow:'scroll'}}>
+                          {row.details}
+                        </div>
+                      </TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.year}</TableCell>
                       <TableCell className={classes.TableCell} align="center" padding="none" onClick={() => machineClicked(row.expertiseObject)}>{row.customerSalePrice}€</TableCell>
                     </TableRow>
@@ -551,6 +587,20 @@ export default function EnhancedTable({stockList,cieMembers,logInfo,setStateFrom
           getInspekts={getInspekts}
           getQots={getQots}
         />
+        <Dialog
+          open={loader.isOpen}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{loader.title}</DialogTitle>
+          <DialogContent>
+            <LinearProgress style={{width:'100%'}} />
+            <LinearProgress style={{width:'100%'}} color="secondary" />
+            <DialogContentText id="alert-dialog-description">
+              {loader.content}
+            </DialogContentText>
+          </DialogContent>
+        </Dialog>
         <SnackBar
           handleClose={() => setSnackbar({isopen : false})}
           message={snackbar.message}
