@@ -52,25 +52,32 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo,pictures,setLoader) => {
             documentPdf.line(15,65,105,65);
             documentPdf.setFontSize(11);
             let Xline = 70;
+            let page = 1;
             orderedDetailsToPrint && orderedDetailsToPrint.map((element) => {
+
+                if(Xline > 270){
+                    page += 1;
+                    documentPdf.insertPage(page);
+                    documentPdf.setPage(page);
+                    Xline = 15;
+                }
                 
-                    if(element === 'divider' && Xline > 70){
-                        documentPdf.line(20,Xline,190,Xline);
-                        Xline += 5;
-                    }else if(element.visibleOnPdf === true){
-                        let dX = documentPdf.getTextWidth(element.title);
-                        documentPdf.setFontStyle('bold');
-                        documentPdf.text(element.title, 15, Xline);
-                        documentPdf.setFontStyle('normal');
-                        documentPdf.text('  : '+element.value, dX + 15, Xline,{maxWidth:'150'});
-                        let informationLength = documentPdf.getTextWidth(element.title + element.value) + 15;
+                if(element === 'divider' && Xline > 70){
+                    documentPdf.line(20,Xline,190,Xline);
+                    Xline += 5;
+                }else if(element.visibleOnPdf === true){
+                    let dX = documentPdf.getTextWidth(element.title);
+                    documentPdf.setFontStyle('bold');
+                    documentPdf.text(element.title, 15, Xline);
+                    documentPdf.setFontStyle('normal');
+                    documentPdf.text('  : '+element.value, dX + 15, Xline,{maxWidth:'150'});
+                    let informationLength = documentPdf.getTextWidth(element.title + element.value) + 15;
                         
                         //on passe une ligne si le texte génère un retour à la ligne (= longueur > 150)
-                        informationLength > 150 
-                        ? Xline += 10
-                        : Xline += 5
-
-                    }
+                    informationLength > 150 
+                    ? Xline += 10
+                    : Xline += 5
+                }
             })
         
             /**CONTRACT DETAILS */
@@ -95,27 +102,41 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo,pictures,setLoader) => {
             documentPdf.line(15,65,105,65);
             documentPdf.setFontSize(11);
             let Xline = 70;
+            let page = 1;
             orderedDetailsToPrint && orderedDetailsToPrint.map((element) => {
+
+                if(Xline > 270){
+                    page += 1;
+                    documentPdf.insertPage(page);
+                    documentPdf.setPage(page);
+                    Xline = 15;
+                }
                 
-                    if(element === 'divider' && Xline > 70){ //UNABLE TO SET A DIVIDER TO BEGIN
-                        documentPdf.line(20,Xline,190,Xline)
-                        Xline += 5;
-                    }else if(element.visibleOnPdf === true){
-                        let dX = documentPdf.getTextWidth(element.title);
-                        documentPdf.setFontStyle('bold');
-                        documentPdf.rect(15,Xline-3,3,3);
-                        documentPdf.text(element.title, 20, Xline);
-                        documentPdf.setFontStyle('normal');
-                        documentPdf.text('  : '+element.value, dX + 20, Xline,{maxWidth:'150'});
-                        let informationLength = documentPdf.getTextWidth(element.title + element.value) + 15;
+                if(element === 'divider' && Xline > 70){ //UNABLE TO SET A DIVIDER TO BEGIN
+                    documentPdf.line(20,Xline,190,Xline)
+                    Xline += 5;
+                }else if(element.visibleOnPdf === true){
+                    let dX = documentPdf.getTextWidth(element.title);
+                    documentPdf.setFontStyle('bold');
+                    documentPdf.rect(15,Xline-3,3,3);
+                    documentPdf.text(element.title, 20, Xline);
+                    documentPdf.setFontStyle('normal');
+                    documentPdf.text('  : '+element.value, dX + 20, Xline,{maxWidth:'150'});
+                    let informationLength = documentPdf.getTextWidth(element.title + element.value) + 15;
                         
                         //on passe une ligne si le texte génère un retour à la ligne (= longueur > 150)
-                        informationLength > 150 
-                        ? Xline += 10
-                        : Xline += 5
-                    }
+                    informationLength > 150 
+                    ? Xline += 10
+                    : Xline += 5
+                }
             })
             Xline += 10;
+            if(Xline > 270){
+                page += 1;
+                documentPdf.insertPage(page);
+                documentPdf.setPage(page);
+                Xline = 15;
+            }
             documentPdf.setFontSize(9);
             documentPdf.text('Signature concession',15,Xline);
             documentPdf.text('Signature client',120,Xline);
@@ -124,13 +145,56 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo,pictures,setLoader) => {
             documentPdf.setFontSize(8);
             documentPdf.text('"Je déclare ne pas avoir connaissance',120,Xline += 8);
             documentPdf.text('de vices cachés sur cette machine."',120,Xline += 3);
-    
-            /**CONTRACT DETAILS */
-            documentPdf.setFontSize(14);
-            documentPdf.setFontStyle('bold');
         
-            documentPdf.save('inspektReprise_' + orderedDetailsToPrint[0].value+'.pdf');
-            setLoader({isOpen:false});
+            page += 1;
+            documentPdf.insertPage(page);
+            documentPdf.setPage(page);
+
+            const downloadPictures = new Promise(async(resolve,reject) => {
+
+                let base64ArrayPictures = [];
+                let n = 0;
+
+                const keys = await Promise.resolve(Object.keys(pictures)); //[leftFront,rightBack]
+                keys.map(async(k) => {                      
+                    let picture = await Promise.resolve(pictures[k].value.replace('%2F','/'));
+                    let splitted = await Promise.resolve(picture.split('/'));
+                    let key = await Promise.resolve(splitted[splitted.length-1]);
+                    let params = await Promise.resolve({Bucket : 'inspekt-prod',Key:`MEDIASLANDER/${key}`})
+                    
+                    s3.getObject(params, async(err, data) => {
+                        let blob = await Promise.resolve(new Blob([data.Body], {type: data.ContentType}));
+                        var pictureReader = new FileReader();
+                        pictureReader.readAsDataURL(blob); 
+                        pictureReader.onloadend = async() => {
+                            let picturebase64data = await Promise.resolve(pictureReader.result);
+                            base64ArrayPictures = await Promise.resolve([...base64ArrayPictures,picturebase64data]);
+                            base64ArrayPictures.length === keys.length
+                            && resolve(base64ArrayPictures)             
+                        }
+                    })  
+                })
+            })
+
+            const pictureHeightSelected = 85;
+            downloadPictures.then((arrayOfPictures) => {
+                Xline =10;
+                arrayOfPictures.forEach((picture) => {
+                    if(Xline >= 290 - pictureHeightSelected){
+                        page += 1;
+                        documentPdf.insertPage(page);
+                        documentPdf.setPage(page);
+                        Xline =10;
+                    }
+                    let pictureRatio = documentPdf.getImageProperties(picture).width / documentPdf.getImageProperties(picture).height;
+                    let leftMargin = (210 - pictureHeightSelected * pictureRatio) / 2;
+                    documentPdf.addImage(picture,'JPG',leftMargin,Xline,pictureHeightSelected*pictureRatio,pictureHeightSelected);
+                    Xline += pictureHeightSelected + 5;
+                })
+
+                documentPdf.save('InspektFichePhoto_' + orderedDetailsToPrint[0].value+'.pdf');
+                setLoader({isOpen:false});
+            })
 
         }else if(type === 'contreExpertise'){
     
@@ -147,25 +211,33 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo,pictures,setLoader) => {
             documentPdf.line(15,65,105,65)
             documentPdf.setFontSize(11);
             let Xline = 70;
+            let page = 1;
             orderedDetailsToPrint && orderedDetailsToPrint.map((element) => {
-                
-                    if(element === 'divider' && Xline > 70){ //UNABLE TO SET A DIVIDER TO BEGIN
-                        documentPdf.line(20,Xline,190,Xline);
-                        Xline += 5;
-                    }else if(element.visibleOnPdf === true){
-                        let dX = documentPdf.getTextWidth(element.title);
-                        documentPdf.setFontStyle('bold');
-                        documentPdf.rect(15,Xline-3,3,3);
-                        documentPdf.text(element.title, 20, Xline);
-                        documentPdf.setFontStyle('normal');
-                        documentPdf.text('  : '+element.value, dX + 20, Xline,{maxWidth:'150'});
-                        let informationLength = documentPdf.getTextWidth(element.title + element.value) + 15;
+
+                if(Xline > 270){
+                    page += 1;
+                    documentPdf.insertPage(page);
+                    documentPdf.setPage(page);
+                    Xline = 15;
+                }
+            
+                if(element === 'divider' && Xline > 70){ //UNABLE TO SET A DIVIDER TO BEGIN
+                    documentPdf.line(20,Xline,190,Xline);
+                    Xline += 5;
+                }else if(element.visibleOnPdf === true){
+                    let dX = documentPdf.getTextWidth(element.title);
+                    documentPdf.setFontStyle('bold');
+                    documentPdf.rect(15,Xline-3,3,3);
+                    documentPdf.text(element.title, 20, Xline);
+                    documentPdf.setFontStyle('normal');
+                    documentPdf.text('  : '+element.value, dX + 20, Xline,{maxWidth:'150'});
+                    let informationLength = documentPdf.getTextWidth(element.title + element.value) + 15;
                         
                         //on passe une ligne si le texte génère un retour à la ligne (= longueur > 150)
-                        informationLength > 150 
-                        ? Xline += 10
-                        : Xline += 5
-                    }
+                    informationLength > 150 
+                    ? Xline += 10
+                    : Xline += 5
+                }
             })
             Xline += 10;
             documentPdf.setFontSize(9);
@@ -196,28 +268,37 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo,pictures,setLoader) => {
             documentPdf.line(15,65,105,65);
             documentPdf.setFontSize(11);
             let Xline = 70;
+            let page = 1;
             orderedDetailsToPrint && orderedDetailsToPrint.map((element) => {
                 
-                    if(element === 'divider' && Xline > 70){ //UNABLE TO SET A DIVIDER TO BEGIN
-                        documentPdf.line(20,Xline,190,Xline);
-                        Xline += 5;
-                    }else if(element.visibleOnPdf === true){
-                        let dX = documentPdf.getTextWidth(element.title);
-                        documentPdf.setFontStyle('bold');
+                if(Xline > 270){
+                    page += 1;
+                    documentPdf.insertPage(page);
+                    documentPdf.setPage(page);
+                    Xline = 15;
+                }
+                    
+                if(element === 'divider' && Xline > 70){ //UNABLE TO SET A DIVIDER TO BEGIN
+                    documentPdf.line(20,Xline,190,Xline);
+                    Xline += 5;
+                }else if(element.visibleOnPdf === true){
+                    let dX = documentPdf.getTextWidth(element.title);
+                    documentPdf.setFontStyle('bold');
                         //documentPdf.rect(15,Xline-3,3,3)
-                        documentPdf.text(element.title, 20, Xline);
-                        documentPdf.setFontStyle('normal');
-                        documentPdf.text('  : '+element.value, dX + 20, Xline,{maxWidth:'150'});
-                        let informationLength = documentPdf.getTextWidth(element.title + element.value) + 15;
+                    documentPdf.text(element.title, 20, Xline);
+                    documentPdf.setFontStyle('normal');
+                    documentPdf.text('  : '+element.value, dX + 20, Xline,{maxWidth:'150'});
+                    let informationLength = documentPdf.getTextWidth(element.title + element.value) + 15;
                         
                         //on passe une ligne si le texte génère un retour à la ligne (= longueur > 150)
-                        informationLength > 150 
-                        ? Xline += 10
-                        : Xline += 5
-                    }
+                    informationLength > 150 
+                    ? Xline += 10
+                    : Xline += 5
+                }
             })
-            documentPdf.addPage();
-            documentPdf.setPage(2);
+            page += 1;
+            documentPdf.insertPage(page);
+            documentPdf.setPage(page);
 
             const downloadPictures = new Promise(async(resolve,reject) => {
 
@@ -226,22 +307,22 @@ const getPdf = async(orderedDetailsToPrint,type,logInfo,pictures,setLoader) => {
 
                 const keys = await Promise.resolve(Object.keys(pictures)); //[leftFront,rightBack]
                 keys.map(async(k) => {                      
-                        let picture = await Promise.resolve(pictures[k].value.replace('%2F','/'));
-                        let splitted = await Promise.resolve(picture.split('/'));
-                        let key = await Promise.resolve(splitted[splitted.length-1]);
-                        let params = await Promise.resolve({Bucket : 'inspekt-prod',Key:`MEDIASLANDER/${key}`})
-                
-                        s3.getObject(params, async(err, data) => {
-                            let blob = await Promise.resolve(new Blob([data.Body], {type: data.ContentType}));
-                            var pictureReader = new FileReader();
-                            pictureReader.readAsDataURL(blob); 
-                            pictureReader.onloadend = async() => {
-                                let picturebase64data = await Promise.resolve(pictureReader.result);
-                                base64ArrayPictures = await Promise.resolve([...base64ArrayPictures,picturebase64data]);
-                                base64ArrayPictures.length === keys.length
-                                && resolve(base64ArrayPictures)             
-                            }
-                        })  
+                    let picture = await Promise.resolve(pictures[k].value.replace('%2F','/'));
+                    let splitted = await Promise.resolve(picture.split('/'));
+                    let key = await Promise.resolve(splitted[splitted.length-1]);
+                    let params = await Promise.resolve({Bucket : 'inspekt-prod',Key:`MEDIASLANDER/${key}`})
+                    
+                    s3.getObject(params, async(err, data) => {
+                        let blob = await Promise.resolve(new Blob([data.Body], {type: data.ContentType}));
+                        var pictureReader = new FileReader();
+                        pictureReader.readAsDataURL(blob); 
+                        pictureReader.onloadend = async() => {
+                            let picturebase64data = await Promise.resolve(pictureReader.result);
+                            base64ArrayPictures = await Promise.resolve([...base64ArrayPictures,picturebase64data]);
+                            base64ArrayPictures.length === keys.length
+                            && resolve(base64ArrayPictures)             
+                        }
+                    })  
                 })
             })
 

@@ -11,7 +11,7 @@ const Natures = [
                 addOns: ["nbrHectares"] // ex. ['tires'] (used by NewEvaluation.js)
             },
             3: {
-                addOns: ["usureGenerale","largeurTravailMetres","typeAligneusePierres","attelageOutil","repliageChassis","nombrePoutres","sectionPoutre","usureSocs","typeReglageAngle","miseAuTransport","commandesHydrauliques","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","documents"]
+                addOns: ["usureGenerale","largeurTravailMetres","typeAligneusePierres","attelageOutil","repliageChassis","nombrePoutres","sectionPoutre","usureSocs","typeReglageAngle","miseAuTransport","commandesHydrauliques","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
@@ -28,7 +28,7 @@ const Natures = [
                 addOns:[]
             },
             3: {
-                addOns: ["usureGenerale","largeurTravailMetres","attelageOutil","nombreRotors","nombreBrasRotors","nombreDentsARemplacer","miseEnAndain","suiviSol","essieuPrincipal","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsAndaineur","conformite","documents"]
+                addOns: ["usureGenerale","largeurTravailMetres","attelageOutil","nombreRotors","nombreBrasRotors","nombreDentsARemplacer","miseEnAndain","suiviSol","essieuPrincipal","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsAndaineur","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
@@ -45,7 +45,7 @@ const Natures = [
                 addOns: []
             },
             3:{
-                addOns:["usureGenerale","capaciteEnM3","chargeUtile","largeurPickUp","nombreDentsARemplacer","nombreCouteaux","dechargementRemorque","usureChaines","attelageRemorque","suspensionFleche","typeEssieuRemorque","sectionEssieu","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsAutochargeuse","conformite","documents"]
+                addOns:["usureGenerale","capaciteEnM3","chargeUtile","largeurPickUp","nombreDentsARemplacer","nombreCouteaux","dechargementRemorque","usureChaines","attelageRemorque","suspensionFleche","typeEssieuRemorque","sectionEssieu","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsAutochargeuse","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
@@ -62,7 +62,7 @@ const Natures = [
                 addOns: []
             },
             3:{
-                addOns:["usureGenerale","largeurTravailMetres","entrainementOutil","attelageOutil","repliageChassis","commandesHydrauliques","typeReglageAngle","usureChassis","usureBalais","miseAuTransport","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","documents"]
+                addOns:["usureGenerale","largeurTravailMetres","entrainementOutil","attelageOutil","repliageChassis","commandesHydrauliques","typeReglageAngle","usureChassis","usureBalais","miseAuTransport","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
@@ -79,7 +79,7 @@ const Natures = [
                 addOns: []
             },
             3:{
-                addOns:["usureGenerale","capaciteEnM3","chargeUtile","materiauxCaisse","remorqueBennage","remorquePorte","attelageRemorque","suspensionFleche","typeEssieuRemorque","sectionEssieu","commandesHydrauliques","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","documents"]
+                addOns:["usureGenerale","capaciteEnM3","chargeUtile","materiauxCaisse","remorqueBennage","remorquePorte","attelageRemorque","suspensionFleche","typeEssieuRemorque","sectionEssieu","commandesHydrauliques","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
@@ -96,7 +96,7 @@ const Natures = [
                 addOns: []
             },
             3:{
-                addOns: ["usureGenerale","chargeUtile","materiauxCaisse","usureChassis","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsBetaillere","conformite","documents"]
+                addOns: ["usureGenerale","chargeUtile","materiauxCaisse","usureChassis","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsBetaillere","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
@@ -113,7 +113,7 @@ const Natures = [
                 addOns: ["nbrHectares"]
             },
             3:{
-                addOns: ["usureGenerale","largeurTravailMetres","typeBroyeur","attelageOutil","repliageChassis","nombreCouteauxAremplacer","miseAuTransport","commandesHydrauliques","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsBroyeur","conformite","documents"]
+                addOns: ["usureGenerale","largeurTravailMetres","typeBroyeur","attelageOutil","repliageChassis","nombreCouteauxAremplacer","miseAuTransport","commandesHydrauliques","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsBroyeur","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
@@ -164,11 +164,28 @@ const Natures = [
                 addOns: []
             },
             3:{
-                addOns:["usureGenerale","largeurTravailMetres","attelageOutil","repliageChassis","nombreRotors","fixationDentsHerse","nombreDentsARemplacer","typeRouleau","capaciteEnLitres","typeDistribution","typeEnterrage","usureSocs","commandesHydrauliques","conformite","documents"]
+                addOns:["usureGenerale","largeurTravailMetres","attelageOutil","repliageChassis","nombreRotors","fixationDentsHerse","nombreDentsARemplacer","typeRouleau","capaciteEnLitres","typeDistribution","typeEnterrage","usureSocs","commandesHydrauliques","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'regular',
                 addOns:["dents","rouleau","boitier","cuve","socs","rampe"]
+            }
+        }
+    },
+    {
+        name: "Cover crop",
+        key: "cropTillage",
+        formStepsTypes : {
+            2: {
+                type: 'regular',
+                addOns: ["nbrHectares"]
+            },
+            3:{
+                addOns:["usureGenerale","largeurTravailMetres","typeCoverCrop","attelageOutil","repliageChassis","sectionPoutre","nombreSocsDisques","typeSocsDisques","usureSocsDisques","securiteTravailSol","typeReglageAngle","hauteurDegagement","typeRouleau","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","etatCarosserie","etatEclairage","documents"]
+            },
+            4:{
+                type:'trailed',
+                addOns:["usureDisques","securite"]
             }
         }
     },
@@ -181,7 +198,7 @@ const Natures = [
                 addOns: ["nbrHectares"]
             },
             3:{
-                addOns:["usureGenerale","largeurTravailMetres","typeCueilleur","nombreRangs","ecartementRangs","reglagePlaques","marqueTablierAttelageMoissonneuse","usureRouleauxEpanouilleurs","usureVis","usureCouteaux","usureChainesAlimentation","usureChaines","optionsCueilleur","conformite","documents"]
+                addOns:["usureGenerale","largeurTravailMetres","typeCueilleur","nombreRangs","ecartementRangs","reglagePlaques","marqueTablierAttelageMoissonneuse","usureRouleauxEpanouilleurs","usureVis","usureCouteaux","usureChainesAlimentation","usureChaines","optionsCueilleur","conformite","etatCarosserie","documents"]
             },
             4:{
                 addOns:["broyeur","rouleauxEpanouilleurs","visAlimentation"]
@@ -197,7 +214,7 @@ const Natures = [
                 addOns: ["nbrHectares"]
             },
             3:{
-                addOns:["usureGenerale","largeurTravailMetres","attelageOutil","repliageChassis","sectionPoutre","nombreSocsDisques","typeSocsDisques","usureSocsDisques","securiteTravailSol","typeReglageAngle","hauteurDegagement","typeRouleau","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","documents"]
+                addOns:["usureGenerale","largeurTravailMetres","attelageOutil","repliageChassis","sectionPoutre","nombreSocsDisques","typeSocsDisques","usureSocsDisques","securiteTravailSol","typeReglageAngle","hauteurDegagement","typeRouleau","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
@@ -231,11 +248,11 @@ const Natures = [
                 addOns: []
             },
             3:{
-                addOns:["usureGenerale","attelageOutil","capaciteEnM3","entrainementTurbine","usureTurbine","nombreDemeleurs","entrainementDemeleurs","usureDemeleurs","vitessePDF","usureTapis","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","documents"]
+                addOns:["usureGenerale","attelageOutil","capaciteEnM3","entrainementTurbine","usureTurbine","nombreDemeleurs","entrainementDemeleurs","usureDemeleurs","vitessePDF","usureTapis","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
-                addOns:["turbine","demeleurs"]
+                addOns:["turbine","demeleurs","tapis","couteaux","interieurCaisse_1","interieurCaisse_2","boitier","goulotte"]
             }
         }
     },
@@ -245,10 +262,10 @@ const Natures = [
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: ["version","hrsMoteur","hrsPrev","nbrHectares","nbrBottes"]
+                addOns: ["version","hrsMoteur","hrsPrev","nbrHectares","cptrBottes"]
             },
             3:{
-                addOns:["usureGenerale","attelageOutil","capaciteEnM3","repliageChassis","sectionPoutre","nombreSocsDisques","typeSocsDisques","usureSocsDisques","securiteTravailSol","typeReglageAngle","hauteurDegagement","typeRouleau","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","documents"]
+                addOns:["usureGenerale","attelageOutil","capaciteEnM3","repliageChassis","sectionPoutre","nombreSocsDisques","typeSocsDisques","usureSocsDisques","securiteTravailSol","typeReglageAngle","hauteurDegagement","typeRouleau","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
@@ -262,10 +279,10 @@ const Natures = [
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: ["nbrBottes"]
+                addOns: ["cptrBottes"]
             },
             3:{
-                addOns:["usureGenerale","attelageOutil","diametreMaxBotte","rotationEnrubanneuse","nombreRouleaux","nombreCourroies","commandesEnrubanneuse","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsEnrubanneuse","conformite","documents"]
+                addOns:["usureGenerale","attelageOutil","diametreMaxBotte","rotationEnrubanneuse","nombreRouleaux","nombreCourroies","commandesEnrubanneuse","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsEnrubanneuse","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
@@ -279,14 +296,14 @@ const Natures = [
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: ["hrsMoteur", "hrsRotor"]
+                addOns: ["hrsMoteur", "hrsRotor","compteur","interieurCabine_1","interieurCabine_2"]
             },
             3:{
-                addOns:["usureGenerale","puissance","transmissionAutomoteur","transmissionAutomoteurModele","largeurCanal","rouleauxAlimentation","eclateur","reglageContreCouteau","cabineAutomoteur","usureTolesRotor","usureTolesGoulotte","usureCouteaux","usureContreCouteau","marqueRecolteur","modeleRecolteur","vitesseMaximaleAutomoteur","autoguidageEmbarque","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","optionsEnsileuse","conformite","documents"]
+                addOns:["usureGenerale","puissance","etatMoteur","transmissionAutomoteur","transmissionAutomoteurModele","etatTransmission","largeurCanal","rouleauxAlimentation","nombreCouteaux","eclateur","reglageContreCouteau","cabineAutomoteur","etatClimatisation","usureTolesRotor","usureTolesGoulotte","usureCouteaux","usureContreCouteau","marqueRecolteur","modeleRecolteur","vitesseMaximaleAutomoteur","etatPonts","autoguidageEmbarque","commentaireConsole","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","optionsEnsileuse","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'regular',
-                addOns:["compteur","recolteur_1","recolteur_2","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","interieurCabine_1","interieurCabine_2","carteGrise"]
+                addOns:["recolteur_1","recolteur_2","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","carteGrise"]
             }
         }
     },
@@ -299,7 +316,7 @@ const Natures = [
                 addOns: []
             },
             3:{
-                addOns:["usureGenerale","largeurTravailMetres","capaciteEnLitres","attelageOutil","entrainementOutil","commandesHydrauliques","freinageOutil","usureAubes","usurePeinture","usureTremie","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsEpandeurEngrais","conformite","documents"]
+                addOns:["usureGenerale","largeurTravailMetres","capaciteEnLitres","attelageOutil","entrainementOutil","commandesHydrauliques","freinageOutil","usureAubes","usurePeinture","usureTremie","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsEpandeurEngrais","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
@@ -316,7 +333,7 @@ const Natures = [
                 addOns: []
             },
             3:{
-                addOns:["usureGenerale","capaciteEnM3","chargeUtile","largeurTravailMetres","herissons","remorquePorte","usureHerissons","usureChainesBarettes","attelageRemorque","suspensionFleche","typeEssieuRemorque","sectionEssieu","commandesHydrauliques","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsEpandeurFumier","conformite","documents"]
+                addOns:["usureGenerale","capaciteEnM3","chargeUtile","largeurTravailMetres","herissons","remorquePorte","usureHerissons","usureChainesBarettes","attelageRemorque","suspensionFleche","typeEssieuRemorque","sectionEssieu","commandesHydrauliques","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsEpandeurFumier","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
@@ -330,14 +347,14 @@ const Natures = [
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: []
+                addOns: ["hrsRotor","compteur"]
             },
             3:{
-                addOns:["usureGenerale","puissance","porteeHorizontale","monolevier","attelageOutil","usureCouteaux","optionsEpareuse","conformite","documents"]
+                addOns:["usureGenerale","puissance","largeurTravailMetres","porteeHorizontale","monolevier","attelageOutilEpareuse","usureCouteaux","optionsEpareuse","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'regular',
-                addOns:["couteaux"]
+                addOns:["refroidisseur","couteaux","attelage"]
             }
         }
     },
@@ -350,7 +367,7 @@ const Natures = [
                 addOns: []
             },
             3: {
-                addOns: ["usureGenerale","largeurTravailMetres","attelageOutil","nombreRotors","nombreBrasRotors","nombreDentsARemplacer","commandesHydrauliques","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsFaneuse","conformite","documents"]
+                addOns: ["usureGenerale","largeurTravailMetres","attelageOutil","nombreRotors","nombreBrasRotors","nombreDentsARemplacer","commandesHydrauliques","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsFaneuse","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
@@ -367,11 +384,28 @@ const Natures = [
                 addOns: ["nbrHectares"]
             },
             3: {
-                addOns: ["usureGenerale","typeFaucheuse","largeurTravailMetres","attelageOutil","repliageChassis","nombreAssiettesTambours","fixationCouteaux","vitessePDF","conditionneur","usureDisques","usureLamier","commandesHydrauliques","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsFaucheuse","conformite","documents"]
+                addOns: ["usureGenerale","typeFaucheuse","largeurTravailMetres","attelageOutil","repliageChassis","nombreAssiettesTambours","fixationCouteaux","vitessePDF","conditionneur","usureDisques","usureLamier","commandesHydrauliques","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsFaucheuse","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
                 addOns: ["lamier","conditionneur"]
+            }
+        }
+    },
+    {
+        name: "Fraise rotative",
+        key: "rotaryTiller",
+        formStepsTypes : {
+            2: {
+                type: 'regular',
+                addOns: ["nbrHectares"]
+            },
+            3:{
+                addOns:["usureGenerale","largeurTravailMetres","attelageOutil","repliageChassis","usureLames","nombreLamesARemplacer","typeRouleau","conformite","etatCarosserie","etatEclairage","documents"]
+            },
+            4:{
+                type:'regular',
+                addOns:["boitier","lames","rouleau"]
             }
         }
     },
@@ -435,7 +469,7 @@ const Natures = [
                 addOns: ["nbrHectares"]
             },
             3:{
-                addOns:["usureGenerale","largeurTravailMetres","attelageOutil","repliageChassis","nombreDentsARemplacer","commandesHydrauliques","conformite","documents"]
+                addOns:["usureGenerale","largeurTravailMetres","attelageOutil","repliageChassis","nombreDentsARemplacer","commandesHydrauliques","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'regular',
@@ -444,7 +478,7 @@ const Natures = [
         }
     },
     {
-        name: "Herse Rotative",
+        name: "Herse rotative",
         key: "rotativeHarrow",
         formStepsTypes : {
             2: {
@@ -452,7 +486,24 @@ const Natures = [
                 addOns: ["nbrHectares"]
             },
             3:{
-                addOns:["usureGenerale","largeurTravailMetres","attelageOutil","repliageChassis","nombreRotors","fixationDentsHerse","nombreDentsARemplacer","typeRouleau","commandesHydrauliques","optionsHerse","conformite","documents"]
+                addOns:["usureGenerale","largeurTravailMetres","attelageOutil","repliageChassis","nombreRotors","fixationDentsHerse","nombreDentsARemplacer","typeRouleau","commandesHydrauliques","optionsHerse","conformite","etatCarosserie","etatEclairage","documents"]
+            },
+            4:{
+                type:'regular',
+                addOns:["dents","rouleau"]
+            }
+        }
+    },
+    {
+        name: "Herse à paille",
+        key: "strawHarrow",
+        formStepsTypes : {
+            2: {
+                type: 'regular',
+                addOns: ["nbrHectares"]
+            },
+            3:{
+                addOns:["usureGenerale","largeurTravailMetres","attelageOutil","repliageChassis","nombreRotors","fixationDentsHerse","nombreDentsARemplacer","typeRouleau","commandesHydrauliques","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'regular',
@@ -483,14 +534,14 @@ const Natures = [
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: ["version","hrsMoteur", "hrsRecolte","hrsPrev"]
+                addOns: ["version","hrsMoteur", "hrsRecolte","hrsPrev","compteur","interieurCabine_1","interieurCabine_2"]
             },
             3: {
-                addOns:["puissance","cabine","climatisation","siege","radio","capaciteBacEnLitres","nombreBrasCueilleurs","dimensionPneumatiquesAvant", "marquePneumatiquesAvant", "usurePneumatiquesAvant", "dimensionPneumatiquesArriere", "marquePneumatiquesArriere", "usurePneumatiquesArriere","optionTeteRecolte","multifonction","optionsMachineVendanger","conformite","documents"]
+                addOns:["puissance","etatMoteur","cabine","climatisation","etatClimatisation","siege","radio","capaciteBacEnLitres","nombreBrasCueilleurs","dimensionPneumatiquesAvant", "marquePneumatiquesAvant", "usurePneumatiquesAvant", "dimensionPneumatiquesArriere", "marquePneumatiquesArriere", "usurePneumatiquesArriere","optionTeteRecolte","multifonction","optionsMachineVendanger","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4: {
                 type:'regular',
-                addOns:["compteur","interieurCabine_1","interieurCabine_2","toit","spoilerDroit","spoilerGauche","capotLateral","avant","arriere","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","interieurTeteRecolte","ecaille","tapis","virages","baches","portes","defautChassis","defautDirection","defautMoteurRoue","defautPompeHydraulique","carteGrise"]
+                addOns:["compteurHeuresRecolte","toit","spoilerDroit","spoilerGauche","capotLateral","avant","arriere","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","interieurTeteRecolte","ecaille","tapis","virages","baches","portes","defautChassis","defautDirection","defautMoteurRoue","defautPompeHydraulique","carteGrise"]
             }
         }
     },
@@ -503,11 +554,11 @@ const Natures = [
                 addOns: ["version","hrsRecolte","hrsPrev"]
             },
             3: {
-                addOns:["capaciteBacEnLitres","nombreBrasCueilleurs","dimensionPneumatiques", "marquePneumatiques", "usurePneumatiques","optionTeteRecolte","optionsMachineVendangertrainee","conformite","documents"]
+                addOns:["capaciteBacEnLitres","nombreBrasCueilleurs","dimensionPneumatiques", "marquePneumatiques", "usurePneumatiques","optionTeteRecolte","optionsMachineVendangertrainee","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4: {
                 type:'trailed',
-                addOns:["compteur","pupitreCommande","capotLateral","avant","arriere","interieurTeteRecolte","ecaille","tapis","virages","baches","portes","defautChassis","defautDirection","defautMoteurRoue","defautPompeHydraulique"]
+                addOns:["compteurHeuresRecolte","pupitreCommande","capotLateral","avant","arriere","interieurTeteRecolte","ecaille","tapis","virages","baches","portes","defautChassis","defautDirection","defautMoteurRoue","defautPompeHydraulique"]
             }
         }
     },
@@ -520,11 +571,11 @@ const Natures = [
                 addOns: []
             },
             3:{
-                addOns:["usureGenerale","attelageOutil","capaciteEnM3","entrainementTurbine","usureTurbine","nombreDemeleurs","entrainementDemeleurs","usureDemeleurs","vitessePDF","usureTapis","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsDesileuse","conformite","documents"]
+                addOns:["usureGenerale","attelageOutil","capaciteEnM3","entrainementTurbine","usureTurbine","nombreDeVis","nombreDeCouteauxParVis","usureCouteaux","nombreDemeleurs","entrainementDemeleurs","usureDemeleurs","entrainementTapis","usureTapis","vitessePDF","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsMelangeuse","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
-                addOns:["turbine","demeleurs","tapis"]
+                addOns:["turbine","demeleurs","tapis","convoyeur","couteaux","interieurCaisse_1","interieurCaisse_2","boitier","goulotte"]
             }
         }
     },
@@ -534,14 +585,14 @@ const Natures = [
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: ["version","hrsMoteur","hrsPrev"]
+                addOns: ["version","hrsMoteur","hrsPrev","compteur","interieurCabine_1","interieurCabine_2"]
             },
             3:{
-                addOns:["usureGenerale","capaciteEnM3","usureTurbine","nombreDemeleurs","entrainementDemeleurs","usureDemeleurs","usureTapis","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","optionsDesileuse","conformite","documents"]
+                addOns:["usureGenerale","puissance","etatMoteur","transmissionAutomoteur","etatTransmission","etatPonts","etatClimatisation","vitesseMaximaleAutomoteur","capaciteEnM3","usureTurbine","nombreDeVis","nombreDeCouteauxParVis","usureCouteaux","nombreDemeleurs","entrainementDemeleurs","usureDemeleurs","usureTapis","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","optionsMelangeuse","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'regular',
-                addOns:["turbine","demeleurs","tapis","interieurCaisse_1","interieurCaisse_2","compteur","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","interieurCabine_1","interieurCabine_2","carteGrise"]
+                addOns:["turbine","demeleurs","tapis","convoyeur","couteaux","boitier","goulotte","interieurCaisse_1","interieurCaisse_2","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","carteGrise"]
             }
         }
     },
@@ -551,14 +602,14 @@ const Natures = [
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: ["hrsMoteur", "hrsBatteur"]
+                addOns: ["version","hrsMoteur", "hrsBatteur",'hrsRotor','nbrHectares',"compteur","interieurCabine_1","interieurCabine_2"]
             },
             3:{
-                addOns:["usureGenerale","typeSeparationMoissoneuse","puissance","transmissionAutomoteur","cabineAutomoteur","vitesseMaximaleAutomoteur","autoguidageEmbarque","compensationNiveau","plastron","nombreCouteauxBroyeur","chariot","marqueChariot","rallongeColza","plateauxTournesol","largeurCoupe","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","optionsMoissonneuse","conformite","documents"]
+                addOns:["usureGenerale","typeSeparationMoissoneuse","puissance","etatMoteur","transmissionAutomoteur","etatTransmission","vitesseMaximaleAutomoteur","etatPonts","climatisation","etatClimatisation","siege","autoguidageEmbarque","commentaireConsole","compensationNiveau","optionsMoissonneuseConvoyeur","etatConvoyeur","optionsMoissonneuseBatteur","etatBatteur","optionsMoissonneuseCaisson","etatCaisson","nombreCouteauxBroyeur","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","largeurCoupe","optionsMoissonneuseCoupe","etatCoupe","scieColza","rallongeColza","chariot","marqueChariot","plateauxTournesol","optionsMoissonneuse","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'regular',
-                addOns:["compteur","recolteur_1","recolteur_2","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","interieurCabine_1","interieurCabine_2","carteGrise"]
+                addOns:["recolteur_1","recolteur_2","scie_1","scie_2","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","carteGrise"]
             }
         }
     },
@@ -571,7 +622,7 @@ const Natures = [
                 addOns: ["nbrHectares"]
             },
             3:{
-                addOns:["usureGenerale","largeurTravailMetres","attelageOutil","repliageChassis","usureRouleaux","typeRouleau","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","documents"]
+                addOns:["usureGenerale","largeurTravailMetres","attelageOutil","repliageChassis","usureRouleaux","typeRouleau","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
@@ -588,7 +639,7 @@ const Natures = [
                 addOns: ["nbrHectares"]
             },
             3:{
-                addOns:["usureGenerale","largeurTravailMetres","repliageChassis","nombreDentsARemplacer","usureChaines","usureRouleaux","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","documents"]
+                addOns:["usureGenerale","largeurTravailMetres","marqueTablierAttelageMoissonneuse","repliageChassis","nombreDentsARemplacer","usureChaines","usureRouleaux","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
@@ -621,7 +672,7 @@ const Natures = [
                 addOns: []
             },
             3:{
-                addOns:["usureGenerale","chargeUtile","materiauxCaisse","attelageRemorque","suspensionFleche","typeEssieuRemorque","sectionEssieu","commandesHydrauliques","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","documents"]
+                addOns:["usureGenerale","chargeUtile","materiauxCaisse","attelageRemorque","suspensionFleche","typeEssieuRemorque","sectionEssieu","commandesHydrauliques","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed'
@@ -634,14 +685,14 @@ const Natures = [
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: ["cptrBottes"]
+                addOns: ["cptrBottes","compteur"]
             },
             3:{
-                addOns:["usureGenerale","diametreMaxBotte","typeChambrePresse","typeAmeneur","liageBotte","largeurPickUp","nombreDentsARemplacer","nombreCouteaux","usureChaines","usureCourroies","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsPresseBallesRondes","conformite","documents"]
+                addOns:["usureGenerale","diametreMaxBotte","typeChambrePresse","typeAmeneur","liageBotte","largeurPickUp","nombreDentsARemplacer","nombreCouteaux","usureChaines","usureCourroies","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsPresseBallesRondes","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
-                addOns:["pickUp","entrainementGauche","entrainementDroit"]
+                addOns:["boitier","pickUp","entrainementGauche","entrainementDroit"]
             }
         }
     },
@@ -651,14 +702,14 @@ const Natures = [
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: ["cptrBottes"]
+                addOns: ["cptrBottes","compteur"]
             },
             3:{
-                addOns:["usureGenerale","canalPresse","largeurPickUp","nombreDentsARemplacer","nombreCouteaux","liagePresseCarre","nettoyageNoueurs","usureChaines","typeEssieuRemorque","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsPresseBallesCarrees","conformite","documents"]
+                addOns:["usureGenerale","canalPresse","largeurPickUp","nombreDentsARemplacer","nombreCouteaux","liagePresseCarre","nettoyageNoueurs","usureChaines","typeEssieuRemorque","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsPresseBallesCarrees","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
-                addOns:["pickUp","canal","entrainementGauche","entrainementDroit"]
+                addOns:["boitier","pickUp","canal","entrainementGauche","entrainementDroit"]
             }
         }
     },
@@ -688,7 +739,7 @@ const Natures = [
                 addOns: ["nbrHectares"]
             },
             3:{
-                addOns:["usureGenerale","largeurTravailMetres","materiauxRampe","capaciteEnLitres","attelageOutil","entrainementOutil","commandesHydrauliques","typePompe","debitPompe","regulation","repliageRampe","nombreTroncons","porteBuse","correcteurDeversPulverisateur","geometrieVariable","suspensionEssieu","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsPulverisateur","conformite","documents"]
+                addOns:["usureGenerale","largeurTravailMetres","materiauxRampe","capaciteEnLitres","attelageOutil","entrainementOutil","commandesHydrauliques","typePompe","debitPompe","regulation","repliageRampe","nombreTroncons","porteBuse","correcteurDeversPulverisateur","geometrieVariable","suspensionEssieu","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsPulverisateur","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
@@ -702,14 +753,14 @@ const Natures = [
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: ["version","hrsMoteur","hrsPrev","nbrHectares"]
+                addOns: ["version","hrsMoteur","hrsPrev","nbrHectares","compteur","interieurCabine_1","interieurCabine_2"]
             },
             3:{
-                addOns:["usureGenerale","puissance","transmissionTracteur","transmissionTracteurModele","nombreVitesses","vitesseMaximaleTracteur","inverseur","freinage","cabine","climatisation","siege","radio","autoguidageEmbarque","largeurTravailMetres","materiauxRampe","capaciteEnLitres","typePompe","debitPompe","regulation","repliageRampe","nombreTroncons","porteBuse","correcteurDeversPulverisateur","geometrieVariable","suspensionEssieu","freinage","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","optionsPulverisateurAutomoteur","conformite","documents"]
+                addOns:["usureGenerale","puissance","etatMoteur","transmissionTracteur","transmissionTracteurModele","nombreVitesses","etatTransmission","vitesseMaximaleTracteur","inverseur","freinage","etatPonts","cabine","climatisation","etatClimatisation","siege","radio","autoguidageEmbarque","commentaireConsole","largeurTravailMetres","materiauxRampe","capaciteEnLitres","typePompe","debitPompe","regulation","repliageRampe","nombreTroncons","porteBuse","correcteurDeversPulverisateur","geometrieVariable","suspensionEssieu","freinage","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","optionsPulverisateurAutomoteur","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'regular',
-                addOns:["compteur","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","interieurCabine_1","interieurCabine_2","carteGrise","attelage","boitier","rampeDroite","rampeGauche","cadreCentral","cuve"]
+                addOns:["dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","carteGrise","attelage","boitier","rampeDroite","rampeGauche","cadreCentral","cuve"]
             }
         }
     },
@@ -756,7 +807,7 @@ const Natures = [
                 addOns: ["nbrHectares"]
             },
             3:{
-                addOns:["usureGenerale","typeSemoir","largeurTravailMetres","attelageOutil","repliageChassis","nombreRangs","typeRouleau","capaciteEnLitres","typeDistribution","typeEnterrage","usureSocs","commandesHydrauliques","optionsSemoir","conformite","documents"]
+                addOns:["usureGenerale","typeSemoir","largeurTravailMetres","attelageOutil","repliageChassis","nombreRangs","typeRouleau","capaciteEnLitres","typeDistribution","typeEnterrage","usureSocs","commandesHydrauliques","optionsSemoir","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
@@ -773,7 +824,7 @@ const Natures = [
                 addOns: ["nbrHectares"]
             },
             3:{
-                addOns:["usureGenerale","largeurTravailMetres","attelageOutil","repliageChassis","nombreRangs","typeRouleau","capaciteEnLitres","typeDistribution","typeRotorDoseur","typeDisqueDoseur","diametreDisquesSemeurs","typeEnterrage","usureSocs","commandesHydrauliques","optionsSemoir","conformite","documents"]
+                addOns:["usureGenerale","largeurTravailMetres","attelageOutil","repliageChassis","nombreRangs","typeRouleau","capaciteEnLitres","typeDistribution","typeRotorDoseur","typeDisqueDoseur","diametreDisquesSemeurs","typeEnterrage","usureSocs","commandesHydrauliques","optionsSemoir","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
@@ -804,15 +855,32 @@ const Natures = [
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: ["hrsMoteur","hrsPrev"]
+                addOns: ["hrsMoteur","hrsPrev","compteur","interieurCabine_1","interieurCabine_2"]
             },
             3: {
-                addOns:["usureGenerale","puissance","capaciteEnTonnes","longueurFleche","teteAttelage","transmissionTracteur","nombreVitesses","vitesseMaximaleTracteur","rouesDirectrices","inverseur","freinage","cabine","climatisation","siege","radio","priseDeForceAR","distributeursArriere","chandelles","stabilisateurs","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","optionsTelescopique","conformite","documents"]
+                addOns:["usureGenerale","puissance","etatMoteur","capaciteEnTonnes","longueurFleche","teteAttelage","transmissionTracteur","nombreVitesses","etatTransmission","vitesseMaximaleTracteur","rouesDirectrices","inverseur","freinage","etatPonts","cabine","climatisation","etatClimatisation","siege","radio","priseDeForceAR","distributeursArriere","chandelles","stabilisateurs","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","optionsTelescopique","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'regular',
-                addOns:["compteur","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","interieurCabine_1","interieurCabine_2","outil_1","outil_2","outil_3","outil_4","outil_5","carteGrise"]
+                addOns:["dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","outil_1","outil_2","outil_3","outil_4","outil_5","carteGrise"]
             }
+        }
+    },
+    {
+        name: "Tonne a eau",
+        key: "waterTank",
+        formStepsTypes : {
+            2: {
+                type: 'regular',
+                addOns: []
+            },
+            3:{
+                addOns:["usureGenerale","capaciteEnLitres","chargeUtile","attelageRemorque","suspensionFleche","typeEssieuRemorque","sectionEssieu","commandesHydrauliques","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","conformite","etatCarosserie","etatEclairage","documents"]
+            },
+            4:{
+                type:'trailed',
+                addOns:[]
+            },
         }
     },
     {
@@ -824,7 +892,7 @@ const Natures = [
                 addOns: []
             },
             3:{
-                addOns:["usureGenerale","capaciteEnLitres","chargeUtile","largeurTravailMetres","attelageRemorque","suspensionFleche","typeEssieuRemorque","sectionEssieu","commandesHydrauliques","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsTonneLisier","conformite","documents"]
+                addOns:["usureGenerale","capaciteEnLitres","chargeUtile","largeurTravailMetres","attelageRemorque","suspensionFleche","typeEssieuRemorque","sectionEssieu","commandesHydrauliques","freinageOutil","marquePneumatiques","dimensionPneumatiques","usurePneumatiques","optionsTonneLisier","conformite","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'trailed',
@@ -838,14 +906,14 @@ const Natures = [
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: ["version","hrsMoteur","hrsPrev"]
+                addOns: ["version","hrsMoteur","hrsPrev","compteur","interieurCabine_1","interieurCabine_2"]
             },
             3: {
-                addOns:["usureGenerale","puissance","transmissionTracteur","transmissionTracteurModele","nombreVitesses","vitesseMaximaleTracteur","inverseur","freinage","cabine","climatisation","siege","radio","priseDeForceAR","distributeursArriere","distributeursArriereElectriques","chandelles","stabilisateurs","pontAvant","relevageAvant","distributeursAvant","priseDeForceAV","autoguidageEmbarque","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","attelageTracteur","documents"]
+                addOns:["usureGenerale","puissance","etatMoteur","transmissionTracteur","transmissionTracteurModele","nombreVitesses","etatTransmission","vitesseMaximaleTracteur","inverseur","freinage","cabine","climatisation","etatClimatisation","siege","radio","priseDeForceAR","distributeursArriere","distributeursArriereElectriques","chandelles","stabilisateurs","pontAvant","etatPonts","relevageAvant","distributeursAvant","priseDeForceAV","autoguidageEmbarque","commentaireConsole","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","attelageTracteur","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'regular',
-                addOns:["compteur","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","interieurCabine_1","interieurCabine_2","carteGrise","attelage"]
+                addOns:["dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","carteGrise","attelage"]
             }
         }
     },
@@ -855,14 +923,14 @@ const Natures = [
         formStepsTypes : {
             2: {
                 type: 'regular',
-                addOns: ["version","hrsMoteur","hrsPrev"]
+                addOns: ["version","hrsMoteur","hrsPrev","compteur","interieurCabine_1","interieurCabine_2"]
             },
             3: {
-                addOns:["usureGenerale","puissance","transmissionTracteur","transmissionTracteurModele","nombreVitesses","vitesseMaximaleTracteur","inverseur","freinage","cabine","climatisation","siege","radio","priseDeForceAR","distributeursArriere","chandelles","stabilisateurs","pontAvant","relevageAvant","distributeursAvant","priseDeForceAV","autoguidageEmbarque","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","attelageTracteur","marqueChargeur","modeleChargeur","serieChargeur","usureGenerale","fonctionsChargeur","parallelogrammeChargeur","monolevier","tablierAttelage","documents"]
+                addOns:["usureGenerale","puissance","etatMoteur","transmissionTracteur","transmissionTracteurModele","nombreVitesses","etatTransmission","vitesseMaximaleTracteur","inverseur","freinage","cabine","climatisation","etatClimatisation","siege","radio","priseDeForceAR","distributeursArriere","chandelles","stabilisateurs","pontAvant","etatPonts","relevageAvant","distributeursAvant","priseDeForceAV","autoguidageEmbarque","commentaireConsole","marquePneumatiquesAvant","dimensionPneumatiquesAvant","usurePneumatiquesAvant","marquePneumatiquesArriere","dimensionPneumatiquesArriere","usurePneumatiquesArriere","attelageTracteur","marqueChargeur","modeleChargeur","serieChargeur","usureGenerale","fonctionsChargeur","parallelogrammeChargeur","monolevier","tablierAttelage","etatCarosserie","etatEclairage","documents"]
             },
             4:{
                 type:'regular',
-                addOns:["compteur","dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","interieurCabine_1","interieurCabine_2","carteGrise","attelage","monolevier","multicoupleur","outil_1","outil_2","outil_3","outil_4","outil_5"]
+                addOns:["dimensionPneumatiqueAvant","dimensionPneumatiqueArriere","carteGrise","attelage","monolevier","multicoupleur","outil_1","outil_2","outil_3","outil_4","outil_5"]
             }
         }
     }

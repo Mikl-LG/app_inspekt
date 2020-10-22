@@ -2,7 +2,6 @@ import 'date-fns';
 import frLocale from "date-fns/locale/fr";
 import Moment from 'moment';
 import React from 'react';
-import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,

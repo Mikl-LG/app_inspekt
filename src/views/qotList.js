@@ -11,6 +11,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
+import DoneAllIcon from "@material-ui/icons/DoneAll";
+import DoneIcon from "@material-ui/icons/Done";
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import GetAppIcon from '@material-ui/icons/GetApp';
@@ -55,7 +57,7 @@ const MenuProps = {
 };
 
 function LoadSelectHeadTable(props){
-  const {logInfo,priceType,qotList,sort,setSort,tempSort,setTempSort} = props;
+  const {logInfo,priceType,qotList,sort,setSort,tempSort,selectMode,setTempSort} = props;
 
   const headCells = [
     { id: 'inStock', select: true, width:'1vi', label: 'Stock' ,selectOptions : ['STOCKS','QOTS']},
@@ -83,12 +85,13 @@ function LoadSelectHeadTable(props){
     autoList = {...autoList,[headCell.id] : headCell.selectOptions}
   })
 
-  const handleSelectTempSort = (key,value) =>{
-    let newSelected = tempSort[key];
-    const selectedIndex = newSelected.indexOf(value);
-    newSelected = [...value];
-    setTempSort({...tempSort,[key]:newSelected})
-  }
+  const handleSelectTempSort = (key, value) => {
+    let newSelected = [];
+    Array.isArray(value) ? (newSelected = [...value]) : newSelected.push(value);
+
+    setTempSort({ ...tempSort, [key]: newSelected });
+    selectMode === "single" && setSort({ ...tempSort, [key]: newSelected }); //SINGLE
+  };
 
   const resetSort = (key) => {
     setSort({...sort,[key]:[]})
@@ -120,22 +123,33 @@ function LoadSelectHeadTable(props){
                 {headCell.label}
               </InputLabel>
               <Select
-                labelId="demo-mutiple-chip-label"
-                id="demo-mutiple-chip"
-                style={{minWidth: headCell.minWidth,maxWidth: headCell.maxWidth,fontSize:'1em',textAlign:'center'}}
-                multiple
-                value={tempSort[headCell.id]}
-                onChange={(event) => handleSelectTempSort(headCell.id,event.target.value)}
-                onClose={() => setSort(tempSort)}
-                MenuProps={MenuProps}
-                IconComponent={() => (
-                  sort[headCell.id].length > 0
-                  ? <CancelIcon 
-                      style={{fontSize:'1em',cursor:'pointer',color:Color.warning}}
-                      onClick={() => resetSort([headCell.id])} />
-                  : null
-                )}
-              >
+                    labelId='headcell-label'
+                    id='demo-mutiple-chip'
+                    style={{
+                      minWidth: headCell.minWidth,
+                      maxWidth: headCell.maxWidth,
+                      fontSize: "1em",
+                      textAlign: "center",
+                    }}
+                    multiple={selectMode === "multiple" ? true : false} //MULTIPLE
+                    value={tempSort[headCell.id] && tempSort[headCell.id]}
+                    onChange={(event) =>
+                      handleSelectTempSort(headCell.id, event.target.value)
+                    }
+                    onClose={() => selectMode === "multiple" && setSort(tempSort)} //MULTIPLE
+                    MenuProps={MenuProps}
+                    IconComponent={() =>
+                      sort[headCell.id].length > 0 ? (
+                        <CancelIcon
+                          style={{
+                            fontSize: "1em",
+                            cursor: "pointer",
+                            color: Color.warning,
+                          }}
+                          onClick={() => resetSort([headCell.id])}
+                        />
+                      ) : null
+                    }>
                 {
                 autoList[headCell.id] && autoList[headCell.id].map((element) => (
                   element &&
@@ -233,7 +247,8 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
   const [isExpertiseDetailsOpen,setIsExpertiseDetailsOpen] = React.useState(false);
   const [focusMachine,setFocusMachine] = React.useState({});
   const [snackbar, setSnackbar] = React.useState({message:'Init',type:'snackbarSuccess',isOpen:false});
-  const [loader,setLoader] = React.useState({isOpen:false,title:'',content:''})
+  const [loader,setLoader] = React.useState({isOpen:false,title:'',content:''});
+  const [selectMode, setSelectMode] = React.useState("single");
   const [sort,setSort] = React.useState({inStock:[],id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],qotState:[],quotation:[]});
   const [tempSort,setTempSort] = React.useState({inStock:[],id:[],date:[],salesman:[],customer:[],nature:[],brand:[],model:[],details:[],year:[],qotState:[],quotation:[]});
 
@@ -480,21 +495,37 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
       
       ////////// MACHINE PICTURES ARRAY BUILD \\\\\\\\\\
       let pictureArrayList = [];
-      if(expertise.pictures){
-        for (let [key,value] of Object.entries(expertise.pictures)){
-          pictureArrayList.push({key : key,value:value,visibleOnPdf:true});
+      if (expertise.pictures) {
+        for (let [key, value] of Object.entries(expertise.pictures)) {
+          pictureArrayList.push({key: key, value: value, visibleOnPdf: true});
         }
       }
 
-      if(expertise.particularities && expertise.particularities.points){
-        expertise.particularities.points.forEach(element => {
-          if(element.pictures && element.pictures.length){
-            pictureArrayList = [...pictureArrayList,{title : element.text,value:element.pictures[0]}];
+      if (expertise.particularities && expertise.particularities.points) {
+        expertise.particularities.points.forEach((element) => {
+          if (element.pictures && element.pictures.length) {
+            pictureArrayList = [
+              ...pictureArrayList,
+              {
+                key: element.text,
+                title: element.text,
+                value: element.pictures[0],
+                visibleOnPdf: true,
+              },
+            ]; // title is used to display particularity text in imageSlider
           }
-        })
-
+        });
       }
-      
+
+      ["counter", "cabIndoor1", "cabIndoor2"].forEach((key) => {
+        if (expertise.machine[key]) {
+          pictureArrayList = [
+            ...pictureArrayList,
+            {key: key, value: expertise.machine[key], visibleOnPdf: true},
+          ];
+        }
+      });
+
       expertise.imageList = pictureArrayList;
       expertise.orderedDetailsToPrint = machineToArray;
       setFocusMachine(expertise);
@@ -635,14 +666,29 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
         <div style={{width:'100%',color:Color.secondary,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
           <div style={{fontSize:'0.8em',fontStyle:'italic',marginLeft:'15px',color:Color.secondary}}>{qotListFiltered.length} résultat(s)
           </div>
-          
-          {
-            allowedLicenses[logInfo.user.licence] && <div style={{cursor:'pointer',marginRight:'15px'}}>
-              <Tooltip title='Télécharger les QOTS'>
-                <GetAppIcon onClick={() => downloadQotsInCsv()}/>
-              </Tooltip>
+          {allowedLicenses[logInfo.user.licence] && (
+            <div style={{ display: "flex" }}>
+              {selectMode === "single" ? (
+                <div style={{ cursor: "pointer", marginRight: "15px" }}>
+                  <Tooltip title='Sélection simple active'>
+                    <DoneIcon onClick={() => setSelectMode("multiple")} />
+                  </Tooltip>
+                </div>
+              ) : (
+                  <div style={{ cursor: "pointer", marginRight: "15px" }}>
+                    <Tooltip title='Sélection multiple active'>
+                      <DoneAllIcon onClick={() => setSelectMode("single")} />
+                    </Tooltip>
+                  </div>
+                )}
+
+              <div style={{ cursor: "pointer", marginRight: "15px" }}>
+                <Tooltip title='Télécharger les QOTS'>
+                  <GetAppIcon onClick={() => downloadQotsInCsv()} />
+                </Tooltip>
+              </div>
             </div>
-          }
+          )}
         </div>
         <TableContainer>
           <Table
@@ -657,6 +703,7 @@ export default function EnhancedTable({qotList,cieMembers,logInfo,setStateFromCh
               qotList={qotListFiltered}
               sort={sort}
               setSort={setSort}
+              selectMode={selectMode}
               tempSort={tempSort}
               setTempSort={setTempSort}
               stateMenuItemsFiltered={stateMenuItemsFiltered}

@@ -217,8 +217,11 @@ class Home extends Component{
                                         />
                                         :navigation === 4
                                         ? <Compass
-                                            logInfo = {logInfo}
-                                        />
+                                        logInfo={logInfo}
+                                        inspektList={inspektList}
+                                        getInspekts={this.getInspekts}
+                                        getQots={this.getQots}
+                                      />
                                         : null
                                 )
                             }

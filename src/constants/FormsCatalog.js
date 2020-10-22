@@ -1,6 +1,5 @@
 
 
-
 /* FORMS COMPONENTS*/
 
 const numberOneToTwenty = Array.from(new Array(20)).map((e, i) => String(i + 1));           // 1 to 20
@@ -35,7 +34,7 @@ const formsCatalog = {
 
     baler:{
         brands:[
-            "CASE",
+            "CASE IH",
             "CLAAS",
             "DEUTZ FAHR",
             "FENDT",
@@ -66,10 +65,12 @@ const formsCatalog = {
             "BERTI",
             "BOMFORD",
             "BREVIGLIERI",
+            "BUGNOT",
             "DESVOYS",
             "FERRI",
             "FORMULE DIRECTE",
             "GYRAX",
+            "KIRPY",
             "KUBOTA",
             "KUHN",
             "KVERNELAND",
@@ -184,7 +185,7 @@ const formsCatalog = {
 
     combineHarvester:{
         brands:[
-            "CASE",
+            "CASE IH",
             "CLAAS",
             "DEUTZ FAHR",
             "DRONNINGBORG",
@@ -195,6 +196,141 @@ const formsCatalog = {
             "MASSEY FERGUSON",
             "NEW HOLLAND",
             "ROSTSELMASH"
+        ]
+    },
+
+    cropTillage:{
+        brands:[
+            "AGRAM",
+            "AGRISEM",
+            "AMAZONE",
+            "BEDNAR",
+            "BONNEL",
+            "BUGNOT",
+            "CARRE",
+            "CLAYDON",
+            "ECO MULCH",
+            "FRANQUET",
+            "GREGOIRE BESSON", 
+            "HORSCH",
+            "KONGSKILDE",
+            "KUBOTA",
+            "KUHN",
+            "KVERNELAND",
+            "KOCKERLING",
+            "LEMKEN",
+            "NEW HOLLAND",
+            "POTTINGER",
+            "QUIVOGNE",
+            "RABE", 
+            "RAZOL",
+            "SOUCHU PINET",
+            "TECHNMAGRI",
+            "VICON",
+            "VOGEL & NOOT",
+            "VADERSTAD",
+            //DIVIDER
+            "AGRIALLY",
+            "AGRIPOL",
+            "AGRISTAL",
+            "AGRI-MASZ",
+            "AGROLAND",
+            "AGROMET", 
+            "AKPIL",
+            "ALGRITEC",
+            "ALPEGO",
+            "ASKEL",
+            "AWEMAK",
+            "BEISER",
+            "BESSON",
+            "BEYNE",
+            "BOMFORD",
+            "BOURBONNAIS",
+            "BRIOIS", 
+            "CASE IH",
+            "COMAI",
+            "DALBO",
+            "DEHONDT",
+            "DELAPLACE",
+            "DEVRAND",
+            "DOUBLET",
+            "DUPUY",
+            "DURO",
+            "DUROU",
+            "EBRA", 
+            "EKOAGRI",
+            "EURO FARM",
+            "EVERS",
+            "FARMET",
+            "FITOSA",
+            "GASCON",
+            "GASPARDO",
+            "GOIZIN",
+            "GOYER",
+            "GRANO",
+            "GREAT PLAINS", 
+            "GREEN VISION",
+            "GYRAX",
+            "GUTTLER",
+            "HEVA",
+            "HANKMO",
+            "HOWARD",
+            "HUARD",
+            "HEBARD",
+            "INTER TECH",
+            "JAMMET",
+            "JEAN DE BRU", 
+            "JOHN DEERE",
+            "K-LINE",
+            "KIRPY",
+            "LABBE ET ROTIEL",
+            "LACHAUD",
+            "LANDSTAL",
+            "MACAR",
+            "MACRON",
+            "MANDAM",
+            "MARSK-STIG",
+            "MASCHIO", 
+            "MC CONNEL",
+            "MC AGRI",
+            "METAL-FACH",
+            "MOREAU",
+            "MORRIS",
+            "MULTIVA",
+            "NAMYSLO",
+            "NEW SOLAGRI",
+            "OTTAVIOLI",
+            "OVLAC",
+            "POM BRODNICA", 
+            "PERREIN",
+            "PICHON",
+            "RAU",
+            "RELIGIEUX",
+            "RINIERI",
+            "ROGER",
+            "ROLEX",
+            "ROLMAKO",
+            "SMS",
+            "SV",
+            "SAMSON", 
+            "SICAM",
+            "SIMBA",
+            "SIROT",
+            "SKY",
+            "SOLANO",
+            "STALTECH",
+            "STEENO",
+            "SUIRE",
+            "TESTA",
+            "THIEME",
+            "TIGER", 
+            "TREFFLER",
+            "TULIP",
+            "UNIA",
+            "URGA",
+            "VIAUD",
+            "VARIN",
+            "ZAGRODA",
         ]
     },
 
@@ -273,6 +409,7 @@ const formsCatalog = {
             "ACCORD",
             "AGRAM",
             "AGUIRE",
+            "ALTEC",
             "AMAZONE",
             "AUDUREAU",
             "BOGBALLE",
@@ -742,6 +879,7 @@ const formsCatalog = {
             "SULKY",
             "VICON",
             "VADERSTAD",
+            "VREDO",
             //DIVIDER
             "ABA",
             "AGRO-MASZ",
@@ -758,7 +896,7 @@ const formsCatalog = {
 
     largeSquarebaler:{
         brands:[
-            "CASE",
+            "CASE IH",
             "CLAAS",
             "DEUTZ FAHR",
             "FENDT",
@@ -850,6 +988,7 @@ const formsCatalog = {
             "ROCK",
             "ROLLAND",
             "SAMSON",
+            "SAMAS",
             "SODIMAC",
             "STRAUTMANN",
             "TEBBE",
@@ -881,7 +1020,42 @@ const formsCatalog = {
             "TOTALSA"
         ]
     },
-
+    waterTank:{
+        brands:[
+            "AGRIMAT",
+            "AGRIMAC",
+            "ARMOR",
+            "DESMAREST",
+            "JEANTIL",
+            "JOSKIN",
+            "MAUGUIN",
+            "PICHON",
+            "LEBOULCH",
+            "PROMODIS",
+            "SAMAS",
+            "SAMSON",
+            "SODIMAC",
+            "TONALIS",
+            "VERVAET",
+            "VREDO",
+            //DIVIDER
+            "AGROLAND",
+            "AURAN",
+            "CAVALMORETTI",
+            "COMERO",
+            "DOME",
+            "GODIMAT",
+            "HERCULANO",
+            "HEYWANG",
+            "HOLMER",
+            "IPSAM",
+            "JEULIN",
+            "MIRO",
+            "ROLLAND",
+            "SCHALLBERGER",
+            "TOBROCO"
+        ]
+    },
     manureTankSpreader:{
         brands:[
             "AGRIMAT",
@@ -1103,7 +1277,7 @@ const formsCatalog = {
             "AGROLUX",
             "AKPIL",
             "ALPLER",
-            "CASE-IH",
+            "CASE IH",
             "CASTILLON",
             "CAVEL",
             "FALC",
@@ -1364,7 +1538,39 @@ const formsCatalog = {
         ]
     },
 
-
+    rotaryTiller:{
+        brands:[
+            "AGRAM",
+            "ALPEGO",
+            "AMAZONE",
+            "BELRECOLT",
+            "BREVIGLIERI",
+            "HOWARD",
+            "KONGSKILDE",
+            "KUBOTA",
+            "KUHN",
+            "KVERNELAND",
+            "LEMKEN",
+            "MASCHIO",
+            "POTTINGER",
+            "RABE",
+            "RAU",
+            "SULKY",
+            "VICON",
+            //DIVIDER
+            "CARRE",
+            "CELLI",
+            "FALC",
+            "FERABOLI",
+            "GREGOIRE",       
+            "LELY",
+            "PEGORARO",
+            "PERUGINI",
+            "PROMODIS",
+            "PROSOL",
+            "VOGEL & NOOT"
+        ]
+    },
 
     silageTrailer: {                      // formsCatalog properties (here "tractor") MUST be equal to Natures[index].key
         brands : [
@@ -1629,6 +1835,18 @@ const formsCatalog = {
         ]
     },
 
+    strawHarrow:{
+        brands:[
+            "AGRAM",
+            "AGRISEM",
+            "AGRO MASZ",
+            "CLAYDON",
+            "ECO MULCH",
+            "STEIMER",
+            "TECHMAGRI"
+        ]
+    },
+
     sweeper:{
         brands:[
             "ACTISWEEP",
@@ -1710,7 +1928,7 @@ const formsCatalog = {
     telehandler:{
         brands:[
             "BOBCAT", 
-            "CASE", 
+            "CASE IH", 
             "CLAAS",
             "CATERPILLAR",
             "DEUTZ FAHR",
@@ -1887,7 +2105,7 @@ const formsCatalog = {
 
     tractor: {                      // formsCatalog properties (here "tractor") MUST be equal to Natures[index].key
         brands : [
-            "CASE", 
+            "CASE IH", 
             "CLAAS",
             "DEUTZ FAHR",
             "FENDT",
@@ -1921,7 +2139,7 @@ const formsCatalog = {
 
     tractorLoader: {                      // formsCatalog properties (here "tractor") MUST be equal to Natures[index].key
         brands : [
-            "CASE", 
+            "CASE IH", 
             "CLAAS",
             "DEUTZ FAHR",
             "FENDT",
@@ -2090,7 +2308,7 @@ const formsCatalog = {
      * /////////////////////////////////////[ STEP_1_COMPONENTS ]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
      */
 
-    ownerTitles:["CUMA", "EARL", "ETA", "EURL", "GAEC", "GIE", "MONSIEUR", "MADAME", "SARL", "SCEA", "SCEV", "SNC", "ETS"],
+    ownerTitles:["CUMA", "COLLECTIVITE", "EARL", "ETA", "EURL", "GAEC", "GIE", "MONSIEUR", "MADAME", "SARL", "SCEA", "SCEV", "SNC", "ETS"],
        
 
 
@@ -2192,6 +2410,13 @@ const formsCatalog = {
         "6 SECOUEURS",
         "5 SECOUEURS",
         "4 SECOUEURS",
+    ],
+
+    componentState:[
+        'A REPARER',
+        'ETAT MOYEN',
+        'BON ETAT',
+        'NEUF'
     ],
 
     conformity:[
@@ -2355,7 +2580,8 @@ const formsCatalog = {
     implementPowerTransmission:[
         "ELECTRIQUE",
         "HYDRAULIQUE",
-        "MECANIQUE"
+        "MECANIQUE",
+        "NON EQUIPE"
     ],
 
     implementWorkingWidth:[
@@ -2515,6 +2741,7 @@ const formsCatalog = {
     ],
 
     rearValves:[
+        "AUCUN",
         "1 SIMPLE EFFET",
         "1 DOUBLE EFFET",
         "1 SIMPLE EFFET + 1 DOUBLE EFFET",
@@ -2598,7 +2825,12 @@ const formsCatalog = {
         "BOULON",
         "DEMONTAGE RAPIDE"
     ],
-
+    statut:[
+        "Disponible",
+        "Indisponible",
+        "Pré-vendu",
+        "En location"
+    ],
     tonsFrom1To10:[
         "1T",
         "1.5T",
@@ -2685,6 +2917,7 @@ const formsCatalog = {
         "TRELLEBORG", 
         "VREDESTEIN", 
         // divider
+        "AUTRES",
         "ALLIANCE", 
         "BARUM", 
         "CARLISLE", 
@@ -2748,21 +2981,21 @@ const formsCatalog = {
         const _formSteps = {
             2: {
                 addOns: {
-                    "nbrBottes": {
-                        title: 'Nombre bottes',
-                        property: 'baleCounter',
-                        numeric: true
+                    "compteur":{
+                        title:'Compteur',
+                        property:'counter',
+                        picture: true
                     },
-                    "nbrHectares": {
-                        title: 'Nombre hectares',
-                        property: 'hectaresCounter',
+                    "compteurKm": {
+                        title: 'Kilomètres',
+                        property: 'kilometers',
                         numeric: true
                     },
                     "cptrBottes": {
                         title: 'Compteur bottes',
                         property: 'cptrBottes',
                         numeric: true
-                    }, 
+                    },
                     "hrsMoteur": {
                         title: 'Heures moteur',
                         property: 'motorHours',
@@ -2788,15 +3021,25 @@ const formsCatalog = {
                         property: 'batteurHours',
                         numeric: true
                     },
-                    "compteurKm": {
-                        title: 'Kilomètres',
-                        property: 'kilometers',
+                    "interieurCabine_1":{
+                        title:'Intérieur cabine 1',
+                        property:'cabIndoor1',
+                        picture: true
+                    },
+                    "interieurCabine_2":{
+                        title:'Intérieur cabine 2',
+                        property:'cabIndoor2',
+                        picture: true
+                    },
+                    "nbrHectares": {
+                        title: 'Nombre hectares',
+                        property: 'hectaresCounter',
                         numeric: true
                     },
                     "version": {
                         title: 'Version',
                         property: 'version'
-                    },
+                    }
                 },
 
                 regular : [             // type 'regular' stored by nature.formStepsTypes (Natures.js)
@@ -2813,8 +3056,8 @@ const formsCatalog = {
                     {
                         title: 'Année',
                         property: 'year',
-                        data: formsCatalog.years
-                        //numeric: true,
+                        //data: formsCatalog.years
+                        numeric: true,
                     },
                     {
                         title: 'Numéro de série',
@@ -2857,6 +3100,12 @@ const formsCatalog = {
                         data: formsCatalog.implementLinkageType
                     },
 
+                    "attelageOutilEpareuse":{
+                        title:'Attelage',
+                        property:'reachMowerLinkageType',
+                        data: ["3 POINTS","FAUX CHASSIS"]
+                    },
+
                     "attelageOutilViti":{
                         title:'Attelage outil',
                         property:'implementVitiLinkageType',
@@ -2870,13 +3119,14 @@ const formsCatalog = {
                     },
 
                     "autoguidageEmbarque":{
-                        title:'Autoguidage',
+                        title:'Pré-disposition guidage',
                         property : 'onboardAutoguidance',
                         toggle:[
-                            "AUTOTRAC READY",
-                            "ACTIVATION AUTOTRAC",
-                            "AUTOGUIDE READY",
-                            "ACTIVATION AUTGUIDE"
+                            "CAPTEURS DE DIRECTION",
+                            "CONTROLE ORBITROL",
+                            "FAISCEAU",
+                            "SUPPORT ANTENNE",
+                            "SUPPORT CONSOLE"
                         ]  
                     },
 
@@ -2950,7 +3200,10 @@ const formsCatalog = {
                     "chandelles":{
                         title:'Chandelles',
                         property:'pullBars',
-                        data: formsCatalog.pullbars
+                        data: [
+                            "MANUELLES",
+                            "HYDRAULIQUES"
+                        ]//formsCatalog.pullbars
                     },
 
                     "chargeUtile":{
@@ -2983,6 +3236,11 @@ const formsCatalog = {
                         data: formsCatalog.implementHydraulicCommands
                     },
 
+                    "commentaireConsole":{
+                        title:'Commentaire guidage',
+                        property:'screenComment'
+                    },
+
                     "compensationNiveau":{
                         title:'Compensation',
                         property:'levelCompensation',
@@ -2998,6 +3256,13 @@ const formsCatalog = {
                     "conformite":{
                         title:'Conformité',
                         property:'conformity',
+                        //type:'select',
+                        toggle: formsCatalog.conformity
+                    },
+
+                    "console":{
+                        title:'Ecrans',
+                        property:'screen',
                         //type:'select',
                         toggle: formsCatalog.conformity
                     },
@@ -3071,7 +3336,6 @@ const formsCatalog = {
                         title:'Dim pneus',
                         property:'tyreSize',
                         tires: true
-                        
                     },
 
                     "dimensionPneumatiquesAvant":{
@@ -3134,6 +3398,12 @@ const formsCatalog = {
                         data: formsCatalog.implementPowerTransmission
                     },
 
+                    "entrainementTapis":{
+                        title:'Entrainement du tapis',
+                        property:'conveyorPowerTransmission',
+                        data: ["CHAINE","NOIX"]
+                    },
+
                     "entrainementTurbine":{
                         title:'Entrainement turbine',
                         property:'implementTurbinePowerTransmission',
@@ -3162,6 +3432,78 @@ const formsCatalog = {
                         title:'Essieu principal',
                         property:'implementMainAxle',
                         data: formsCatalog.implementMainAxle
+                    },
+
+                    "etatBatteur":{
+                        title:'Etat batteur',
+                        property:'combineThreshingDrumState',
+                        ratings: formsCatalog.componentState
+                    },
+
+                    "etatCaisson":{
+                        title:'Etat caisson',
+                        property:'combineCleaningFanState',
+                        ratings: formsCatalog.componentState
+                    },
+
+                    "etatCarosserie":{
+                        title:'Etat carosserie',
+                        property:'bodyworkState',
+                        ratings: formsCatalog.componentState
+                    },
+
+                    "etatClimatisation":{
+                        title:'Etat climatisation',
+                        property:'airConditioningState',
+                        ratings: formsCatalog.componentState
+                    },
+
+                    "etatConvoyeur":{
+                        title:'Etat convoyeur',
+                        property:'combineConveyorState',
+                        ratings: formsCatalog.componentState
+                    },
+
+                    "etatCoupe":{
+                        title:'Etat coupe',
+                        property:'cuttingPlateformState',
+                        ratings: formsCatalog.componentState
+                    },
+
+                    "etatEclairage":{
+                        title:'Etat éclairage',
+                        property:'lightsState',
+                        ratings: formsCatalog.componentState
+                    },
+
+                    "etatLamier":{
+                        title:'Etat éclairage',
+                        property:'lightsState',
+                        ratings: formsCatalog.componentState
+                    },
+
+                    "etatMoteur":{
+                        title:'Etat moteur',
+                        property:'engineState',
+                        ratings: formsCatalog.componentState
+                    },
+
+                    "etatPonts":{
+                        title:'Etat ponts',
+                        property:'axleState',
+                        ratings: formsCatalog.componentState
+                    },
+
+                    "etatSiege":{
+                        title:'Etat siège',
+                        property:'seatState',
+                        ratings: formsCatalog.componentState
+                    },
+
+                    "etatTransmission":{
+                        title:'Etat transmission',
+                        property:'transmissionState',
+                        ratings: formsCatalog.componentState
                     },
 
                     "fixationCouteaux":{
@@ -3339,6 +3681,12 @@ const formsCatalog = {
                         data: formsCatalog.combineHarvester.brands
                     },
 
+                    "marqueTablierAttelageEnsileuse":{
+                        title:'Marque compatible',
+                        property:'forageHarvesterBrandLinkage',
+                        data: formsCatalog.forageHarvester.brands
+                    },
+
                     "materiauxCaisse":{
                         title:'Construction caisse',
                         property:'chassisMaterial',
@@ -3440,6 +3788,12 @@ const formsCatalog = {
                         numeric: true
                     },
 
+                    "nombreDeCouteauxParVis":{
+                        title:'Nombre de couteaux par vis',
+                        property:'knifePerScrewNumber',
+                        numeric: true
+                    },
+
                     "nombreCouteauxVerticaux":{
                         title:'Nombre de couteaux verticaux',
                         property:'knifeVerticalNumber',
@@ -3473,6 +3827,18 @@ const formsCatalog = {
                         title:'Nombre de rangs',
                         property:'halfRowowNumber',
                         data: ["1 demi-rang","2 demi-rangs","1 rang","2 rangs","2 rangs + 1/2"]
+                    },
+
+                    "nombreDeVis":{
+                        title:'Nombre de vis',
+                        property:'screwNumber',
+                        numeric: true
+                    },
+
+                    "nombreLamesARemplacer":{
+                        title:'Nombre de lames à remplacer',
+                        property:'bladeToReplace',
+                        numeric: true
                     },
 
                     "nombrePairesDisques":{
@@ -3642,10 +4008,13 @@ const formsCatalog = {
                         title:'Options',
                         property : 'cattleFeederOptions',
                         toggle:[
+                            "BEQUILLE",
+                            "CONTRE-COUTEAUX",
                             "GOULOTTE ORIENTABLE",
                             "GRIFFE ARRIERE",
                             "RECYCLAGE",
-                            "PAILLEUSE"
+                            "PAILLEUSE",
+                            "PESEE"
                         ]  
                     },
 
@@ -3783,15 +4152,87 @@ const formsCatalog = {
                         toggle: formsCatalog.grapeTrailedHarvesterOptions
                     },
 
-                    "optionsMoissonneuse":{
+                    "optionsMelangeuse":{
                         title:'Options',
+                        property : 'mixFeederOptions',
+                        toggle:[
+                            "ANNEAU ANTI-DEBORDEMENT",
+                            "BEQUILLE",
+                            "2 VITESSES",
+                            "CONTRE-COUTEAUX",
+                            "CONTRE-COUTEAUX HYDRAULIQUES",
+                            "GOULOTTE ORIENTABLE",
+                            "PESEE",
+                            "TREMIE MINERAUX"
+                        ]  
+                    },
+
+                    "optionsMoissonneuse":{
+                        title:'Options générales',
                         property : 'combineOptions',
                         toggle:[
+                            "AVANCEMENT AUTOMATIQUE",
                             "BROYEUR",
+                            "CHENILLES",
+                            "CAMERA",
                             "COMPRESSEUR",
+                            "CROCHET AUTOMATIQUE",
                             "COUPE EXTENSIBLE",
-                            "EPARPILLEUR",
-                            "PONT AR MOTEUR"
+                            "DEBITMETRE",
+                            "DOCUMENTATION",
+                            "EPARPILLEUR MENUES-PAILLES",
+                            "GRAISSAGE AUTOMATIQUE",
+                            "MONITEUR DE PERTES",
+                            "PONT AR MOTEUR",
+                            "TELEMATIQUE"
+                        ]  
+                    },
+
+                    "optionsMoissonneuseBatteur":{
+                        title:'Options batteur',
+                        property:'threshingOptions',
+                        toggle : [
+                            "BATTEUR FERME",
+                            "CONTRE-BATTEUR CEREALES",
+                            "CONTRE-BATTEUR MAIS",
+                            "CONTRE-BATTEUR MIXTE",
+                            "REDUCTEUR BATTEUR"
+                        ]
+                    },
+
+                    "optionsMoissonneuseCaisson":{
+                        title:'Options caisson',
+                        property:'cleaningOptions',
+                        toggle : [
+                            "BATTEUR A OTONS",
+                            "GRILLES MAIS",
+                            "PRE GRILLE",
+                            "REGLAGE ELECTRIQUE",
+                            "VENTILATION PAR TURBINES"
+                        ]
+                    },
+
+                    "optionsMoissonneuseConvoyeur":{
+                        title:'Options convoyeur',
+                        property : 'combineConveyorOptions',
+                        toggle:[
+                            "ASPIRATEUR DE POUSSIERES",
+                            "BAR A PIERRES",
+                            "FREIN DE COUPE",
+                            "PIQUAGE HYDRAULIQUE",
+                            "PLASTRON PIVOTANT",
+                            "VARIATEUR",
+                            "3 VERINS DE LEVAGE"
+                        ]  
+                    },
+
+                    "optionsMoissonneuseCoupe":{
+                        title:'Options coupe',
+                        property : 'combineCutterBarOptions',
+                        toggle:[
+                            "DIVISEURS LONGS",
+                            "LAME DE RECHANGE",
+                            "RELEVEURS"
                         ]  
                     },
 
@@ -3848,6 +4289,7 @@ const formsCatalog = {
                             "COUPURE SECTION",
                             "INCORPORATEUR",
                             "ESSIEU SUIVEUR",
+                            "FLECHE SUIVEUSE",
                             "ISOBUS"
                         ]  
                     },
@@ -3946,7 +4388,7 @@ const formsCatalog = {
                     "optionTeteRecolte":{
                         title:'Tête de récolte',
                         property:'harvestingHead',
-                        toggle: ["ACTIVE","CLASSIC","CLEAN TECH","CLEAN TECH VARIO","EGRENEUR","SELECTIV PROCESS","SMART","VIS DE BENNE","4 ASPIRATEURS"]                        
+                        toggle: ["ACTIVE","CLASSIC","CLEAN TECH","CLEAN TECH VARIO","EGRENEUR","PENDULAIRE","PINCEMENT ELECTRIQUE","SECOUAGE NSBF","SELECTIV PROCESS","SMART","VIS DE BENNE","4 ASPIRATEURS"]                        
                     },
 
                     "optionsTelescopique":{
@@ -4106,6 +4548,22 @@ const formsCatalog = {
                         data: ["BOITE DE VITESSE","IVLOC","VARIATION CONTINUE"]
                     },
 
+                    "scieColza":{
+                        title:'Scie(s) à colza',
+                        property:'oilSeedRapeDivisor',
+                        data: [
+                            "1 SCIE MECANIQUE",
+                            "1 SCIE HYDRAULIQUE",
+                            "1 SCIE ELECTRIQUE",
+                            "2 SCIES MECANIQUE",
+                            "2 SCIES HYDRAULIQUE",
+                            "2 SCIES ELECTRIQUE",
+                            "1 MECANIQUE + 1 ELECTRIQUE",
+                            "1 MECANIQUE + 1 HYDRAULIQUE",
+                            "1 HYDRAULIQUE + 1 ELECTRIQUE",
+                        ]
+                    },
+
                     "sectionPoutre":{
                         title:'Section poutre',
                         property:'beamSection',
@@ -4232,6 +4690,12 @@ const formsCatalog = {
                         title:'Type de coupe',
                         property:'cuttingType',
                         data : ["COUTEAUX","SECTIONS"]
+                    },
+
+                    "typeCoverCrop":{
+                        title:'Type de cover-crop',
+                        property:'ccoverCropType',
+                        data : ["EN V","EN X"]
                     },
 
                     "typeCueilleur":{
@@ -4450,6 +4914,12 @@ const formsCatalog = {
                         data: formsCatalog.wearRatio
                     },
 
+                    "usureLames":{
+                        title:'Usure lames',
+                        property:'bladesWearing',
+                        data: formsCatalog.wearRatio
+                    },
+
                     "usureLamier":{
                         title:'Usure lamier',
                         property:'cutterbarWearing',
@@ -4652,7 +5122,7 @@ const formsCatalog = {
                         picture: true
                     },
                     {
-                        title:'Dimension pneus',
+                        title:'Etat pneus',
                         property:'tyreSize',
                         picture: true
                     },
@@ -4758,22 +5228,16 @@ const formsCatalog = {
                         property:'registrationCard',
                         picture: true
                     },
-                    
-                    "compteur":{
-                        title:'Compteur',
-                        property:'counter',
+
+                    "carteGrise":{
+                        title:'Carte grise',
+                        property:'registrationCard',
                         picture: true
                     },
 
-                    "conditionneur":{
-                        title:'Conditionneur',
-                        property:'Conditionning',
-                        picture: true
-                    },
-
-                    "console":{
-                        title:'Console',
-                        property:'screen',
+                    "compteurHeuresRecolte":{
+                        title:'compteurHeuresRecolte',
+                        property:'harvestHoursCounter',
                         picture: true
                     },
 
@@ -4786,6 +5250,11 @@ const formsCatalog = {
                     "controleur":{
                         title:'Controleur',
                         property:'controller',
+                        picture: true
+                    },
+                    "convoyeur":{
+                        title:'Convoyeur',
+                        property:'conveyor',                 
                         picture: true
                     },
 
@@ -4831,12 +5300,12 @@ const formsCatalog = {
                         picture: true
                     },
                     "dimensionPneumatiqueAvant":{
-                        title:'Dimension pneus AV',
+                        title:'Etat pneus AV',
                         property:'frontTyreSize',
                         picture: true
                     },
                     "dimensionPneumatiqueArriere":{
-                        title:'Dimension pneus AR',
+                        title:'Etat pneus AR',
                         property:'rearTyreSize',
                         picture: true
                     },
@@ -4855,19 +5324,14 @@ const formsCatalog = {
                         property:'rightPowerChain',
                         picture: true
                     },
+                    "goulotte":{
+                        title:'Goulotte',
+                        property:'chute',                 
+                        picture: true
+                    },
                     "herissons":{
                         title:'Hérissons',
                         property:'hedgehog',
-                        picture: true
-                    },
-                    "interieurCabine_1":{
-                        title:'Intérieur cabine 1',
-                        property:'cabIndoor1',
-                        picture: true
-                    },
-                    "interieurCabine_2":{
-                        title:'Intérieur cabine 2',
-                        property:'cabIndoor2',
                         picture: true
                     },
                     "interieurCaisse_1":{
@@ -4888,6 +5352,12 @@ const formsCatalog = {
                     "lame":{
                         title:'Lame',
                         property:'blade',
+                        picture: true
+                    },
+
+                    "lames":{
+                        title:'Lames',
+                        property:'blades',
                         picture: true
                     },
 
@@ -4996,6 +5466,12 @@ const formsCatalog = {
                         picture: true
                     },
 
+                    "refroidisseur":{
+                        title:'Refroidisseur',
+                        property:'cooler',
+                        picture: true
+                    },
+
                     "rouleau":{
                         title:'Rouleau',
                         property:'roll',
@@ -5005,6 +5481,18 @@ const formsCatalog = {
                     "rouleauxEpanouilleurs":{
                         title:'Rouleaux épanouilleurs',
                         property:'harvestRolls',
+                        picture: true
+                    },
+
+                    "scie_1":{
+                        title:'Scie 1',
+                        property:'verticalCutterBar_1',
+                        picture: true
+                    },
+
+                    "scie_2":{
+                        title:'Scie 2',
+                        property:'verticalCutterBar_2',
                         picture: true
                     },
 
@@ -5067,6 +5555,13 @@ const formsCatalog = {
                         property:'turbine',        
                         picture: true
                     },
+
+                    "usureDisques":{
+                        title:'Usure disques',
+                        property:'discWear',
+                        picture: true
+                    },
+
                     "virages":{
                         title:'Virages',
                         property:'curves',        

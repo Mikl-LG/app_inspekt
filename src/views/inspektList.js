@@ -76,6 +76,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-around',
     overflow: 'hidden',
     backgroundColor: theme.palette.background.paper,
+    borderRadius: '5px',
   },
   secondaryHeading: {
     fontSize: theme.typography.pxToRem(15),
@@ -213,7 +214,7 @@ export default function TitlebarGridList({inspektList,qotList,cieMembers,logInfo
 
         machineAddonsAvailable.forEach((element) => {
         for (let [key,value] of Object.entries(expertise.machine)){
-          if(key === element.property){
+          if(key === element.property && ['counter','cabIndoor1','cabIndoor2'].indexOf(key) === -1){ //counter, cabIndoor1 and cabIndoor2 are picture format
             element.value = value;
             element.visibleOnPdf = true;
             element.step = 'machine';
@@ -277,20 +278,37 @@ export default function TitlebarGridList({inspektList,qotList,cieMembers,logInfo
       
       ////////// MACHINE PICTURES ARRAY BUILD \\\\\\\\\\
       let pictureArrayList = [];
-      if(expertise.pictures){
-        for (let [key,value] of Object.entries(expertise.pictures)){
-          pictureArrayList.push({key : key,value:value,visibleOnPdf:true});
+      if (expertise.pictures) {
+        for (let [key, value] of Object.entries(expertise.pictures)) {
+          pictureArrayList.push({key: key, value: value, visibleOnPdf: true});
         }
       }
 
-      if(expertise.particularities && expertise.particularities.points){
-        expertise.particularities.points.forEach(element => {
-          if(element.pictures && element.pictures.length){
-            pictureArrayList = [...pictureArrayList,{title : element.text,value:element.pictures[0],visibleOnPdf:true}];
+      if (expertise.particularities && expertise.particularities.points) {
+        expertise.particularities.points.forEach((element) => {
+          if (element.pictures && element.pictures.length) {
+            pictureArrayList = [
+              ...pictureArrayList,
+              {
+                key: element.text,
+                title: element.text,
+                value: element.pictures[0],
+                visibleOnPdf: true,
+              },
+            ]; // title is used to display particularity text in imageSlider
           }
-        })
+        });
       }
-      
+
+      ["counter", "cabIndoor1", "cabIndoor2"].forEach((key) => {
+        if (expertise.machine[key]) {
+          pictureArrayList = [
+            ...pictureArrayList,
+            {key: key, value: expertise.machine[key], visibleOnPdf: true},
+          ];
+        }
+      });
+
       expertise.imageList = pictureArrayList;
       expertise.orderedDetailsToPrint = machineToArray;
       setFocusMachine(expertise);
@@ -302,10 +320,6 @@ export default function TitlebarGridList({inspektList,qotList,cieMembers,logInfo
       setDisplayFromUrlHook(false);
       setStateFromChild({displayFromUrl : {...displayFromUrl,allowed : false}})
     }
-
-    useEffect(() => {
-      
-    })
 
   return (
       <div className={classes.root}>

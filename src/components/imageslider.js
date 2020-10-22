@@ -184,7 +184,7 @@ function SwipeableTextMobileStepper({listOfPictures,setListOfPictures,gridScreen
         <div className={classes.widget}>
           <Tooltip title='Edition sur PDF'>
             {
-              listOfPictures && listOfPictures[activeStep].visibleOnPdf === true
+              (listOfPictures && listOfPictures[activeStep] && listOfPictures[activeStep].visibleOnPdf === true)
               ? <VisibilityIcon onClick={() => switchPictureVisibility(activeStep)}/>
               : <VisibilityOffIcon onClick={() => switchPictureVisibility(activeStep)}/>
             }
@@ -192,7 +192,7 @@ function SwipeableTextMobileStepper({listOfPictures,setListOfPictures,gridScreen
         </div>
       </div>
       {
-        listOfPictures && listOfPictures[activeStep].visibleOnPdf === false
+        listOfPictures && listOfPictures[activeStep] && listOfPictures[activeStep].visibleOnPdf === false
         && <div style={{position:'absolute',top:swipeableViewsInformations && (swipeableViewsInformations.offsetTop),right:'50%',zIndex:'20',backgroundColor:'black',borderRadius:'10px',padding:'5px',marginTop:'15px',marginRight:'15px',opacity:'0.7'}}>
         <Typography variant='h6' style={{color:'white'}}>Cette photo ne sera pas publiée sur tes documents PDF.</Typography>
         </div>
@@ -206,7 +206,7 @@ function SwipeableTextMobileStepper({listOfPictures,setListOfPictures,gridScreen
         onChangeIndex={handleStepChange}
         enableMouseEvents
         id='swipeableViews'
-        style={listOfPictures && listOfPictures[activeStep].visibleOnPdf === false && {border:'5px solid', borderColor:Color.secondary}}
+        style={listOfPictures && listOfPictures[activeStep] && listOfPictures[activeStep].visibleOnPdf === false && {border:'5px solid', borderColor:Color.secondary}}
       >
         {listOfPictures && listOfPictures.map((step, index) => (
           displayImage(step,index)

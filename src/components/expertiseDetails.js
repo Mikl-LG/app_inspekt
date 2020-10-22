@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-
 import AppBar from '@material-ui/core/AppBar';
 import AWS from 'aws-sdk';
 import Badge from '@material-ui/core/Badge';
@@ -21,6 +20,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
+import MailOutlineIcon from "@material-ui/icons/MailOutline";
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
@@ -42,11 +42,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalculator,faPen,faTimesCircle,faMoneyBillAlt,faCheck,faComments, faEuroSign,faFileSignature, faCheckSquare,faSearch } from '@fortawesome/free-solid-svg-icons';
 import { faImages } from '@fortawesome/free-solid-svg-icons';
 
-// configuring the AWS environment
 AWS.config.update({
-  accessKeyId: 'AKIA5JIBCZYIY4IZPEFL',
-  secretAccessKey: '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',
-  region: 'eu-west-3',
+  accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY_ID,
+  region: process.env.REACT_APP_AWS_REGION,
 });
 
 let s3 = new AWS.S3();
@@ -206,35 +205,87 @@ export default function ExpertiseDetails(props) {
     }
   }
 
-  const downloadPictures = async(pictures) => {
+  const downloadPictures = async (imageList) => {
+    if (imageList.length) {
+      setLoader({
+        isOpen: true,
+        title: "Téléchargement...",
+        content: "Tu pourras consulter les photos dans quelques secondes.",
+      });
 
-    setLoader({isOpen:true,title:'Téléchargement...',content:'Tu pourras consulter les photos dans quelques secondes.'});
-    const keys = await Promise.resolve(Object.keys(pictures)); //[leftFront,rightBack]
-    let promises = await Promise.resolve(keys.map(async(k) => {
-      return new Promise(async(resolve) => {
-        let picture = await Promise.resolve(pictures[k].replace('%2F','/'));
-        let splitted = await Promise.resolve(picture.split('/'));
-        let key = await Promise.resolve(splitted[splitted.length-1]);
-        let folder = await Promise.resolve(splitted[splitted.length-2]);
-        let params = await Promise.resolve({Bucket : 'inspekt-prod',Key:`${folder}/${key}`})
+      let promises = await Promise.resolve(
+        imageList.map(async (image) => {
+          return new Promise(async (resolve) => {
+            let picture = await Promise.resolve(
+              image.value.replace("%2F", "/")
+            );
+            let splitted = await Promise.resolve(picture.split("/"));
+            let key = await Promise.resolve(splitted[splitted.length - 1]);
+            let folder = await Promise.resolve(splitted[splitted.length - 2]);
+            let params = await Promise.resolve({
+              Bucket: `inspekt-prod`,
+              Key: `MEDIASLANDER/${key}`,
+            });
 
-        s3.getObject(params, async(err, data) => {
-          let blob = await Promise.resolve(new Blob([data.Body], {type: 'image/jpeg'}));
-          let link = await Promise.resolve(document.createElement('a'));
-          link.href = await Promise.resolve(window.URL.createObjectURL(blob));
-          link.download = await Promise.resolve(k+'.jpeg');
-          let clicked = await new Promise((_clicked) => {
-            link.click();
-            _clicked(true);
-          })
-          resolve(true);
-          setLoader({isOpen:false});
+            s3.getObject(params, async (err, data) => {
+              let blob = await Promise.resolve(
+                new Blob([data.Body], {type: "image/jpeg"})
+              );
+              let link = await Promise.resolve(document.createElement("a"));
+              link.href = await Promise.resolve(
+                window.URL.createObjectURL(blob)
+              );
+              link.download = await Promise.resolve(image.key + ".jpg");
+              let clicked = await new Promise((_clicked) => {
+                link.click();
+                _clicked(true);
+              });
+              resolve(true);
+              setLoader({isOpen: false});
+            });
+          });
         })
-      })
+      );
+      const result = await Promise.all(promises);
+    } else {
+      setSnackbar({
+        message: "Aucune image disponible",
+        type: "snackbarWarning",
+        isOpen: true,
+      });
+    }
+  };
+
+  /////DEPRECATED\\\\\\\\\
+  // const downloadPictures = async(pictures) => {
+
+  //   setLoader({isOpen:true,title:'Téléchargement...',content:'Tu pourras consulter les photos dans quelques secondes.'});
+  //   const keys = await Promise.resolve(Object.keys(pictures)); //[leftFront,rightBack]
+  //   let promises = await Promise.resolve(keys.map(async(k) => {
+  //     return new Promise(async(resolve) => {
+  //       let picture = await Promise.resolve(pictures[k].replace('%2F','/'));
+  //       let splitted = await Promise.resolve(picture.split('/'));
+  //       let key = await Promise.resolve(splitted[splitted.length-1]);
+  //       let folder = await Promise.resolve(splitted[splitted.length-2]);
+  //       let params = await Promise.resolve({Bucket : 'inspekt-prod',Key:`${folder}/${key}`})
+
+  //       s3.getObject(params, async(err, data) => {
+  //         let blob = await Promise.resolve(new Blob([data.Body], {type: 'image/jpeg'}));
+  //         let link = await Promise.resolve(document.createElement('a'));
+  //         link.href = await Promise.resolve(window.URL.createObjectURL(blob));
+  //         link.download = await Promise.resolve(k+'.jpeg');
+  //         let clicked = await new Promise((_clicked) => {
+  //           link.click();
+  //           _clicked(true);
+  //         })
+  //         resolve(true);
+  //       setLoader({isOpen:false});
+  //       })
+  //     })
       
-    }))
-    const result = await Promise.all(promises);
-  }
+  //   }))
+  //   const result = await Promise.all(promises);
+  // }
 
   const editPdf = (type) => {
     //type = ficheExpertise || bonReprise || contreExpertise
@@ -355,6 +406,39 @@ export default function ExpertiseDetails(props) {
       } 
     }
   }
+
+  const sendMeExpertiseByMail = async (pdfType) => {
+    const body = await Promise.resolve({
+      orderedDetailsToPrint: focusMachine.orderedDetailsToPrint,
+      type: pdfType,
+      headerFileName: logInfo.company.header,
+      pictures: focusMachine.pictures,
+      emailTo: logInfo.user.email,
+    });
+
+    //**ADD COTATION REQUEST**\\
+    const url = `${process.env.REACT_APP_URL_API}api?request=PRINT_PDF&token=${logInfo.token}`;
+    let fetchOptions = await Promise.resolve({
+      method: "POST",
+      mode: "cors",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    let fetching = await fetch(url, fetchOptions);
+    let error = await Promise.resolve(!fetching.ok);
+    let response = !error && (await Promise.resolve(fetching.json()));
+
+    if (error == false) {
+      setSnackbar({
+        message: "Ton expertise arrive dans ta boîte email.",
+        type: "snackbarSuccess",
+        isOpen: true,
+      });
+    }
+  };
 
   const startCotation = () => {
     setQoterMode(logInfo.user.config && logInfo.user.config.isDefaultQoter === true ? true : false);
@@ -522,10 +606,18 @@ export default function ExpertiseDetails(props) {
                   <FontAwesomeIcon icon={faCalculator} style={{fontSize:'1.5em'}}/>
                 </Badge>
               </Button>
-            </Tooltip>            
+            </Tooltip>
+            <Tooltip title='Recevoir par email'>
+              <Button
+                autoFocus
+                color='inherit'
+                onClick={() => sendMeExpertiseByMail("ficheExpertise")}>
+                <MailOutlineIcon />
+              </Button>
+            </Tooltip>           
             <Tooltip title="Télécharger les photos">
               <Button autoFocus color="inherit"
-                onClick={() => downloadPictures(focusMachine.pictures)}
+                onClick={() => downloadPictures(focusMachine.imageList)}
               >
                 <FontAwesomeIcon icon={faImages} style={{fontSize:'1.5em'}}/>
               </Button>
@@ -690,7 +782,7 @@ export default function ExpertiseDetails(props) {
                     {key : 'marketerSalePrice',title : 'Prix marchand',sigle:'€'},
                     {key : 'repairCost',title : 'Préparation',sigle:'€'},
                     {key : 'marketerRepairCost',title : 'Préparation (marchand)',sigle:'€'},
-                    {key : 'buyingPrice',title : 'Prix achat',sigle:'€'},
+                    {key : 'buyingPrice',title : 'Prix achat gestion',sigle:'€'},
                     {key : 'publicComment',title : 'Commentaire public',sigle:''},
                     {key : 'privateComment',title : 'Commentaire privé',sigle:''},
                   ].map((element) => 
@@ -748,12 +840,12 @@ export default function ExpertiseDetails(props) {
               </Typography>
               <Divider />
               {[
-                {title : 'Prix de vente',key:'customerEstimatedSalePrice'},
-                {title : 'Prix marchand',key:'marketerEstimatedSalePrice'},
+                {title : 'Prix de vente estimé',key:'customerEstimatedSalePrice'},
+                {title : 'Prix marchand estimé',key:'marketerEstimatedSalePrice'},
                 {title : 'Préparation estimée',key:'estimatedRepairCost'},
                 {title : 'Préparation estimée (marchand)',key:'estimatedMarketerRepairCost'},
                 {title : 'Cote SIMO',key:'simoQuotation'},
-                {title : 'Prix d\'achat',key:'estimatedBuyingPrice'},
+                {title : 'Prix d\'achat gestion',key:'estimatedBuyingPrice'},
               ].map((value, index) => (
                 ((logInfo.user.config && logInfo.user.config.hiddenInput) || []).indexOf(value.key) == -1
                 &&
@@ -828,12 +920,12 @@ export default function ExpertiseDetails(props) {
                     </div>
                     {
                       [
-                        {title : 'Prix de vente',key:'customerEstimatedSalePrice'},
-                        {title : 'Prix marchand',key:'marketerEstimatedSalePrice'},
+                        {title : 'Prix de vente estimé',key:'customerEstimatedSalePrice'},
+                        {title : 'Prix marchand estimé',key:'marketerEstimatedSalePrice'},
                         {title : 'Préparation estimée',key:'estimatedRepairCost'},
                         {title : 'Préparation estimée (marchand)',key:'estimatedMarketerRepairCost'},
                         {title : 'Cote SIMO',key:'simoQuotation'},
-                        {title : 'Prix d\'achat',key:'estimatedBuyingPrice'},
+                        {title : 'Prix d\'achat gestion',key:'estimatedBuyingPrice'},
                       ].map((value) => (
                         <div 
                           key={value}
